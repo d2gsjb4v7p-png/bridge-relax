@@ -78,7 +78,7 @@ h3{margin:0 0 6px;font:700 15px/1.3 var(--sans)}
 .btn:disabled{opacity:.45}
 .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .grow{flex:1;min-width:0}
-input[type=text],input[type=time],input[type=number],select,textarea{background:var(--paper);border:1.5px solid var(--line);border-radius:12px;padding:11px 12px;width:100%;color:var(--ink)}
+input[type=text],input[type=time],input[type=date],input[type=number],select,textarea{background:var(--paper);border:1.5px solid var(--line);border-radius:12px;padding:11px 12px;width:100%;color:var(--ink)}
 label.f{display:block;font-size:13px;color:var(--mute);margin:12px 0 4px}
 input[type=checkbox]{width:20px;height:20px;accent-color:var(--felt)}
 
@@ -293,6 +293,154 @@ body.salle-on{padding:0;background:#0a2018}
 .sctl button{border:1px solid rgba(255,255,255,.35);background:rgba(0,0,0,.5);color:#fff;border-radius:10px;padding:8px 12px;font-size:13px}
 .sctl button.on{background:#f0cf86;color:#14233b;border-color:#f0cf86}
 
+/* ===== Version colorée et très lisible ===== */
+:root{
+  --bg:#eef3fb;--ns:#2b6fd6;--eo:#e0661e;
+  --shadow:0 2px 0 rgba(20,35,59,.06),0 14px 30px -16px rgba(20,35,59,.45);
+}
+body{font-size:17px;background:linear-gradient(180deg,#e3ecfb 0,#eef3fb 260px) fixed,var(--bg)}
+@media (prefers-color-scheme:dark){body{background:var(--bg)}}
+header{background:linear-gradient(100deg,#14233b 0%,#1d4a7a 55%,#1f8a57 100%)}
+header h1{font-weight:700;font-size:25px}
+nav{background:linear-gradient(100deg,#14233b,#1d3d66)}
+nav button{font-size:12.5px;font-weight:600}
+nav button.on{background:#f0cf86;color:#14233b}
+h2{font-weight:700;font-size:28px}
+.btn{border-width:2px;border-radius:16px;padding:12px 18px;font-size:16px}
+.btn.pri{background:linear-gradient(135deg,#1f8a57,#17694a);border-color:#17694a}
+
+/* Cartes de table : une couleur par table */
+.tcard{border-radius:24px;border:3px solid var(--tc,#1f8a57);box-shadow:var(--shadow)}
+.felt{background:radial-gradient(120% 90% at 50% 40%,color-mix(in srgb,var(--tc,#1f8a57) 88%,#fff) 0%,var(--tc,#1f8a57) 45%,color-mix(in srgb,var(--tc,#1f8a57) 70%,#000) 100%);padding:16px 12px 18px}
+.felt .tag{color:#fff;font-weight:600}
+.felt .tag b{color:#fff;font:700 15px var(--sans);background:rgba(0,0,0,.28);padding:2px 9px;border-radius:99px;display:inline-block;margin-bottom:2px}
+.plate{font-size:19px;font-weight:700;min-height:56px;padding-left:42px;border-radius:14px}
+.plate .sl{width:27px;height:27px;left:8px;font:800 14px/27px var(--sans);color:#fff}
+.plate.p-N .sl,.plate.p-S .sl{background:var(--ns)}
+.plate.p-E .sl,.plate.p-O .sl{background:var(--eo)}
+.plate.p-N,.plate.p-S{box-shadow:0 3px 0 rgba(0,0,0,.25),inset 0 -4px 0 var(--ns)}
+.plate.p-E,.plate.p-O{box-shadow:0 3px 0 rgba(0,0,0,.25),inset 0 -4px 0 var(--eo)}
+.plate.prof{outline:3px solid #f0cf86}
+.hub{background:#fff;color:var(--tc,#14233b);box-shadow:0 3px 0 rgba(0,0,0,.25)}
+.hub b{font:800 44px/1 var(--sans);color:var(--tc,#14233b)}
+.hub small{color:var(--ink-2);font-weight:600;font-size:12px}
+.brow .info{font-size:16px}
+.brow .info b{font-size:17px}
+.brow .info small{font-size:14px;color:var(--ink-2)}
+.brow .res{font-size:18px;color:var(--tc,var(--ink))}
+.mb{width:58px;height:58px;font-weight:700}
+.tcard .btn.sm{background:var(--tc,#1f8a57);border-color:var(--tc,#1f8a57);color:#fff;min-width:84px}
+
+/* Bandeau d'infos clair */
+.tcount{font-weight:800}
+
+/* Grand écran : une couleur par table, contraste maximal */
+.salle{background:radial-gradient(130% 110% at 50% 10%,#1d3d66 0%,#10213a 60%,#0a1424 100%)}
+.tile{background:rgba(255,255,255,.07);box-shadow:inset 0 0 0 .28vw var(--tc,#f0cf86)}
+.tile .th b{background:var(--tc,#f0cf86);color:#fff;font-weight:800;font-family:var(--sans)}
+.tile .th span{color:#fff;font-weight:600}
+.tile .grp{background:rgba(43,111,214,.30)}
+.tile .grp.g2{background:rgba(224,102,30,.32)}
+.tile .trw .sl{background:#fff;color:#14233b;font-weight:800}
+.tile .tn2{font-weight:700}
+.ni{background:rgba(255,255,255,.12)}
+.ni .nn{font-weight:700}
+.x{min-width:44px;min-height:44px;font-size:20px}
+.x.ask{background:var(--red);color:#fff;border-radius:12px;font-size:14px;font-weight:700;padding:6px 10px}
+
+/* ===== v2 : séances, inscriptions, accueil, feuilles ===== */
+.htitle{flex:1;min-width:0}
+.htitle h1{line-height:1.05}
+.hdate{border:0;background:rgba(255,255,255,.14);color:#fff;border-radius:99px;padding:3px 11px;margin-top:4px;font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.lbl{margin:22px 0 10px;font-size:13px;color:var(--ink-2);font-weight:700}
+
+/* Onglets internes Inscriptions / Accueil / Liste */
+.seg3{display:flex;background:var(--paper);border-radius:16px;padding:4px;box-shadow:var(--shadow);margin:6px 0 14px;max-width:520px}
+.seg3 button{flex:1;border:0;background:none;border-radius:12px;padding:11px 6px;font-weight:700;font-size:15px;color:var(--ink-2)}
+.seg3 button.on{background:#14233b;color:#fff}
+
+/* Filtres à compteur */
+.fchips{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px}
+.fchip{border:2px solid var(--line);background:var(--paper);border-radius:14px;padding:7px 12px;font-size:14px;font-weight:600;color:var(--ink-2);display:flex;align-items:baseline;gap:6px}
+.fchip b{font-size:20px;color:var(--ink)}
+.fchip.yes b{color:var(--green)}.fchip.none b{color:#8a6416}.fchip.no b{color:var(--red)}
+.fchip.on{border-color:#14233b;background:#14233b;color:#fff}
+.fchip.on b{color:#fff}
+
+/* Réponse à trois choix */
+.rsvp{display:flex;flex:none;border:2px solid var(--line);border-radius:14px;overflow:hidden}
+.rsvp button{border:0;background:var(--paper);padding:10px 10px;font-weight:700;font-size:14px;color:var(--mute);min-width:44px;min-height:44px}
+.rsvp button+button{border-left:2px solid var(--line)}
+.rsvp button.yes.on{background:var(--green);color:#fff}
+.rsvp button.none.on{background:#d6a017;color:#fff}
+.rsvp button.no.on{background:var(--red);color:#fff}
+.prow.r-yes .av{box-shadow:0 0 0 3px var(--green)}
+.prow.r-no .nm{color:var(--mute)}
+.prow.r-no .av{opacity:.45}
+
+/* Accueil : arrivée et départ */
+.btn.arr{background:var(--green);border-color:var(--green);color:#fff;min-width:104px;min-height:48px;font-size:17px}
+.btn.dep{background:var(--paper);border-color:var(--red);color:var(--red);min-width:104px;min-height:48px}
+.prow.here{background:linear-gradient(90deg,var(--green-soft),transparent 70%);margin:0 -14px;padding-left:14px;padding-right:14px}
+.prow.here .nm small{color:var(--green);font-weight:700}
+
+/* Cartes de séance */
+.slist{display:grid;gap:12px}
+@media (min-width:1000px){.slist{grid-template-columns:1fr 1fr}}
+.scard{display:flex;gap:14px;align-items:flex-start;background:var(--paper);border-radius:20px;box-shadow:var(--shadow);padding:14px;border:3px solid transparent}
+.scard.cur{border-color:#2b6fd6}
+.scard.past{opacity:.72}
+.sdate{flex:none;width:64px;border-radius:14px;overflow:hidden;text-align:center;background:linear-gradient(160deg,#2b6fd6,#1d4a7a);color:#fff;padding:6px 0 8px}
+.scard.past .sdate{background:#6a7890}
+.sdate b{display:block;font:800 30px/1.05 var(--sans)}
+.sdate span{font-size:13px;font-weight:600;text-transform:lowercase}
+.sinfo{flex:1;min-width:0}
+.st{font-weight:800;font-size:18px}
+.st small{font-weight:600;color:var(--mute);font-size:13px;margin-left:4px}
+.sh{color:var(--ink-2);font-size:15px;margin:2px 0 6px}
+.cnt{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px}
+.k{border-radius:99px;padding:2px 10px;font-size:13px;font-weight:700}
+.k.yes{background:var(--green-soft);color:var(--green)}
+.k.none{background:var(--brass-soft);color:#8a6416}
+.k.no{background:var(--red-soft);color:var(--red)}
+.sact{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.sedit{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.sedit>div{min-width:120px}
+.slist .sedit{background:var(--paper-2);border-radius:0 0 18px 18px;margin:-16px 0 0;padding:16px 14px 12px;border:3px solid #2b6fd6;border-top:0}
+.slist .scard.cur{border-radius:20px 20px 0 0;border-bottom:0}
+
+/* Table : étui reçu, réserve */
+.from{padding:10px 16px 0;font-weight:700;color:var(--tc,var(--ink))}
+.bchip{display:inline-flex;align-items:center;justify-content:center;min-width:38px;height:32px;margin-left:6px;border-radius:10px;background:var(--tc,#14233b);color:#fff;font-weight:800}
+
+/* Feuilles d'étui : visibles seulement à l'impression */
+.sheets{display:none}
+@media print{
+  @page{size:A4 portrait;margin:11mm}
+  body.psheets main>*:not(.sheets){display:none!important}
+  body.psheets .sheets{display:block}
+  body.psheets{font-size:10pt}
+  .sheet-p{break-after:page;color:#000}
+  .sp-head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;border-bottom:2.5pt solid #000;padding-bottom:3mm;margin-bottom:4mm}
+  .sp-head b{font:800 26pt/1 var(--sans);display:block}
+  .sp-head span{font-size:11pt}
+  .sp-tip{font-size:8.5pt;max-width:85mm;text-align:right}
+  .sp-board{break-inside:avoid;margin-bottom:4mm}
+  .sp-bt{display:flex;align-items:center;gap:3mm;font:800 13pt var(--sans);margin-bottom:1.5mm}
+  .sp-bt small{font:500 9.5pt var(--sans)}
+  .sp-n{display:inline-flex;align-items:center;justify-content:center;width:10mm;height:10mm;border:1.6mm solid #ccc;border-radius:2mm;font-size:11pt}
+  .sp-n.vns{border-top-color:#c8342f;border-bottom-color:#c8342f}
+  .sp-n.veo{border-left-color:#c8342f;border-right-color:#c8342f}
+  .sp-t{width:100%;border-collapse:collapse;table-layout:fixed}
+  .sp-t th{font-size:8.5pt;text-align:left;background:#eee;border:.6pt solid #000;padding:1mm 1.5mm;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .sp-t td{border:.6pt solid #000;height:6.6mm}
+  .sp-t .w1{width:12mm}.sp-t .w2{width:18mm}
+}
+.scwrap{display:flex;flex-direction:column}
+.slist .scwrap .sedit{margin:0}
+@media print{body.psheets{background:#fff!important}}
+@media (max-width:480px){.fchip{padding:6px 9px;font-size:13px}.fchip b{font-size:18px}.fchips{gap:6px}}
+
 </style>
 </head>
 <body></body>
@@ -399,10 +547,9 @@ body.salle-on{padding:0;background:#0a2018}
         inc(h.setUse, t.set);
         h.setLast[t.set] = { round: ri, table: t.n };
         if (t.set > h.maxSet) h.maxSet = t.set;
-        Object.keys(t.results || {}).forEach(bn => {
-          const res = t.results[bn];
-          if (res && !res.pass && res.level && res.players) inc(h.decl, res.players[res.decl]);
-        });
+        // mains prévues déjà attribuées (mode donnes préparées)
+        const K = (state.settings && state.settings.setSize) || 4;
+        (t.boards || []).forEach(n => inc(h.decl, s[designated(n, K)]));
       });
     });
     return h;
@@ -699,73 +846,131 @@ body.salle-on{padding:0;background:#0a2018}
 
 </script>
 <script>
-/* Bridge Relax — interface */
+/* Bridge Relax — interface (v2 : séances datées, inscriptions, feuilles d'étui) */
 (function () {
   'use strict';
   const LS = 'bridge-relax-v1';
   const LOGO = (document.querySelector('link[rel="apple-touch-icon"]') || {}).href || '';
   const SEATS = BR.SEATS, SN = BR.SEAT_NAME;
-  const DEN = { C: '♣', D: '♦', H: '♥', S: '♠', SA: 'SA' };
+  const pad = n => String(n).padStart(2, '0');
+  const isoDay = d => d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+  const todayIso = () => isoDay(new Date());
 
+  /* ---------- Données ---------- */
+  function newSession(D, date, start, end) {
+    const s = { id: D.nextSess++, date: date || todayIso(), start: start || D.settings.start, end: end || D.settings.end, rsvp: {}, att: {}, rounds: [] };
+    D.sessions.push(s);
+    return s;
+  }
   function defaults() {
-    return { v: 1, nextId: 1, settings: { start: '15:00', end: '18:30', roundMin: 30, minPerBoard: 9, setSize: 4, bankSets: 12, changeMin: 2, prepared: false }, players: [], rounds: [], notes: {} };
+    const D = { v: 2, nextId: 1, nextSess: 1, settings: { start: '15:00', end: '18:30', roundMin: 30, minPerBoard: 9, setSize: 4, bankSets: 12, changeMin: 2, prepared: false }, roster: [], sessions: [], cur: null, notes: {} };
+    D.cur = newSession(D).id;
+    return D;
+  }
+  // Ancien format (une seule après-midi) → nouveau format
+  function migrate(j) {
+    if (j && j.v === 2) {
+      const d = defaults();
+      const D = Object.assign(d, j, { settings: Object.assign(d.settings, j.settings) });
+      if (!D.sessions.length) D.cur = newSession(D).id;
+      if (!D.sessions.some(s => s.id === D.cur)) D.cur = D.sessions[D.sessions.length - 1].id;
+      return D;
+    }
+    if (j && j.v === 1) {
+      const D = defaults();
+      D.sessions = []; D.nextSess = 1;
+      Object.assign(D.settings, j.settings || {});
+      D.nextId = j.nextId || 1;
+      D.notes = j.notes || {};
+      D.roster = (j.players || []).map(p => ({ id: p.id, name: p.name, teacher: !!p.teacher }));
+      const s = newSession(D, todayIso(), D.settings.start, D.settings.end);
+      (j.players || []).forEach(p => { if (p.present) { s.rsvp[p.id] = 'yes'; s.att[p.id] = { present: true, arr: p.arrivedAt || Date.now() }; } });
+      s.rounds = j.rounds || [];
+      D.cur = s.id;
+      D.nextId = Math.max(D.nextId, 1 + Math.max(0, ...D.roster.map(p => p.id)));
+      return D;
+    }
+    return null;
   }
   function load() {
-    try {
-      const j = JSON.parse(localStorage.getItem(LS));
-      if (j && j.v === 1) { const d = defaults(); return Object.assign(d, j, { settings: Object.assign(d.settings, j.settings) }); }
-    } catch (e) { /* ignore */ }
+    try { const m = migrate(JSON.parse(localStorage.getItem(LS))); if (m) return m; } catch (e) { /* ignore */ }
     return defaults();
   }
-  let S = load();
-  const ui = { tab: 'tour', score: null, filter: '', fresh: false, salleView: 'noms', auto: true, tick: 0 };
-  function save() { try { localStorage.setItem(LS, JSON.stringify(S)); } catch (e) { /* ignore */ } }
+  let D = load();
+  const ui = { tab: 'tour', filter: '', fresh: false, salleView: 'noms', auto: true, tick: 0, pmode: null, pf: 'all', delId: null, delS: null };
+  function save() { try { localStorage.setItem(LS, JSON.stringify(D)); } catch (e) { /* ignore */ } }
   function commit() { save(); render(); }
+
+  const cur = () => D.sessions.find(s => s.id === D.cur) || D.sessions[0];
+  const att = id => cur().att[id] || {};
+  const isPresent = id => !!att(id).present;
+  const rsvpOf = (s, id) => s.rsvp[id] || 'none';
+  // Vue « moteur » de la séance ouverte
+  function C() {
+    const s = cur();
+    return {
+      settings: Object.assign({}, D.settings, { start: s.start, end: s.end }),
+      players: D.roster.map(p => ({ id: p.id, name: p.name, teacher: !!p.teacher, present: !!(s.att[p.id] && s.att[p.id].present) })),
+      rounds: s.rounds
+    };
+  }
 
   const $ = s => document.querySelector(s);
   const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-  const getP = id => S.players.find(p => p.id === id);
+  const getP = id => D.roster.find(p => p.id === id);
   const nm = id => { const p = getP(id); return p ? p.name : '?'; };
-  const pad = n => String(n).padStart(2, '0');
   const fmtT = ms => { const d = new Date(ms); return pad(d.getHours()) + ':' + pad(d.getMinutes()); };
   const fmtDur = min => { min = Math.max(0, Math.round(min)); return min >= 60 ? Math.floor(min / 60) + ' h ' + pad(min % 60) : min + ' min'; };
   const plural = (n, a, b) => n + ' ' + (n > 1 ? b : a);
-  const K = () => S.settings.setSize;
+  const K = () => D.settings.setSize;
   const vulName = v => v === '-' ? 'personne' : v === 'ALL' ? 'tous' : v === 'NS' ? 'NS' : 'EO';
-  const suitHtml = d => d === 'SA' ? 'SA' : '<span class="su' + (d === 'H' || d === 'D' ? ' r' : '') + '">' + DEN[d] + '</span>';
   const initials = n => n.trim().split(/\s+/).slice(0, 2).map(w => w.charAt(0)).join('').toUpperCase();
+  const dateObj = iso => { const p = String(iso).split('-'); return new Date(+p[0], +p[1] - 1, +p[2]); };
+  const fmtDate = (iso, o) => { try { return dateObj(iso).toLocaleDateString('fr-BE', o || { weekday: 'long', day: 'numeric', month: 'long' }); } catch (e) { return iso; } };
+  const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+  const sessMs = (s, hhmm) => { const d = dateObj(s.date); const p = String(hhmm).split(':'); d.setHours(+p[0] || 0, +p[1] || 0, 0, 0); return d.getTime(); };
+  const daysUntil = iso => Math.round((dateObj(iso) - dateObj(todayIso())) / 86400000);
+  const TC = ['#1f8a57', '#2b6fd6', '#e0661e', '#8a3fc7', '#d6a017', '#0f9aa8', '#d03a6b', '#5a9a1f', '#4a55c8', '#b5562f'];
+  const tcol = n => TC[(n - 1) % TC.length];
 
   const ICON = {
+    seances: '<rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/><circle cx="12" cy="15" r="1.6"/>',
     joueurs: '<circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.4"/><path d="M16 14.2c2.9.2 5 2.4 5 5.3"/>',
     tour: '<rect x="6" y="6" width="12" height="12" rx="2.5"/><circle cx="12" cy="2.9" r="1.5"/><circle cx="12" cy="21.1" r="1.5"/><circle cx="2.9" cy="12" r="1.5"/><circle cx="21.1" cy="12" r="1.5"/>',
-    scores: '<path d="M8 4h8v5a4 4 0 0 1-8 0V4z"/><path d="M8 6H4v1a4 4 0 0 0 4 4M16 6h4v1a4 4 0 0 1-4 4"/><path d="M12 13v4M8 20h8M10 17h4"/>',
-    donnes: '<rect x="4.5" y="3.5" width="11" height="15" rx="2.2"/><path d="M8.5 21h8.3a2.2 2.2 0 0 0 2.2-2.2V7.5"/>',
+    etuis: '<rect x="4.5" y="3.5" width="11" height="15" rx="2.2"/><path d="M8.5 21h8.3a2.2 2.2 0 0 0 2.2-2.2V7.5"/>',
     reglages: '<path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/>'
   };
 
-  /* ---------- En-tête ---------- */
+  /* ---------- Horloge ---------- */
+  function sessionStatus(now) {
+    const s = cur();
+    const dd = daysUntil(s.date);
+    if (dd > 0) return dd === 1 ? 'séance demain' : 'séance dans ' + dd + ' jours';
+    if (dd < 0) return 'séance passée';
+    const a = sessMs(s, s.start), z = sessMs(s, s.end);
+    if (now < a) return 'début dans ' + fmtDur((a - now) / 60000);
+    if (now < z) return 'fin dans ' + fmtDur((z - now) / 60000);
+    return 'séance terminée';
+  }
+  function roundEnd(r) { return r.startedAt + r.b * D.settings.minPerBoard * 60000; }
   function updateClock() {
     const now = Date.now();
-    const end = BR.timeToMs(S.settings.end, now);
-    const left = (end - now) / 60000;
     const el = $('#hclock');
-    if (el) el.innerHTML = '<b>' + fmtT(now) + '</b>' + (left > 0 ? 'reste ' + fmtDur(left) : 'séance terminée');
+    if (el) el.innerHTML = '<b>' + fmtT(now) + '</b>' + sessionStatus(now);
     const sc = $('#sclock');
     if (sc) sc.textContent = fmtT(now);
+    const r = BR.currentRound(C());
     const sn = $('#scount');
-    const r0 = BR.currentRound(S);
     if (sn) {
-      if (r0) {
-        const m0 = (r0.startedAt + r0.b * S.settings.minPerBoard * 60000 - now) / 60000;
+      if (r) {
+        const m0 = (roundEnd(r) - now) / 60000;
         sn.innerHTML = m0 > 0 ? 'Fin du tour dans <b>' + fmtDur(m0) + '</b>' : '<b>Tour terminé</b> : changez de table';
       } else sn.innerHTML = 'Le premier tour va commencer';
     }
     const rc = $('#rcount');
-    const r = BR.currentRound(S);
     if (rc && r) {
-      const endR = r.startedAt + r.b * S.settings.minPerBoard * 60000;
-      const m = (endR - now) / 60000;
-      rc.textContent = m > 0 ? 'fin prévue à ' + fmtT(endR) + ', dans ' + fmtDur(m) : 'fin prévue à ' + fmtT(endR) + ' : temps écoulé, passez au tour suivant dès que les tables ont fini';
+      const m = (roundEnd(r) - now) / 60000;
+      rc.textContent = m > 0 ? 'fin prévue à ' + fmtT(roundEnd(r)) + ', dans ' + fmtDur(m) : 'fin prévue à ' + fmtT(roundEnd(r)) + ' : temps écoulé, passez au tour suivant dès que les tables ont fini';
     }
   }
 
@@ -773,19 +978,40 @@ body.salle-on{padding:0;background:#0a2018}
   function render() {
     document.body.className = ui.tab === 'salle' ? 'salle-on' : '';
     if (ui.tab === 'salle') { document.body.innerHTML = viewSalle(); ui.fresh = false; updateClock(); return; }
-    const tabs = [['joueurs', 'Joueurs'], ['tour', 'Tour'], ['scores', 'Scores'], ['donnes', 'Donnes'], ['reglages', 'Réglages']];
+    const tabs = [['seances', 'Séances'], ['joueurs', 'Joueurs'], ['tour', 'Tour'], ['etuis', 'Étuis'], ['reglages', 'Réglages']];
+    const s = cur();
     document.body.innerHTML =
-      '<header><img class="logo" src="' + LOGO + '" alt=""><h1>Bridge Relax</h1><div class="clock" id="hclock"></div></header>' +
+      '<header><img class="logo" src="' + LOGO + '" alt=""><div class="htitle"><h1>Bridge Relax</h1><button class="hdate" data-a="tab" data-v="seances">' + esc(cap(fmtDate(s.date, { weekday: 'short', day: 'numeric', month: 'short' }))) + ' · ' + s.start.replace(':', 'h') + '–' + s.end.replace(':', 'h') + '</button></div><div class="clock" id="hclock"></div></header>' +
       '<nav>' + tabs.map(t => '<button data-a="tab" data-v="' + t[0] + '" class="' + (ui.tab === t[0] ? 'on' : '') + '"><svg viewBox="0 0 24 24" aria-hidden="true">' + ICON[t[0]] + '</svg>' + t[1] + '</button>').join('') + '</nav>' +
-      '<main>' + ({ joueurs: viewPlayers, tour: viewRound, scores: viewScores, donnes: viewBoards, reglages: viewSettings }[ui.tab] || viewRound)() + '</main>' +
-      (ui.score ? scoreSheet() : '');
+      '<main>' + ({ seances: viewSessions, joueurs: viewPlayers, tour: viewRound, etuis: viewBoards, reglages: viewSettings }[ui.tab] || viewRound)() + '</main>';
     ui.fresh = false;
     updateClock();
   }
 
+  /* ---------- Comptes ---------- */
+  function counts(s) {
+    const c = { yes: 0, no: 0, none: 0, present: 0, left: 0, teacherYes: false, teacherPresent: false };
+    D.roster.forEach(p => {
+      if (p.archived) return;
+      const v = rsvpOf(s, p.id); c[v]++;
+      if (v === 'yes' && p.teacher) c.teacherYes = true;
+      const a = s.att[p.id] || {};
+      if (a.present) { c.present++; if (p.teacher) c.teacherPresent = true; }
+      else if (a.left) c.left++;
+    });
+    return c;
+  }
+  function expected(s) {
+    const c = counts(s);
+    const n = c.yes - (c.teacherYes ? 1 : 0);
+    const plan = BR.suggestPlan(n, c.teacherYes);
+    return { players: c.yes, tables: plan.tables, etuis: plan.tables ? Math.min(D.settings.bankSets, plan.tables + 3) : 0 };
+  }
+
   /* ---------- Situation du jour ---------- */
   function planInfo() {
-    const present = S.players.filter(p => p.present);
+    const c = C();
+    const present = c.players.filter(p => p.present);
     const teacher = present.find(p => p.teacher);
     const n = present.filter(p => !p.teacher).length;
     const plan = BR.suggestPlan(n, !!teacher);
@@ -805,78 +1031,168 @@ body.salle-on{padding:0;background:#0a2018}
     const p = planInfo();
     return '<div class="plan"><div class="big">' + p.tables + '<small>' + (p.tables > 1 ? 'tables' : 'table') + '</small></div><div class="txt">' + esc(p.txt) + '</div></div>';
   }
-
   function timeline() {
-    const now = Date.now();
-    const a = BR.timeToMs(S.settings.start, now), z = BR.timeToMs(S.settings.end, now);
+    const s = cur(), now = Date.now();
+    const a = sessMs(s, s.start), z = sessMs(s, s.end);
     const span = Math.max(1, z - a);
     const pct = t => Math.max(0, Math.min(100, (t - a) / span * 100));
-    const r = BR.currentRound(S);
-    let segs = S.rounds.map(x => {
-      const e = x.startedAt + x.b * S.settings.minPerBoard * 60000;
-      return '<i class="seg' + (x === r ? ' cur' : '') + '" style="left:' + pct(x.startedAt) + '%;width:' + Math.max(1, pct(e) - pct(x.startedAt)) + '%"></i>';
-    }).join('');
+    const r = BR.currentRound(C());
+    const segs = s.rounds.map(x => '<i class="seg' + (x === r ? ' cur' : '') + '" style="left:' + pct(x.startedAt) + '%;width:' + Math.max(1, pct(roundEnd(x)) - pct(x.startedAt)) + '%"></i>').join('');
     let ticks = '';
     const d0 = new Date(a); d0.setMinutes(0, 0, 0);
     for (let t = d0.getTime(); t <= z; t += 3600000) if (t >= a) ticks += '<span style="left:' + pct(t) + '%">' + new Date(t).getHours() + ' h</span>';
     return '<div class="tl"><div class="bar">' + segs + (now >= a && now <= z ? '<i class="now" style="left:' + pct(now) + '%"></i>' : '') + '</div><div class="ticks">' + ticks + '</div></div>';
   }
 
-  /* ---------- Joueurs ---------- */
+  /* ---------- Séances ---------- */
+  function sessionCard(s) {
+    const c = counts(s), e = expected(s), isCur = s.id === D.cur;
+    const d = dateObj(s.date), dd = daysUntil(s.date);
+    const when = dd === 0 ? 'aujourd\'hui' : dd === 1 ? 'demain' : dd > 1 ? 'dans ' + dd + ' jours' : 'passée';
+    let h = '<div class="scwrap"><div class="scard' + (isCur ? ' cur' : '') + (dd < 0 ? ' past' : '') + '">' +
+      '<div class="sdate"><b>' + d.getDate() + '</b><span>' + esc(fmtDate(s.date, { month: 'short' })) + '</span></div>' +
+      '<div class="sinfo"><div class="st">' + esc(cap(fmtDate(s.date, { weekday: 'long' }))) + ' <small>' + when + '</small></div>' +
+      '<div class="sh">' + s.start.replace(':', 'h') + ' à ' + s.end.replace(':', 'h') + (s.rounds.length ? ', ' + plural(s.rounds.length, 'tour joué', 'tours joués') : '') + '</div>' +
+      '<div class="cnt"><span class="k yes">' + c.yes + ' inscrits</span><span class="k none">' + c.none + ' sans réponse</span><span class="k no">' + c.no + ' refus</span></div>' +
+      (e.tables ? '<div class="mute">Prévu : ' + plural(e.tables, 'table', 'tables') + ', ' + plural(e.etuis, 'étui', 'étuis') + ' à apporter.</div>' : '') + '</div>' +
+      '<div class="sact">' + (isCur ? '<span class="pill">ouverte</span>' : '<button class="btn sm pri" data-a="sopen" data-id="' + s.id + '">Ouvrir</button>') +
+      (D.sessions.length > 1 ? (ui.delS === s.id ? '<button class="x ask" data-a="sdel" data-id="' + s.id + '">Supprimer ?</button>' : '<button class="x" data-a="sdel" data-id="' + s.id + '" aria-label="Supprimer la séance">✕</button>') : '') + '</div></div>';
+    if (isCur) {
+      h += '<div class="sedit"><div class="grow"><label class="f">Date</label><input type="date" data-f="sess" data-k="date" value="' + s.date + '"></div><div><label class="f">Début</label><input type="time" data-f="sess" data-k="start" value="' + s.start + '"></div><div><label class="f">Fin</label><input type="time" data-f="sess" data-k="end" value="' + s.end + '"></div></div>';
+    }
+    return h + '</div>';
+  }
+  function suggestNextDate() {
+    const last = D.sessions.map(s => s.date).sort().pop();
+    let d = last ? dateObj(last) : new Date();
+    d.setDate(d.getDate() + 7);
+    const t = dateObj(todayIso());
+    while (d < t) d.setDate(d.getDate() + 7);
+    return isoDay(d);
+  }
+  function viewSessions() {
+    const t = todayIso();
+    const up = D.sessions.filter(s => s.date >= t).sort((a, b) => a.date.localeCompare(b.date));
+    const past = D.sessions.filter(s => s.date < t).sort((a, b) => b.date.localeCompare(a.date));
+    let h = '<div class="sec"><h2>Séances</h2><p class="lead">Chaque après-midi a sa date, ses heures et ses inscriptions. La liste des joueurs est commune à toutes les séances.</p></div>';
+    h += '<div class="panel newsess"><h3>Nouvelle séance</h3><div class="sedit"><div class="grow"><label class="f">Date</label><input type="date" id="ns-date" value="' + suggestNextDate() + '"></div><div><label class="f">Début</label><input type="time" id="ns-start" value="' + D.settings.start + '"></div><div><label class="f">Fin</label><input type="time" id="ns-end" value="' + D.settings.end + '"></div></div><button class="btn pri" style="margin-top:10px" data-a="snew">Créer et ouvrir</button></div>';
+    h += '<h3 class="lbl">À venir</h3>' + (up.length ? '<div class="slist">' + up.map(sessionCard).join('') + '</div>' : '<p class="mute">Aucune séance à venir.</p>');
+    if (past.length) h += '<h3 class="lbl">Passées</h3><div class="slist">' + past.map(sessionCard).join('') + '</div>';
+    return h;
+  }
+
+  /* ---------- Joueurs : inscriptions, accueil, liste ---------- */
+  const playedAny = id => D.sessions.some(s => s.rounds.some(r => r.tables.some(t => SEATS.some(k => t.seats[k] === id) || (t.extra || []).indexOf(id) >= 0)));
+  function pmode() { return ui.pmode || (daysUntil(cur().date) === 0 ? 'accueil' : 'insc'); }
+  function rowStatus(p) {
+    const s = cur(), a = s.att[p.id] || {}, v = rsvpOf(s, p.id);
+    if (a.present) return 'là depuis ' + fmtT(a.arr);
+    if (a.left) return 'parti à ' + fmtT(a.left);
+    return v === 'yes' ? 'inscrit' : v === 'no' ? 'a refusé' : 'pas répondu';
+  }
+  function filtered() {
+    const s = cur(), m = pmode(), f = ui.filter.trim().toLowerCase();
+    let list = D.roster.filter(p => !p.archived).sort((a, b) => a.name.localeCompare(b.name, 'fr'));
+    if (f) list = list.filter(p => p.name.toLowerCase().includes(f));
+    const pf = ui.pf;
+    if (m === 'insc' && pf !== 'all') list = list.filter(p => rsvpOf(s, p.id) === pf);
+    if (m === 'accueil') {
+      if (!f) list = list.filter(p => rsvpOf(s, p.id) !== 'no' || isPresent(p.id) || att(p.id).left);
+      if (pf === 'wait') list = list.filter(p => !isPresent(p.id) && !att(p.id).left);
+      else if (pf === 'here') list = list.filter(p => isPresent(p.id));
+      else if (pf === 'gone') list = list.filter(p => !isPresent(p.id) && att(p.id).left);
+    }
+    return list;
+  }
   function playersListHtml() {
-    const f = ui.filter.trim().toLowerCase();
-    const list = S.players.slice().sort((a, b) => a.name.localeCompare(b.name, 'fr')).filter(p => !f || p.name.toLowerCase().includes(f));
-    if (!list.length) return '<div class="empty" style="padding:18px 0">' + (S.players.length ? 'Aucun nom ne correspond. Touchez « Ajouter » pour créer ce joueur.' : 'Aucun joueur pour l\'instant. Tapez un nom ci-dessus pour commencer.') + '</div>';
-    return list.map(p =>
-      '<div class="prow ' + (p.present ? '' : 'off') + '"><span class="av c' + (p.id % 4 + 1) + '">' + esc(initials(p.name)) + '</span>' +
-      '<span class="nm">' + esc(p.name) + (p.teacher ? ' <span class="pill">professeur</span>' : '') + (p.present && p.arrivedAt ? '<small>arrivé à ' + fmtT(p.arrivedAt) + '</small>' : '') + '</span>' +
-      '<button class="star ' + (p.teacher ? 'on' : '') + '" data-a="teach" data-id="' + p.id + '" aria-label="Professeur">' + (p.teacher ? '★' : '☆') + '</button>' +
-      '<button class="sw ' + (p.present ? 'on' : '') + '" data-a="pres" data-id="' + p.id + '">' + (p.present ? 'Présent' : 'Absent') + '</button>' +
-      '<button class="x" data-a="del" data-id="' + p.id + '" aria-label="Supprimer">✕</button></div>').join('');
+    const s = cur(), m = pmode();
+    const list = filtered();
+    if (!list.length) return '<div class="empty" style="padding:18px 0">' + (D.roster.length ? (ui.filter ? 'Aucun nom ne correspond. Touchez « Ajouter » pour créer ce joueur.' : 'Personne dans ce filtre.') : 'La liste est vide. Tapez un nom ci-dessus, ou collez votre liste de diffusion dans l\'onglet « Liste ».') + '</div>';
+    return list.map(p => {
+      const v = rsvpOf(s, p.id), a = s.att[p.id] || {};
+      let right = '';
+      if (m === 'insc') {
+        right = '<div class="rsvp">' + [['yes', 'Inscrit'], ['none', '?'], ['no', 'Refus']].map(x => '<button class="' + x[0] + (v === x[0] ? ' on' : '') + '" data-a="rsvp" data-id="' + p.id + '" data-v="' + x[0] + '">' + x[1] + '</button>').join('') + '</div>';
+      } else if (m === 'accueil') {
+        right = a.present ? '<button class="btn dep" data-a="depart" data-id="' + p.id + '">Départ</button>' : '<button class="btn arr" data-a="arrive" data-id="' + p.id + '">' + (a.left ? 'Revenu' : 'Arrivé') + '</button>';
+      } else {
+        right = '<button class="star ' + (p.teacher ? 'on' : '') + '" data-a="teach" data-id="' + p.id + '" aria-label="Professeur">' + (p.teacher ? '★' : '☆') + '</button>' +
+          (ui.delId === p.id ? '<button class="x ask" data-a="del" data-id="' + p.id + '">' + (playedAny(p.id) ? 'Retirer ?' : 'Supprimer ?') + '</button>' : '<button class="x" data-a="del" data-id="' + p.id + '" aria-label="Retirer de la liste">✕</button>');
+      }
+      const cls = m === 'accueil' ? (a.present ? 'here' : a.left ? 'off' : '') : (m === 'insc' ? 'r-' + v : '');
+      return '<div class="prow ' + cls + '"><span class="av c' + (p.id % 4 + 1) + '">' + esc(initials(p.name)) + '</span>' +
+        '<span class="nm">' + esc(p.name) + (p.teacher ? ' <span class="pill">professeur</span>' : '') + (m !== 'liste' ? '<small>' + rowStatus(p) + '</small>' : '') + '</span>' + right + '</div>';
+    }).join('');
   }
   function viewPlayers() {
-    return '<div class="sec"><h2>Qui est là ?</h2><div id="psum">' + planBlock() + '</div></div>' +
-      '<div class="panel"><div class="row"><input type="text" id="pname" class="grow" placeholder="Taper un nom pour chercher ou ajouter" autocomplete="off" value="' + esc(ui.filter) + '"><button class="btn pri" data-a="add">Ajouter</button></div>' +
-      '<div class="row" style="margin-top:10px"><button class="btn sm" data-a="allpres">Tout le monde présent</button><button class="btn sm" data-a="nonepres">Tout le monde absent</button></div>' +
-      '<details style="margin:10px 0 0"><summary>Coller une liste de noms</summary><textarea id="bulk" rows="5" placeholder="Un nom par ligne"></textarea><button class="btn" data-a="bulk" style="margin-top:8px">Importer la liste</button></details></div>' +
-      '<div class="plist" id="plist">' + playersListHtml() + '</div>' +
-      '<p class="mute" style="margin-top:12px">L\'étoile désigne le professeur : il complète une table quand il manque un joueur et n\'entre pas dans le classement. La liste est conservée d\'une séance à l\'autre, il suffit de cocher les présents.</p>';
+    const s = cur(), m = pmode(), c = counts(s), e = expected(s);
+    const seg = '<div class="seg3">' + [['insc', 'Inscriptions'], ['accueil', 'Accueil'], ['liste', 'Liste']].map(x => '<button class="' + (m === x[0] ? 'on' : '') + '" data-a="pmode" data-v="' + x[0] + '">' + x[1] + '</button>').join('') + '</div>';
+    let top = '';
+    let chips = '';
+    const SING = { inscrits: 'inscrit', attendus: 'attendu', 'présents': 'présent', partis: 'parti' };
+    const chip = (v, label, n, cls) => '<button class="fchip ' + cls + (ui.pf === v ? ' on' : '') + '" data-a="pf" data-v="' + v + '"><b>' + n + '</b>' + (n === 1 ? (SING[label] || label) : label) + '</button>';
+    if (m === 'insc') {
+      top = '<p class="lead">Pour le ' + esc(fmtDate(s.date)) + '. Notez la réponse de chacun.' + (e.tables ? ' Avec ' + plural(e.players, 'inscrit', 'inscrits') + ' : environ ' + plural(e.tables, 'table', 'tables') + ', apportez ' + plural(e.etuis, 'étui', 'étuis') + '.' : '') + '</p>';
+      chips = chip('all', 'tous', c.yes + c.none + c.no, '') + chip('yes', 'inscrits', c.yes, 'yes') + chip('none', 'sans réponse', c.none, 'none') + chip('no', 'refus', c.no, 'no');
+    } else if (m === 'accueil') {
+      top = planBlock();
+      const wait = D.roster.filter(p => !p.archived && rsvpOf(s, p.id) === 'yes' && !isPresent(p.id) && !att(p.id).left).length;
+      chips = chip('all', 'tous', D.roster.filter(p => !p.archived && (rsvpOf(s, p.id) !== 'no' || isPresent(p.id) || att(p.id).left)).length, '') + chip('wait', 'attendus', wait, 'none') + chip('here', 'présents', c.present, 'yes') + chip('gone', 'partis', c.left, 'no');
+    } else {
+      top = '<p class="lead">La liste de diffusion, commune à toutes les séances. L\'étoile désigne le professeur : il complète une table quand il manque un joueur.</p>';
+    }
+    let tools = '';
+    if (m === 'insc') tools = '<div class="row" style="margin-top:10px"><button class="btn sm" data-a="copynone">Copier les noms sans réponse</button><button class="btn sm" data-a="allnone">Tout remettre à « ? »</button></div>';
+    if (m === 'liste') tools = '<details style="margin:10px 0 0"><summary>Coller une liste de noms</summary><textarea id="bulk" rows="6" placeholder="Un nom par ligne"></textarea><button class="btn" data-a="bulk" style="margin-top:8px">Ajouter ces noms</button></details>';
+    const ph = m === 'accueil' ? 'Chercher un nom, ou ajouter quelqu\'un qui arrive' : 'Taper un nom pour chercher ou ajouter';
+    return '<div class="sec"><h2>' + (m === 'accueil' ? 'Accueil' : m === 'insc' ? 'Inscriptions' : 'Liste des joueurs') + '</h2>' + seg + top + '</div>' +
+      (chips ? '<div class="fchips">' + chips + '</div>' : '') +
+      '<div class="panel"><div class="row"><input type="text" id="pname" class="grow" placeholder="' + ph + '" autocomplete="off" value="' + esc(ui.filter) + '"><button class="btn pri" data-a="add">Ajouter</button></div>' + tools + '</div>' +
+      '<div class="plist" id="plist">' + playersListHtml() + '</div>';
   }
-  function addPlayer(name, present) {
+  function addPlayer(name) {
     name = name.trim();
     if (!name) return null;
-    const p = { id: S.nextId++, name, teacher: false, present: present !== false, arrivedAt: Date.now() };
-    S.players.push(p);
+    let p = D.roster.find(x => x.name.toLowerCase() === name.toLowerCase());
+    if (p) { p.archived = false; return p; }
+    p = { id: D.nextId++, name, teacher: false };
+    D.roster.push(p);
     return p;
+  }
+  function arrive(p) {
+    const s = cur();
+    s.att[p.id] = { present: true, arr: Date.now() };
+    if (rsvpOf(s, p.id) !== 'yes') s.rsvp[p.id] = 'yes';
   }
 
   /* ---------- Tour ---------- */
   function viewRound() {
-    const r = BR.currentRound(S);
+    const c = C(), s = cur();
+    const r = BR.currentRound(c);
     const now = Date.now();
-    const auto = BR.autoBoards(S, now);
+    const auto = BR.autoBoards(c, now);
     let h = '<div class="sec">' + planBlock() + timeline();
-    const nextN = S.rounds.length + 1;
+    const nextN = s.rounds.length + 1;
     const opts = []; for (let i = 1; i <= K(); i++) opts.push('<option value="' + i + '"' + (i === auto ? ' selected' : '') + '>' + i + ' donne' + (i > 1 ? 's' : '') + (i === auto ? ' (conseillé)' : '') + '</option>');
     h += '<div class="go-row"><select id="bsel" aria-label="Donnes par tour">' + opts.join('') + '</select><button class="btn go" data-a="next">Lancer le tour ' + nextN + '</button></div>';
-    h += '<div class="mute">' + (r ? 'Le tour tient compte des arrivées et des départs notés dans l\'onglet Joueurs.' : 'Cochez les présents dans l\'onglet Joueurs, puis lancez le premier tour.') + '</div>' +
+    h += '<div class="mute">' + (r ? 'Le tour tient compte des arrivées et des départs notés à l\'accueil.' : 'Marquez les arrivées dans Joueurs, Accueil, puis lancez le premier tour.') + '</div>' +
+      (daysUntil(s.date) !== 0 ? '<div class="note warn" style="margin-top:10px">Cette séance n\'est pas celle d\'aujourd\'hui. Ouvrez la bonne séance dans l\'onglet Séances.</div>' : '') +
       '<div style="margin-top:12px"><button class="btn sm noprint" data-a="salle">Afficher sur grand écran</button></div></div>';
     if (!r) {
       return h + '<div class="empty"><svg viewBox="0 0 150 150" aria-hidden="true"><rect x="45" y="45" width="60" height="60" rx="10" fill="none" stroke="currentColor" stroke-width="3"/><rect x="58" y="12" width="34" height="22" rx="7" fill="none" stroke="currentColor" stroke-width="3"/><rect x="58" y="116" width="34" height="22" rx="7" fill="none" stroke="currentColor" stroke-width="3"/><rect x="12" y="58" width="22" height="34" rx="7" fill="none" stroke="currentColor" stroke-width="3"/><rect x="116" y="58" width="22" height="34" rx="7" fill="none" stroke="currentColor" stroke-width="3"/><path d="M75 62c5 8 12 9 12 16 0 5-4 7-8 6 1 4 2 6 4 9H67c2-3 3-5 4-9-4 1-8-1-8-6 0-7 7-8 12-16z" fill="currentColor"/></svg><div>Les tables apparaîtront ici dès le premier tour.</div></div>';
     }
-
     h += '<div class="sec"><h2>Tour ' + r.n + '</h2><p class="lead">' + plural(r.b, 'donne', 'donnes') + (r.b < K() ? ' à jouer, plus ' + (K() - r.b) + ' de réserve' : ' à jouer') + '. Début à ' + fmtT(r.startedAt) + ', <span id="rcount"></span>.</p>' +
-      (r.stats ? '<div class="mute">Partenaires déjà rencontrés : ' + r.stats.repeatPartners + '. Adversaires déjà rencontrés : ' + r.stats.repeatOpp + '.' + (r.stats.replays ? ' <b class="red">Séries déjà jouées : ' + r.stats.replays + '.</b>' : '') + '</div>' : '') + '</div>';
+      '<div class="note ok">Après chaque donne, notez sur la feuille de l\'étui : contrat, entame et score.</div>' +
+      (r.stats ? '<div class="mute">Partenaires déjà rencontrés : ' + r.stats.repeatPartners + '. Adversaires déjà rencontrés : ' + r.stats.repeatOpp + '.' + (r.stats.replays ? ' <b class="red">Étuis déjà joués : ' + r.stats.replays + '.</b>' : '') + '</div>' : '') + '</div>';
     (r.warnings || []).forEach(w => { h += '<div class="note bad">' + esc(w) + '</div>'; });
 
-    const w = BR.waiting(S);
+    const w = BR.waiting(c);
     const rest = w.players;
     if (rest.length || w.teacherFree) {
-      h += '<div class="note ' + (BR.canOpenTable(S) ? 'ok' : 'warn') + '"><b>' + (rest.length ? plural(rest.length, 'joueur sans table', 'joueurs sans table') : 'Le professeur est libre') + '</b>' +
+      h += '<div class="note ' + (BR.canOpenTable(c) ? 'ok' : 'warn') + '"><b>' + (rest.length ? plural(rest.length, 'joueur sans table', 'joueurs sans table') : 'Le professeur est libre') + '</b>' +
         (rest.length ? ' : ' + rest.map(p => esc(p.name)).join(', ') : '') + (rest.length && w.teacherFree ? '. Le professeur est libre.' : '') +
-        (BR.canOpenTable(S) ? '<div style="margin-top:8px"><button class="btn pri" data-a="opentable">Ouvrir une table avec eux</button></div>' : '<div class="mute" style="margin-top:4px">Ils jouent au prochain tour, ou remplacent quelqu\'un qui part.</div>') + '</div>';
+        (BR.canOpenTable(c) ? '<div style="margin-top:8px"><button class="btn pri" data-a="opentable">Ouvrir une table avec eux</button></div>' : '<div class="mute" style="margin-top:4px">Ils jouent au prochain tour, ou remplacent quelqu\'un qui part.</div>') + '</div>';
     }
-
     let idx = 0;
     let tw = '<div class="tables">' + r.tables.map(t => tableCard(r, t, w, idx++)).join('') + '</div>';
     tw += '<div class="legend" style="margin-top:14px"><span class="mb vns" style="display:flex">9</span>Bords rouges : camp vulnérable. Point doré : donneur.</div>';
@@ -885,36 +1201,29 @@ body.salle-on{padding:0;background:#0a2018}
     r.tables.filter(t => !t.closed).forEach(t => SEATS.forEach(k => rows.push({ name: nm(t.seats[k]), txt: 'table ' + t.n + ', ' + SN[k] })));
     w.players.forEach(p => rows.push({ name: p.name, txt: 'sans table' }));
     rows.sort((a, b) => a.name.localeCompare(b.name, 'fr'));
-    const prev = S.rounds.length > 1 ? S.rounds[S.rounds.length - 2] : null;
-    let moves = '';
+    const prev = s.rounds.length > 1 ? s.rounds[s.rounds.length - 2] : null;
+    let moves;
     if (prev) {
-      const where = {}; prev.tables.forEach(t => { where[t.set] = t.n; });
-      const mv = r.tables.filter(t => !t.closed && where[t.set] !== t.n).map(t => 'Série ' + t.set + (where[t.set] ? ' : de la table ' + where[t.set] + ' à la table ' + t.n : ' : nouvelle série, à poser table ' + t.n));
-      moves = mv.length ? '<h3 style="margin-top:14px">Donnes à déplacer</h3><div>' + mv.join('<br>') + '</div>' : '<div class="mute" style="margin-top:12px">Les séries de donnes restent à leur table : seuls les joueurs bougent.</div>';
-    } else moves = '<div class="mute" style="margin-top:12px">Premier tour : posez la série indiquée sur chaque table.</div>';
+      const mv = r.tables.filter(t => !t.closed).map(t => 'Étui ' + t.set + (t.from ? ' : de la table ' + t.from + ' à la table ' + t.n : ' : nouvel étui, à poser table ' + t.n));
+      moves = '<h3 style="margin-top:14px">Étuis à déplacer</h3><div>' + mv.join('<br>') + '</div>';
+    } else moves = '<div class="mute" style="margin-top:12px">Premier tour : posez l\'étui indiqué sur chaque table.</div>';
     const annc = '<div class="panel"><details open><summary>Qui va où ? (à annoncer)</summary><div style="columns:2 230px">' + rows.map(x => '<div>' + esc(x.name) + ' : <b>' + esc(x.txt) + '</b></div>').join('') + '</div>' + moves + '<button class="btn sm noprint" style="margin-top:10px" data-a="print">Imprimer</button></details></div>';
     return '<div class="split"><div class="side">' + h + '</div><div class="tw">' + tw + '</div><div class="annc">' + annc + '</div></div>';
   }
 
-  function resultHtml(x) {
-    if (x.pass) return 'Passe général';
-    const rs = x.res === 0 ? '=' : x.res > 0 ? '+' + x.res : '−' + (-x.res);
-    return x.level + suitHtml(x.den) + (x.dbl === 1 ? 'X' : x.dbl === 2 ? 'XX' : '') + ' ' + x.decl + ' ' + rs;
-  }
-
   function alreadyDealt(r, bn) {
-    for (const q of S.rounds) {
+    for (const q of cur().rounds) {
       if (q === r) break;
-      if (q.tables.some(x => x.boards.indexOf(bn) >= 0 || (x.results && x.results[bn]))) return true;
+      if (q.tables.some(x => x.boards.indexOf(bn) >= 0)) return true;
     }
     return false;
   }
   function tableCard(r, t, w, i) {
     const cands = w.players.concat(w.teacher ? [w.teacher] : []);
-    let h = '<div class="tcard' + (t.closed ? ' closed' : '') + (ui.fresh ? ' deal' : '') + '" style="--i:' + Math.min(i, 10) + '"><div class="felt"><div class="tag"><b>Série ' + t.set + '</b>' + (t.late ? 'ajoutée en cours de tour' : t.closed ? 'fermée' : '') + '</div><div class="seats">';
+    let h = '<div class="tcard' + (t.closed ? ' closed' : '') + (ui.fresh ? ' deal' : '') + '" style="--i:' + Math.min(i, 10) + ';--tc:' + tcol(t.n) + '"><div class="felt"><div class="tag"><b>Étui ' + t.set + '</b>' + (t.late ? 'ajouté en cours de tour' : t.closed ? 'fermée' : '') + '</div><div class="seats">';
     SEATS.forEach(k => {
       const p = getP(t.seats[k]);
-      const gone = p && !p.present;
+      const gone = p && !isPresent(p.id);
       h += '<div class="plate p-' + k + (gone ? ' gone' : '') + (p && p.teacher ? ' prof' : '') + '"><span class="sl">' + k + '</span>' + esc(p ? p.name : '?') + '</div>';
     });
     h += '<div class="hub"><b>' + t.n + '</b><small>table</small></div></div></div>';
@@ -922,129 +1231,87 @@ body.salle-on{padding:0;background:#0a2018}
     if (!t.closed) {
       SEATS.forEach(k => {
         const p = getP(t.seats[k]);
-        if (p && !p.present) {
+        if (p && !isPresent(p.id)) {
           fix += '<div class="note bad"><b>' + esc(p.name) + '</b> est parti (' + SN[k] + '). ' +
             (cands.length ? 'Remplaçant :<div class="row" style="margin-top:6px"><select id="rep-' + t.n + '-' + k + '" class="grow">' + cands.map(c => '<option value="' + c.id + '">' + esc(c.name) + (c.teacher ? ' (professeur)' : '') + '</option>').join('') + '</select><button class="btn sm pri" data-a="replace" data-t="' + t.n + '" data-s="' + k + '">Remplacer</button></div>' : 'Personne n\'est disponible pour le remplacer.') + '</div>';
         }
       });
-      const gone = SEATS.some(k => { const p = getP(t.seats[k]); return p && !p.present; });
+      const gone = SEATS.some(k => { const p = getP(t.seats[k]); return p && !isPresent(p.id); });
       if (gone && !cands.length) fix += '<div style="margin-top:8px"><button class="btn sm danger" data-a="dissolve" data-t="' + t.n + '">Fermer cette table</button></div>';
     }
     if (fix) h += '<div class="fix">' + fix + '</div>';
-    if (t.from) h += '<div class="mute" style="padding:8px 16px 0">Étui reçu de la table ' + t.from + '.</div>';
+    if (t.from) h += '<div class="from">Étui reçu de la table ' + t.from + '</div>';
     h += '<div class="boards">';
     t.boards.forEach(bn => {
-      const b = BR.boardInfo(bn), des = BR.designated(bn, K()), x = t.results[bn];
+      const b = BR.boardInfo(bn), des = BR.designated(bn, K());
       h += '<div class="brow">' + miniBoard(b) + '<div class="info"><b>Donne ' + bn + '</b> <small>donneur ' + SN[b.dealer].toLowerCase() + ', vulnérable : ' + vulName(b.vul) + '</small><br>' +
-        (x ? '<span class="res">' + resultHtml(x) + '</span> <small>(NS ' + (BR.nsScore(x, bn) > 0 ? '+' : '') + BR.nsScore(x, bn) + ')</small>'
-          : (S.settings.prepared
-            ? '<small>Main prévue : ' + SN[des] + ', ' + esc(nm(t.seats[des])) + '</small>'
-            : (alreadyDealt(r, bn)
-              ? '<small>Déjà distribuée : jouez-la telle quelle, sans rebattre.</small>'
-              : '<small>À battre et distribuer : donneur ' + SN[b.dealer] + ', ' + esc(nm(t.seats[b.dealer])) + '.</small>'))) + '</div>' +
-        '<button class="btn sm noprint" data-a="score" data-t="' + t.n + '" data-b="' + bn + '">' + (x ? 'Modifier' : 'Saisir') + '</button></div>';
+        (D.settings.prepared
+          ? '<small>Main prévue : ' + SN[des] + ', ' + esc(nm(t.seats[des])) + '</small>'
+          : (alreadyDealt(r, bn)
+            ? '<small>Déjà distribuée : jouez-la telle quelle, sans rebattre.</small>'
+            : '<small>À battre et distribuer : donneur ' + SN[b.dealer] + ', ' + esc(nm(t.seats[b.dealer])) + '.</small>')) + '</div></div>';
     });
     h += '</div>';
     const bonus = BR.boardsOfSet(t.set, K()).filter(n => t.boards.indexOf(n) < 0);
-    if (bonus.length) h += '<div class="buf">Donne de réserve si vous finissez en avance :' + bonus.map(bn => '<button class="btn sm noprint" data-a="score" data-t="' + t.n + '" data-b="' + bn + '">' + (t.results[bn] ? '✓ ' : '') + bn + '</button>').join('') + '</div>';
+    if (bonus.length) h += '<div class="buf">Donne de réserve si vous finissez en avance : ' + bonus.map(bn => '<span class="bchip">' + bn + '</span>').join('') + '</div>';
     return h + '</div>';
   }
   function miniBoard(b) {
     return '<span class="mb' + (b.vulNS ? ' vns' : '') + (b.vulEW ? ' veo' : '') + '"><i class="d' + b.dealer + '"></i>' + b.n + '</span>';
   }
 
-  /* ---------- Saisie d'un score ---------- */
-  function clampRes(d) {
-    const lo = -(d.level + 6), hi = 7 - d.level;
-    if (d.res < lo) d.res = lo;
-    if (d.res > hi) d.res = hi;
+  /* ---------- Étuis et feuilles ---------- */
+  function sheetRows() {
+    const s = cur();
+    const mins = (sessMs(s, s.end) - sessMs(s, s.start)) / 60000;
+    return Math.max(5, Math.min(9, Math.ceil(mins / Math.max(10, D.settings.roundMin))));
   }
-  function openScore(tn, bn) {
-    const r = BR.currentRound(S);
-    const t = r.tables.find(x => x.n === tn);
-    const ex = t.results[bn];
-    ui.score = { t: tn, b: bn, d: ex ? { pass: !!ex.pass, level: ex.level || 4, den: ex.den || 'S', dbl: ex.dbl || 0, decl: ex.decl || 'N', res: ex.res || 0 } : { pass: false, level: 4, den: 'S', dbl: 0, decl: S.settings.prepared ? BR.designated(bn, K()) : 'N', res: 0 }, has: !!ex };
-    render();
+  function sheetHtml(set) {
+    const s = cur(), n = sheetRows();
+    let h = '<section class="sheet-p"><div class="sp-head"><div><b>Étui ' + set + '</b><span>Bridge Relax, ' + esc(fmtDate(s.date)) + '</span></div><div class="sp-tip">Notez chaque donne jouée : une ligne par table. Score : seulement dans la colonne du camp qui marque.</div></div>';
+    BR.boardsOfSet(set, K()).forEach((bn, i) => {
+      const b = BR.boardInfo(bn);
+      h += '<div class="sp-board"><div class="sp-bt"><span class="sp-n' + (b.vulNS ? ' vns' : '') + (b.vulEW ? ' veo' : '') + '">' + bn + '</span>Donne ' + bn + ' <small>Donneur : ' + SN[b.dealer] + '. Vulnérable : ' + vulName(b.vul) + '.' + (D.settings.prepared ? ' Main prévue : ' + SN[BR.designated(bn, K())] + '.' : '') + (i >= K() - 1 && K() > 1 ? ' Donne de réserve.' : '') + '</small></div>' +
+        '<table class="sp-t"><thead><tr><th class="w1">Table</th><th>Nord-Sud</th><th>Est-Ouest</th><th class="w2">Contrat</th><th class="w1">Décl.</th><th class="w2">Entame</th><th class="w1">Levées</th><th class="w2">Score NS</th><th class="w2">Score EO</th></tr></thead><tbody>' +
+        '<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>'.repeat(n) + '</tbody></table></div>';
+    });
+    return h + '</section>';
   }
-  function scoreSheet() {
-    const sc = ui.score, d = sc.d;
-    const r = BR.currentRound(S);
-    const t = r.tables.find(x => x.n === sc.t);
-    const b = BR.boardInfo(sc.b);
-    clampRes(d);
-    const chip = (k, v, label, cls) => '<button class="chip ' + (cls || '') + ((d[k] === v) ? ' on' : '') + '" data-a="scset" data-k="' + k + '" data-v="' + v + '">' + label + '</button>';
-    const val = BR.nsScore(Object.assign({}, d), sc.b);
-    const resTxt = d.res === 0 ? 'Fait juste' : d.res > 0 ? 'Fait ' + d.res + ' de plus' : 'Chute de ' + (-d.res);
-    return '<div class="overlay" data-a="scoreclose"><div class="sheet" data-stop="1"><div class="row" style="margin-bottom:4px">' + miniBoard(b) + '<div><h2>Table ' + sc.t + ', donne ' + sc.b + '</h2><div class="mute">Donneur ' + SN[b.dealer].toLowerCase() + ', vulnérable : ' + vulName(b.vul) + '</div></div></div>' +
-      '<div class="chips" style="margin-top:12px"><button class="chip' + (d.pass ? ' on' : '') + '" style="font:600 16px var(--sans)" data-a="scset" data-k="pass" data-v="1">Tout le monde passe</button></div>' +
-      (d.pass ? '' :
-        '<label class="f">Niveau</label><div class="chips">' + [1, 2, 3, 4, 5, 6, 7].map(i => chip('level', i, i)).join('') + '</div>' +
-        '<label class="f">Couleur</label><div class="chips">' + ['C', 'D', 'H', 'S', 'SA'].map(x => chip('den', x, DEN[x], 'suit' + (x === 'H' || x === 'D' ? ' r' : ''))).join('') + '</div>' +
-        '<label class="f">Contre</label><div class="chips">' + chip('dbl', 0, 'Non') + chip('dbl', 1, 'X') + chip('dbl', 2, 'XX') + '</div>' +
-        '<label class="f">Déclarant</label><div class="chips">' + SEATS.map(k => '<button class="chip seatc' + (d.decl === k ? ' on' : '') + '" data-a="scset" data-k="decl" data-v="' + k + '"><b>' + k + '</b>' + esc(nm(t.seats[k])) + '</button>').join('') + '</div>' +
-        '<label class="f">Résultat</label><div class="step"><button class="btn" data-a="scres" data-v="-1" aria-label="Une levée de moins">−</button><div class="val">' + resTxt + '</div><button class="btn" data-a="scres" data-v="1" aria-label="Une levée de plus">+</button></div>') +
-      '<div class="big-score' + (val < 0 ? ' neg' : '') + '"><small>Pour Nord-Sud</small>' + (val > 0 ? '+' : '') + val + '</div>' +
-      '<div class="row"><button class="btn go grow" data-a="scoresave">Enregistrer</button><button class="btn" data-a="scoreclose" style="height:100%">Annuler</button></div>' +
-      (sc.has ? '<button class="btn sm danger" style="margin-top:12px" data-a="scoreclear">Effacer ce résultat</button>' : '') + '</div></div>';
-  }
-  function saveScore() {
-    const sc = ui.score, r = BR.currentRound(S);
-    const t = r.tables.find(x => x.n === sc.t);
-    const d = sc.d;
-    t.results[sc.b] = d.pass ? { pass: true, players: Object.assign({}, t.seats) } : { pass: false, level: +d.level, den: d.den, dbl: +d.dbl, decl: d.decl, res: +d.res, players: Object.assign({}, t.seats) };
-    ui.score = null; commit();
-  }
-
-  /* ---------- Scores ---------- */
-  function viewScores() {
-    const sc = BR.computeScores(S);
-    const ranked = sc.players.filter(p => !p.teacher && p.avg != null).sort((a, b) => b.avg - a.avg);
-    const others = sc.players.filter(p => !p.teacher && p.avg == null && p.rounds > 0);
-    const nBoards = Object.keys(sc.byBoard).length;
-    let h = '<div class="sec"><h2>Classement</h2><p class="lead">Chaque donne est comparée à la même donne jouée aux autres tables. Le pourcentage est la moyenne de chacun. ' + plural(nBoards, 'donne saisie', 'donnes saisies') + '.</p>';
-    if (!ranked.length) h += '<div class="empty"><div>Le classement apparaît dès que deux tables ont saisi la même donne.</div></div>';
-    else {
-      h += '<ol class="rank">' + ranked.map((p, i) => '<li><span class="rk' + (i < 3 ? ' g' + (i + 1) : '') + '">' + (i + 1) + '</span><span class="who"><b>' + esc(p.name) + '</b><small>' + plural(p.boards, 'donne', 'donnes') + ', ' + plural(p.declared, 'contrat joué', 'contrats joués') + '</small><div class="bar"><i style="width:' + p.avg.toFixed(1) + '%"></i></div></span><span class="pc">' + p.avg.toFixed(1) + '<small style="font:400 13px var(--sans)"> %</small></span></li>').join('') + '</ol>';
-    }
-    h += '</div>';
-    if (others.length) h += '<div class="panel"><h3>Pas encore de comparaison</h3><div class="mute">' + others.map(p => esc(p.name)).join(', ') + '</div></div>';
-    const bn = Object.keys(sc.byBoard).map(Number).sort((a, b) => a - b);
-    if (bn.length) {
-      h += '<div class="panel"><details><summary>Résultats donne par donne</summary>' + bn.map(n => {
-        const l = sc.byBoard[n].slice().sort((a, b) => b.ns - a.ns);
-        return '<h3 style="margin-top:14px">Donne ' + n + '</h3><table class="tr">' + l.map(x => '<tr><td>Table ' + x.table + '</td><td>' + resultHtml(x.r) + '</td><td class="num">NS ' + (x.ns > 0 ? '+' : '') + x.ns + '</td><td class="num">' + (x.pct == null ? '' : x.pct.toFixed(0) + ' %') + '</td></tr>').join('') + '</table>';
-      }).join('') + '</details></div>';
-    }
-    return h;
-  }
-
-  /* ---------- Donnes ---------- */
   function viewBoards() {
-    let h = '<div class="sec"><h2>Plan des étuis</h2><p class="lead">' + (S.settings.prepared
-      ? 'Chaque série compte ' + K() + ' donnes. À chaque donne, un siège est la « main prévue » : composez la donne pour que sa paire ait le contrat (environ 24 à 27 points, une belle couleur, une petite difficulté de jeu). Le siège change d\'une donne et d\'une série à l\'autre, pour que chacun joue des contrats. La dernière donne de chaque série sert de réserve.'
-      : 'Les étuis sont numérotés et vides au départ. La première table qui joue une série bat et distribue ses donnes, puis l\'étui passe à une autre table : personne ne rejoue une donne déjà vue. Le donneur et la vulnérabilité sont ceux du numéro de la donne. La dernière donne de chaque série sert de réserve.') + '</p>' +
-      '<div class="legend"><span class="mb vns" style="display:flex">9</span>Bords rouges : camp vulnérable. Point doré : donneur.<button class="btn sm noprint" data-a="print">Imprimer</button></div></div>';
+    const e = expected(cur());
+    const nSets = D.settings.bankSets;
+    let h = '<div class="sec"><h2>Étuis</h2><p class="lead">' + (D.settings.prepared
+      ? 'Mode donnes préparées. À chaque donne, un siège est la « main prévue » : composez la donne pour que sa paire ait le contrat (environ 24 à 27 points, une belle couleur, une petite difficulté de jeu). Le siège change d\'une donne à l\'autre, pour que chacun joue des contrats.'
+      : 'Les étuis sont numérotés et vides au départ. La première table qui reçoit un étui bat et distribue ses donnes, puis l\'étui passe à une autre table : personne ne rejoue une donne déjà vue.') + ' Chaque étui contient ' + K() + ' donnes, dont une de réserve.</p>' +
+      (e.tables ? '<div class="note ok">Pour ' + plural(e.players, 'inscrit', 'inscrits') + ' : environ ' + plural(e.tables, 'table', 'tables') + '. Apportez les étuis 1 à ' + e.etuis + ', avec leur feuille.</div>' : '') +
+      '<div class="row"><button class="btn pri" data-a="printsheets">Imprimer les feuilles d\'étui (' + nSets + ')</button></div>' +
+      '<p class="mute">Une feuille A4 par étui, rangée dedans. Chaque table y note le contrat, l\'entame et le score. Les scores ne sont pas saisis dans l\'application.</p>' +
+      '<div class="legend"><span class="mb vns" style="display:flex">9</span>Bords rouges : camp vulnérable. Point doré : donneur.</div></div>';
     h += '<div class="sets">';
-    for (let s = 1; s <= S.settings.bankSets; s++) {
-      h += '<div class="setcard"><h3>Série ' + s + '</h3>' + BR.boardsOfSet(s, K()).map((bn, i) => {
+    for (let s = 1; s <= nSets; s++) {
+      h += '<div class="setcard"><h3>Étui ' + s + '</h3>' + BR.boardsOfSet(s, K()).map((bn, i) => {
         const b = BR.boardInfo(bn);
-        return '<div class="brow" style="align-items:flex-start">' + miniBoard(b) + '<div class="info"><b>Donne ' + bn + '</b> <small>donneur ' + SN[b.dealer].toLowerCase() + ', vulnérable : ' + vulName(b.vul) + '</small><br>' + (S.settings.prepared ? 'Main prévue : <b>' + SN[BR.designated(bn, K())] + '</b>' : '') + (i >= 3 ? ' <span class="pill">réserve</span>' : '') +
-          (S.settings.prepared ? '<input type="text" data-f="note" data-b="' + bn + '" placeholder="Thème ou idée de la donne" value="' + esc(S.notes[bn] || '') + '">' : '') + '</div></div>';
+        return '<div class="brow" style="align-items:flex-start">' + miniBoard(b) + '<div class="info"><b>Donne ' + bn + '</b> <small>donneur ' + SN[b.dealer].toLowerCase() + ', vulnérable : ' + vulName(b.vul) + '</small><br>' + (D.settings.prepared ? 'Main prévue : <b>' + SN[BR.designated(bn, K())] + '</b>' : '') + (i >= K() - 1 ? ' <span class="pill">réserve</span>' : '') +
+          (D.settings.prepared ? '<input type="text" data-f="note" data-b="' + bn + '" placeholder="Thème ou idée de la donne" value="' + esc(D.notes[bn] || '') + '">' : '') + '</div></div>';
       }).join('') + '</div>';
     }
-    return h + '</div>';
+    h += '</div>';
+    let sh = '';
+    for (let s = 1; s <= nSets; s++) sh += sheetHtml(s);
+    return h + '<div class="sheets">' + sh + '</div>';
   }
 
   /* ---------- Réglages ---------- */
   function viewSettings() {
-    const s = S.settings;
+    const s = D.settings;
     const num = (k, label, min, max) => '<label class="f">' + label + '</label><input type="number" inputmode="numeric" min="' + min + '" max="' + max + '" data-f="set" data-k="' + k + '" value="' + s[k] + '">';
-    return '<div class="sec"><h2>Réglages</h2></div><div class="cols2"><div class="panel"><h3>Séance</h3><label class="f">Étuis</label><select data-f="mode"><option value="live"' + (s.prepared ? '' : ' selected') + '>Donnes non préparées : les joueurs battent et distribuent</option><option value="prep"' + (s.prepared ? ' selected' : '') + '>Donnes préparées à l\'avance (main prévue par donne)</option></select><div class="row"><div class="grow"><label class="f">Début</label><input type="time" data-f="set" data-k="start" value="' + s.start + '"></div><div class="grow"><label class="f">Fin</label><input type="time" data-f="set" data-k="end" value="' + s.end + '"></div></div>' +
-      num('roundMin', 'Durée visée d\'un tour (minutes)', 10, 90) + num('minPerBoard', 'Minutes par donne, marque comprise', 4, 20) + num('changeMin', 'Minutes pour changer de table', 0, 10) + num('setSize', 'Donnes par série (3 jouées et 1 de réserve)', 2, 6) + num('bankSets', 'Nombre de séries d\'étuis', 3, 30) +
+    return '<div class="sec"><h2>Réglages</h2></div><div class="cols2"><div class="panel"><h3>Jeu</h3><label class="f">Étuis</label><select data-f="mode"><option value="live"' + (s.prepared ? '' : ' selected') + '>Donnes non préparées : les joueurs battent et distribuent</option><option value="prep"' + (s.prepared ? ' selected' : '') + '>Donnes préparées à l\'avance (main prévue par donne)</option></select>' +
+      num('roundMin', 'Durée visée d\'un tour (minutes)', 10, 90) + num('minPerBoard', 'Minutes par donne, feuille remplie comprise', 4, 20) + num('changeMin', 'Minutes pour changer de table', 0, 10) + num('setSize', 'Donnes par étui (dont 1 de réserve)', 2, 6) + num('bankSets', 'Nombre d\'étuis disponibles', 3, 30) +
       '<p class="mute">Le nombre de donnes par tour est calculé pour que le dernier tour se termine à l\'heure de fin.</p></div>' +
+      '<div class="panel"><h3>Heures par défaut des nouvelles séances</h3><div class="row"><div class="grow"><label class="f">Début</label><input type="time" data-f="set" data-k="start" value="' + s.start + '"></div><div class="grow"><label class="f">Fin</label><input type="time" data-f="set" data-k="end" value="' + s.end + '"></div></div></div>' +
       '<div class="panel"><h3>Sauvegarde</h3><div class="row"><button class="btn" data-a="export">Exporter dans un fichier</button><label class="btn" style="margin:0">Importer un fichier<input type="file" id="imp" accept=".json,application/json" style="display:none"></label></div>' +
-      '<p class="mute">Les données restent dans ce navigateur. Exportez avant de changer d\'appareil.</p></div>' +
-      '<div class="panel"><h3>Nouvelle séance</h3><div class="row"><button class="btn" data-a="newsession">Nouvelle après-midi</button><button class="btn danger" data-a="reset">Tout effacer</button></div><p class="mute">Une nouvelle après-midi efface les tours et les scores mais garde la liste des joueurs.</p></div></div>';
+      '<p class="mute">Les données restent dans ce navigateur. Exportez pour les passer sur un autre appareil ou les garder en sécurité.</p></div>' +
+      '<div class="panel"><h3>Tout effacer</h3><button class="btn danger" data-a="reset">Effacer séances et liste</button></div></div>';
   }
 
   /* ---------- Grand écran ---------- */
@@ -1053,30 +1320,31 @@ body.salle-on{padding:0;background:#0a2018}
       const p = getP(t.seats[k]);
       return '<div class="trw' + (p && p.teacher ? ' prof' : '') + '"><span class="sl">' + k + '</span><span class="tn2">' + esc(p ? p.name : '?') + '</span></div>';
     };
-    return '<div class="tile"><div class="th"><b>' + t.n + '</b><span>table</span></div><div class="grp">' + row('N') + row('S') + '</div><div class="grp g2">' + row('E') + row('O') + '</div></div>';
+    return '<div class="tile" style="--tc:' + tcol(t.n) + '"><div class="th"><b>' + t.n + '</b><span>table · étui ' + t.set + '</span></div><div class="grp">' + row('N') + row('S') + '</div><div class="grp g2">' + row('E') + row('O') + '</div></div>';
   }
   function viewSalle() {
-    const r = BR.currentRound(S);
-    const present = S.players.filter(p => p.present);
-    let top = '<div class="stop"><div class="sl1"><img class="logo" src="' + LOGO + '" alt=""><div><b>' + (r ? 'Tour ' + r.n : 'Bridge Relax') + '</b><span>' + (r ? plural(r.b, 'donne', 'donnes') : plural(present.length, 'joueur présent', 'joueurs présents')) + '</span></div></div><div class="scount" id="scount"></div><div class="sclock" id="sclock"></div></div>';
-    let body = '';
+    const c = C();
+    const r = BR.currentRound(c);
+    const present = c.players.filter(p => p.present);
+    const top = '<div class="stop"><div class="sl1"><img class="logo" src="' + LOGO + '" alt=""><div><b>' + (r ? 'Tour ' + r.n : 'Bridge Relax') + '</b><span>' + (r ? plural(r.b, 'donne', 'donnes') : plural(present.length, 'joueur présent', 'joueurs présents')) + '</span></div></div><div class="scount" id="scount"></div><div class="sclock" id="sclock"></div></div>';
+    let body;
     if (!r) {
       body = '<div class="swait"><div>Bienvenue</div><small>Installez-vous : les tables vont être annoncées ici.</small></div>';
     } else {
-      const w = BR.waiting(S);
+      const w = BR.waiting(c);
       const act = r.tables.filter(t => !t.closed);
       if (ui.salleView === 'tables') {
         const n = act.length;
         const cols = n <= 2 ? n : n <= 4 ? 2 : n <= 6 ? 3 : n <= 8 ? 4 : 5;
-        body = '<div class="sgrid" style="--cols:' + cols + '">' + act.map(t => salleTile(t)).join('') + '</div>';
+        body = '<div class="sgrid" style="--cols:' + cols + '">' + act.map(salleTile).join('') + '</div>';
         if (w.players.length) body += '<div class="srest">Sans table pour l\'instant : ' + w.players.map(p => esc(p.name)).join(', ') + '</div>';
       } else {
         const rows = [];
-        act.forEach(t => SEATS.forEach(k => rows.push({ name: nm(t.seats[k]), t: t.n, seat: SN[k], prof: !!(getP(t.seats[k]) || {}).teacher })));
+        act.forEach(t => SEATS.forEach(k => rows.push({ name: nm(t.seats[k]), t: t.n, seat: SN[k] })));
         w.players.forEach(p => rows.push({ name: p.name, t: null, seat: 'repos' }));
         rows.sort((a, b) => a.name.localeCompare(b.name, 'fr'));
         const cc = rows.length <= 16 ? 2 : rows.length <= 30 ? 3 : 4;
-        body = '<div class="snames" style="--cc:' + cc + '">' + rows.map(x => '<div class="ni"><span class="nn">' + esc(x.name) + '</span><span class="nt' + (x.t ? '' : ' rest') + '">' + (x.t ? '<b>' + x.t + '</b>' : '') + '<small>' + x.seat + '</small></span></div>').join('') + '</div>';
+        body = '<div class="snames" style="--cc:' + cc + '">' + rows.map(x => '<div class="ni"><span class="nn">' + esc(x.name) + '</span><span class="nt' + (x.t ? '' : ' rest') + '">' + (x.t ? '<b style="background:' + tcol(x.t) + ';color:#fff">' + x.t + '</b>' : '') + '<small>' + x.seat + '</small></span></div>').join('') + '</div>';
       }
     }
     const ctl = '<div class="sctl noprint"><button class="' + (ui.salleView === 'noms' ? 'on' : '') + '" data-a="salleview" data-v="noms">Par nom</button><button class="' + (ui.salleView === 'tables' ? 'on' : '') + '" data-a="salleview" data-v="tables">Par table</button><button class="' + (ui.auto ? 'on' : '') + '" data-a="salleauto">Alterner</button><button data-a="fullscreen">Plein écran</button><button data-a="salleclose">Fermer</button></div>';
@@ -1084,51 +1352,79 @@ body.salle-on{padding:0;background:#0a2018}
   }
 
   /* ---------- Actions ---------- */
-  function setPresent(p, v) {
-    p.present = v;
-    if (v) p.arrivedAt = Date.now();
+  function twoTap(key, id) {
+    if (ui[key] !== id) { ui[key] = id; render(); clearTimeout(ui[key + 'T']); ui[key + 'T'] = setTimeout(() => { ui[key] = null; render(); }, 4000); return false; }
+    ui[key] = null; return true;
+  }
+  function copyText(txt) {
+    const done = () => alert('Copié : ' + txt);
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(done, () => prompt('Copiez ce texte :', txt));
+    else prompt('Copiez ce texte :', txt);
   }
   const actions = {
-    tab(el) { ui.tab = el.dataset.v; ui.score = null; render(); window.scrollTo(0, 0); },
+    tab(el) { ui.tab = el.dataset.v; ui.filter = ''; ui.pf = 'all'; render(); window.scrollTo(0, 0); },
+    pmode(el) { ui.pmode = el.dataset.v; ui.pf = 'all'; render(); },
+    pf(el) { ui.pf = el.dataset.v; render(); },
     add() {
-      const inp = $('#pname'); const p = addPlayer(inp.value);
-      if (p) { ui.filter = ''; commit(); const i = $('#pname'); if (i) i.focus(); }
+      const p = addPlayer($('#pname').value);
+      if (!p) return;
+      const m = pmode();
+      if (m === 'insc') cur().rsvp[p.id] = 'yes';
+      if (m === 'accueil') arrive(p);
+      ui.filter = ''; commit(); const i = $('#pname'); if (i) i.focus();
     },
     bulk() {
-      const names = $('#bulk').value.split(/\n/).map(x => x.trim()).filter(Boolean);
-      names.forEach(n => { if (!S.players.some(p => p.name.toLowerCase() === n.toLowerCase())) addPlayer(n, false); });
+      $('#bulk').value.split(/\n/).map(x => x.trim()).filter(Boolean).forEach(addPlayer);
       commit();
     },
-    pres(el) { const p = getP(+el.dataset.id); if (p) { setPresent(p, !p.present); commit(); } },
-    teach(el) { const p = getP(+el.dataset.id); if (!p) return; const v = !p.teacher; S.players.forEach(x => { x.teacher = false; }); p.teacher = v; commit(); },
-    del(el) { const p = getP(+el.dataset.id); if (p && confirm('Supprimer ' + p.name + ' de la liste ?')) { S.players = S.players.filter(x => x.id !== p.id); commit(); } },
-    allpres() { S.players.forEach(p => { if (!p.present) setPresent(p, true); }); commit(); },
-    nonepres() { if (confirm('Marquer tout le monde absent ?')) { S.players.forEach(p => { p.present = false; }); commit(); } },
+    rsvp(el) { const s = cur(), id = +el.dataset.id; s.rsvp[id] = el.dataset.v; commit(); },
+    arrive(el) { const p = getP(+el.dataset.id); if (p) { arrive(p); commit(); } },
+    depart(el) { const s = cur(), id = +el.dataset.id; s.att[id] = Object.assign({}, s.att[id], { present: false, left: Date.now() }); commit(); },
+    copynone() {
+      const s = cur();
+      const l = D.roster.filter(p => !p.archived && !p.teacher && rsvpOf(s, p.id) === 'none').map(p => p.name).sort((a, b) => a.localeCompare(b, 'fr'));
+      if (!l.length) { alert('Tout le monde a répondu.'); return; }
+      copyText(l.join(', '));
+    },
+    allnone() { if (confirm('Remettre toutes les réponses à « pas répondu » ?')) { cur().rsvp = {}; commit(); } },
+    teach(el) { const p = getP(+el.dataset.id); if (!p) return; const v = !p.teacher; D.roster.forEach(x => { x.teacher = false; }); p.teacher = v; commit(); },
+    del(el) {
+      const id = +el.dataset.id, p = getP(id); if (!p) return;
+      if (!twoTap('delId', id)) return;
+      if (playedAny(id)) p.archived = true;
+      else { D.roster = D.roster.filter(x => x.id !== id); D.sessions.forEach(s => { delete s.rsvp[id]; delete s.att[id]; }); }
+      commit();
+    },
+    snew() {
+      const d = $('#ns-date').value || todayIso();
+      const s = newSession(D, d, $('#ns-start').value || D.settings.start, $('#ns-end').value || D.settings.end);
+      D.cur = s.id; ui.pmode = null; commit();
+    },
+    sopen(el) { D.cur = +el.dataset.id; ui.pmode = null; commit(); },
+    sdel(el) {
+      const id = +el.dataset.id;
+      if (D.sessions.length < 2 || !twoTap('delS', id)) return;
+      D.sessions = D.sessions.filter(s => s.id !== id);
+      if (D.cur === id) D.cur = D.sessions[0].id;
+      commit();
+    },
     next() {
       const b = +$('#bsel').value;
-      const r = BR.planRound(S, { boards: b, now: Date.now() });
+      const r = BR.planRound(C(), { boards: b, now: Date.now() });
       if (r.error) { alert(r.error); return; }
-      S.rounds.push(r); ui.fresh = true; commit(); window.scrollTo(0, 0);
+      cur().rounds.push(r); ui.fresh = true; commit(); window.scrollTo(0, 0);
     },
-    opentable() { if (!BR.openExtraTable(S)) alert('Impossible d\'ouvrir une table.'); ui.fresh = false; commit(); },
+    opentable() { if (!BR.openExtraTable(C())) alert('Impossible d\'ouvrir une table.'); ui.fresh = false; commit(); },
     replace(el) {
       const sel = $('#rep-' + el.dataset.t + '-' + el.dataset.s);
-      if (sel) { BR.replaceSeat(S, +el.dataset.t, el.dataset.s, +sel.value); commit(); }
+      if (sel) { BR.replaceSeat(C(), +el.dataset.t, el.dataset.s, +sel.value); commit(); }
     },
-    dissolve(el) { if (confirm('Fermer cette table ?')) { BR.dissolveTable(S, +el.dataset.t); commit(); } },
-    score(el) { openScore(+el.dataset.t, +el.dataset.b); },
-    scset(el) {
-      const k = el.dataset.k, v = el.dataset.v, d = ui.score.d;
-      if (k === 'pass') d.pass = !d.pass;
-      else if (k === 'den' || k === 'decl') d[k] = v;
-      else d[k] = +v;
-      render();
-    },
-    scres(el) { const d = ui.score.d; d.res += +el.dataset.v; clampRes(d); render(); },
-    scoreclose() { ui.score = null; render(); },
-    scoresave() { saveScore(); },
-    scoreclear() { const r = BR.currentRound(S); const t = r.tables.find(x => x.n === ui.score.t); delete t.results[ui.score.b]; ui.score = null; commit(); },
+    dissolve(el) { if (confirm('Fermer cette table ?')) { BR.dissolveTable(C(), +el.dataset.t); commit(); } },
     print() { window.print(); },
+    printsheets() {
+      document.body.classList.add('psheets');
+      setTimeout(() => { window.print(); setTimeout(() => document.body.classList.remove('psheets'), 800); }, 50);
+    },
     salle() { ui.tab = 'salle'; ui.tick = 0; render(); },
     salleclose() { if (document.fullscreenElement && document.exitFullscreen) document.exitFullscreen(); ui.tab = 'tour'; render(); },
     salleview(el) { ui.salleView = el.dataset.v; ui.auto = false; render(); },
@@ -1139,22 +1435,17 @@ body.salle-on{padding:0;background:#0a2018}
       if (el.requestFullscreen) el.requestFullscreen(); else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
     },
     export() {
-      const blob = new Blob([JSON.stringify(S)], { type: 'application/json' });
+      const blob = new Blob([JSON.stringify(D)], { type: 'application/json' });
       const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-      const d = new Date(); a.download = 'bridge-relax-' + d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + '.json';
+      a.download = 'bridge-relax-' + todayIso() + '.json';
       document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
     },
-    newsession() {
-      if (!confirm('Commencer une nouvelle après-midi ? Les tours et scores actuels seront effacés (pensez à exporter). La liste des joueurs est conservée.')) return;
-      S.rounds = []; S.players.forEach(p => { p.present = false; }); ui.tab = 'joueurs'; commit();
-    },
-    reset() { if (confirm('Tout effacer, y compris la liste des joueurs ?') && confirm('Vraiment tout effacer ?')) { S = defaults(); commit(); } }
+    reset() { if (confirm('Tout effacer, y compris la liste des joueurs et toutes les séances ?') && confirm('Vraiment tout effacer ?')) { D = defaults(); commit(); } }
   };
 
   document.addEventListener('click', e => {
     const el = e.target.closest('[data-a]');
     if (!el) return;
-    if (el.classList.contains('overlay') && e.target !== el) return;
     const f = actions[el.dataset.a];
     if (f) f(el);
   });
@@ -1164,19 +1455,21 @@ body.salle-on{padding:0;background:#0a2018}
   document.addEventListener('input', e => {
     const el = e.target;
     if (el.id === 'pname') { ui.filter = el.value; const l = $('#plist'); if (l) l.innerHTML = playersListHtml(); }
-    else if (el.dataset.f === 'note') { S.notes[el.dataset.b] = el.value; save(); }
+    else if (el.dataset.f === 'note') { D.notes[el.dataset.b] = el.value; save(); }
   });
   document.addEventListener('change', e => {
     const el = e.target;
-    if (el.dataset.f === 'mode') { S.settings.prepared = el.value === 'prep'; commit(); }
+    if (el.dataset.f === 'mode') { D.settings.prepared = el.value === 'prep'; commit(); }
+    else if (el.dataset.f === 'sess') { if (el.value) { cur()[el.dataset.k] = el.value; commit(); } }
     else if (el.dataset.f === 'set') {
       const k = el.dataset.k;
-      S.settings[k] = (k === 'start' || k === 'end') ? el.value : Math.max(0, +el.value || 0);
-      if (k === 'setSize' && S.settings.setSize < 2) S.settings.setSize = 2;
+      D.settings[k] = (k === 'start' || k === 'end') ? el.value : Math.max(0, +el.value || 0);
+      if (k === 'setSize') D.settings.setSize = Math.max(2, Math.min(6, D.settings.setSize));
+      if (k === 'bankSets') D.settings.bankSets = Math.max(3, Math.min(30, D.settings.bankSets));
       save();
     } else if (el.id === 'imp' && el.files[0]) {
       const rd = new FileReader();
-      rd.onload = () => { try { const j = JSON.parse(rd.result); if (j && j.v === 1) { S = Object.assign(defaults(), j); commit(); } else alert('Fichier non reconnu.'); } catch (x) { alert('Fichier illisible.'); } };
+      rd.onload = () => { try { const m = migrate(JSON.parse(rd.result)); if (m) { D = m; commit(); } else alert('Fichier non reconnu.'); } catch (x) { alert('Fichier illisible.'); } };
       rd.readAsText(el.files[0]);
     }
   });
@@ -1187,9 +1480,9 @@ body.salle-on{padding:0;background:#0a2018}
     if (ui.tab !== 'salle') return;
     updateClock();
     ui.tick++;
-    if (ui.auto && ui.tick % 15 === 0 && BR.currentRound(S)) { ui.salleView = ui.salleView === 'noms' ? 'tables' : 'noms'; render(); }
+    if (ui.auto && ui.tick % 15 === 0 && BR.currentRound(C())) { ui.salleView = ui.salleView === 'noms' ? 'tables' : 'noms'; render(); }
   }, 1000);
-  window.__BR_UI = { get state() { return S; }, ui, render, actions };
+  window.__BR_UI = { get state() { return D; }, ui, render, actions, C };
 })();
 
 </script>
