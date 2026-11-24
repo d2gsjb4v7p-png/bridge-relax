@@ -440,6 +440,111 @@ h2{font-weight:700;font-size:28px}
 .slist .scwrap .sedit{margin:0}
 @media print{body.psheets{background:#fff!important}}
 @media (max-width:480px){.fchip{padding:6px 9px;font-size:13px}.fchip b{font-size:18px}.fchips{gap:6px}}
+/* Deux statuts : réponse et présence */
+.bds{display:flex!important;flex-wrap:wrap;gap:4px;margin-top:3px}
+.bd{display:inline-block;border-radius:99px;padding:1px 8px;font-size:12px;font-weight:700;line-height:1.5}
+.bd.r-yes{background:var(--green-soft);color:var(--green)}
+.bd.r-none{background:var(--brass-soft);color:#8a6416}
+.bd.r-no{background:var(--red-soft);color:var(--red)}
+.bd.here{background:var(--green);color:#fff}
+.bd.abs{background:var(--paper-2);color:var(--mute);border:1px solid var(--line)}
+.prow.here .nm small{color:inherit}
+/* Message après une arrivée ou un départ */
+.toast{position:fixed;left:12px;right:12px;bottom:calc(96px + env(safe-area-inset-bottom));z-index:20;max-width:560px;margin:0 auto;background:#14233b;color:#fff;border-left:6px solid var(--green);border-radius:14px;padding:13px 16px;font-weight:600;font-size:16px;box-shadow:0 14px 30px -10px rgba(0,0,0,.6);animation:tin .25s ease-out}
+.toast.warn{border-left-color:#e0661e}
+@keyframes tin{from{transform:translateY(12px);opacity:0}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.toast{animation:none}}
+@media (min-width:760px){.toast{bottom:24px}}
+/* Intertitres : oui, pas répondu, non */
+.ghead{margin:10px -14px 0;padding:8px 14px;font-weight:800;font-size:14px;border-top:1px solid var(--line)}
+.ghead:first-child{margin-top:0;border-top:0;border-radius:20px 20px 0 0}
+.ghead span{display:inline-block;min-width:24px;text-align:center;border-radius:99px;padding:0 7px;margin-left:4px;color:#fff}
+.ghead.g-yes{background:var(--green-soft);color:var(--green)}.ghead.g-yes span{background:var(--green)}
+.ghead.g-none{background:var(--brass-soft);color:#8a6416}.ghead.g-none span{background:#d6a017}
+.ghead.g-no{background:var(--red-soft);color:var(--red)}.ghead.g-no span{background:var(--red)}
+.ghead+.prow{border-top:0}
+@media (min-width:1000px){.plist .ghead{grid-column:1/-1}}
+/* Qui manque encore ? */
+.missing{display:flex;align-items:center;gap:14px;width:100%;text-align:left;border:2px solid #d6a017;background:var(--brass-soft);color:var(--ink);border-radius:18px;padding:12px 16px;margin:12px 0 4px;font:inherit}
+.missing>b{font:800 34px/1 var(--sans);color:#8a6416;min-width:40px;text-align:center}
+.missing span{font-weight:800;font-size:17px}
+.missing small{display:block;font-weight:500;font-size:14px;color:var(--ink-2)}
+.missing.on{flex-wrap:wrap;justify-content:space-between;background:#fff7e0}
+.missing.on b{font-size:18px;display:block}
+
+/* ===== v3 : bilan, alertes, messages, lots ===== */
+.kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:0 0 14px}
+@media (min-width:760px){.kpis{grid-template-columns:repeat(4,1fr)}}
+.kpis>div{background:var(--paper);border-radius:18px;box-shadow:var(--shadow);padding:14px 16px;font-weight:600;color:var(--ink-2)}
+.kpis b{display:block;font:800 38px/1 var(--sans);color:#14233b;margin-bottom:4px}
+.kpis>div:nth-child(1) b{color:var(--green)}.kpis>div:nth-child(2) b{color:#2b6fd6}.kpis>div:nth-child(3) b{color:#e0661e}.kpis>div:nth-child(4) b{color:#8a3fc7}
+.cnt1{display:inline-block;min-width:24px;text-align:center;border-radius:99px;background:#14233b;color:#fff;font-size:13px;padding:1px 7px;margin-left:4px}
+.tscroll{overflow-x:auto;margin:0 -4px}
+.who{border-collapse:collapse;width:100%;font-size:15px}
+.who th{text-align:left;font-size:13px;color:var(--ink-2);padding:6px 8px;border-bottom:2px solid var(--line);white-space:nowrap}
+.who td{padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top;white-space:nowrap}
+.who td:first-child{font-weight:700}
+.who td small{display:block;color:var(--mute);font-size:12px}
+.who tbody tr:nth-child(even){background:var(--paper-2)}
+.avoid{margin:12px 0 0;border:2px solid var(--line);border-radius:14px;padding:10px 12px}
+.avoid summary{font-weight:700;cursor:pointer}
+.avr{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line)}
+.msgp textarea{font:15px/1.5 var(--sans);min-height:220px}
+.msgp{border:3px solid #2b6fd6}
+.chk{display:flex;gap:10px;align-items:center;font-weight:600;margin:6px 0}
+a.btn{text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+/* Alerte de fin de tour : l'écran clignote doucement */
+@keyframes flashbg{0%,100%{box-shadow:inset 0 0 0 0 rgba(224,102,30,0)}50%{box-shadow:inset 0 0 0 14px rgba(224,102,30,.85)}}
+html.flash body{animation:flashbg 1.2s ease-in-out 6}
+html.flash .salle{animation:flashbg 1.2s ease-in-out 7}
+@media (prefers-reduced-motion:reduce){html.flash body,html.flash .salle{animation:none;box-shadow:inset 0 0 0 10px rgba(224,102,30,.85)}}
+/* Feuilles ambulantes : 3 par page A4 */
+@media print{
+  body.psheets .sheet-p{break-after:page}
+  body.psheets .sp-board{height:88mm;box-sizing:border-box;border-bottom:1pt dashed #777;padding:3mm 0 0;margin:0;overflow:hidden}
+  body.psheets .sp-board:last-child{border-bottom:0}
+  .sp-d{margin-left:auto;font:500 9pt var(--sans)}
+  body.psheets .sp-t td{height:7mm}
+  body:not(.psheets) .noprint{display:none!important}
+}
+/* Rôles (donnes préparées) */
+.rl{display:inline-block;border-radius:6px;padding:0 6px;font-size:11.5px;font-weight:800;color:#fff;margin:0 2px 0 6px}
+.rl:first-child{margin-left:0}
+.rD{background:#2b6fd6}.rL{background:#e0661e}.rM{background:#6a7890}
+.roles{line-height:1.9}
+.prepf{display:grid;gap:6px;margin-top:6px}
+.prepbox{border:3px solid #2b6fd6;margin-top:12px}
+.prepsheet{display:none}
+@media print{
+  body.pprep main>*:not(.prepsheet),body.pprep .sheets{display:none!important}
+  body.pprep .prepsheet{display:block;color:#000;background:#fff}
+  body.pprep{background:#fff!important}
+  .prepsheet h2{font:800 15pt var(--sans);margin:0 0 2mm}
+  .prepsheet p{font-size:9.5pt;margin:0 0 3mm}
+  .prepsheet table{width:100%;border-collapse:collapse;font-size:9.5pt}
+  .prepsheet th,.prepsheet td{border:.6pt solid #000;padding:1.4mm 2mm;text-align:left}
+  .prepsheet th{background:#eee;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .prepsheet tr{break-inside:avoid}
+}
+
+/* ===== v4 : relais des étuis ===== */
+.relay{background:var(--paper);border-radius:18px;box-shadow:var(--shadow);padding:14px 16px;margin:10px 0 12px;border-left:6px solid #2b6fd6}
+.relay p{margin:8px 0 0}
+.rbig{display:flex;align-items:center;gap:12px}
+.rbig b{font:800 44px/1 var(--sans);color:#2b6fd6;min-width:56px}
+.rbig span{font-weight:800;font-size:18px}
+.rbig small{display:block;font-weight:600;font-size:14px;color:var(--ink-2)}
+.pass{margin:12px 14px 0;padding:10px 12px;border-radius:12px;background:color-mix(in srgb,var(--tc,#2b6fd6) 14%,var(--paper));border:2px solid var(--tc,#2b6fd6);font-size:16px;line-height:1.4}
+.pass b{color:var(--tc,#14233b);font-size:18px}
+.ord{flex:none;width:24px;height:24px;border-radius:50%;background:var(--paper-2);color:var(--ink-2);font:800 13px/24px var(--sans);text-align:center;align-self:center}
+.dgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.dcell{border-radius:14px;padding:10px 12px;background:var(--paper-2);border-top:5px solid var(--tc,#2b6fd6)}
+.dcell b{display:block;font-size:16px}
+.dcell span{display:flex;gap:6px;margin:6px 0}
+.dcell i{font-style:normal;display:inline-flex;align-items:center;justify-content:center;min-width:36px;height:34px;border-radius:9px;background:var(--tc,#2b6fd6);color:#fff;font-weight:800;font-size:17px}
+.dcell small{color:var(--ink-2);font-weight:600}
+.dist div{padding:2px 0}
+@media print{.sp-t .w0{width:9mm}}
 
 </style>
 </head>
@@ -457,6 +562,8 @@ h2{font-weight:700;font-size:28px}
   const W_P = 400;   // même partenaire qu'avant
   const W_O = 40;    // même adversaire qu'avant
   const W_R = 3000;  // rejouer une série déjà jouée
+  const W_AV = 60000; // deux personnes à ne jamais réunir à la même table
+  const W_PREV = 60;  // partenaires des séances précédentes (variété sur la saison)
   const W_S = 10;    // même siège qu'avant
   const W_D = 30;    // donner la main (déclarant prévu) à qui a le moins déclaré
 
@@ -465,6 +572,11 @@ h2{font-weight:700;font-size:28px}
     const dealer = SEATS[(n - 1) % 4];
     const v = VUL16[(n - 1) % 16];
     return { n, dealer, vul: v, vulNS: v === 'NS' || v === 'ALL', vulEW: v === 'EW' || v === 'ALL' };
+  }
+  // Rôles d'un siège pour un étui préparé : déclarant, mort, entame, défense
+  function roleOf(seat, declSeat) {
+    const d = (SEATS.indexOf(seat) - SEATS.indexOf(declSeat) + 4) % 4;
+    return ['D', 'L', 'M', 'F'][d];
   }
   function setOf(n, K) { return Math.floor((n - 1) / K) + 1; }
   function designated(n, K) { return SEATS[((n - 1) % K + setOf(n, K)) % 4]; }
@@ -526,7 +638,8 @@ h2{font-weight:700;font-size:28px}
 
   /* ---------- Historique ---------- */
   function history(state) {
-    const h = { partner: {}, opp: {}, seat: {}, seen: {}, rests: {}, lastRest: {}, played: {}, decl: {}, setUse: {}, setLast: {}, maxSet: 0 };
+    const h = { partner: {}, opp: {}, seat: {}, seen: {}, rests: {}, lastRest: {}, played: {}, decl: {}, setUse: {}, setLast: {}, maxSet: 0, role: {}, avoid: {}, prev: state.prevPartners || {} };
+    (state.avoid || []).forEach(x => { h.avoid[pk(x[0], x[1])] = 1; });
     state.rounds.forEach((r, ri) => {
       (r.rest || []).forEach(id => { inc(h.rests, id); h.lastRest[id] = ri; });
       r.tables.forEach(t => {
@@ -549,7 +662,11 @@ h2{font-weight:700;font-size:28px}
         if (t.set > h.maxSet) h.maxSet = t.set;
         // mains prévues déjà attribuées (mode donnes préparées)
         const K = (state.settings && state.settings.setSize) || 4;
-        (t.boards || []).forEach(n => inc(h.decl, s[designated(n, K)]));
+        (t.boards || []).forEach(n => {
+          const dz = designated(n, K);
+          inc(h.decl, s[dz]);
+          SEATS.forEach(k => { const id = s[k]; if (id == null) return; if (!h.role[id]) h.role[id] = { D: 0, M: 0, L: 0, F: 0 }; h.role[id][roleOf(k, dz)]++; });
+        });
       });
     });
     return h;
@@ -562,6 +679,8 @@ h2{font-weight:700;font-size:28px}
     c += W_P * (p1 * p1 + p2 * p2);
     for (let i = 0; i < 2; i++) for (let j = 2; j < 4; j++) c += W_O * (h.opp[pk(q[i], q[j])] || 0);
     for (let i = 0; i < 4; i++) { const s = h.seen[q[i]]; if (s && s.has(set)) c += W_R; }
+    for (let i = 0; i < 4; i++) for (let j = i + 1; j < 4; j++) if (h.avoid[pk(q[i], q[j])]) c += W_AV;
+    c += W_PREV * ((h.prev[pk(q[0], q[1])] || 0) + (h.prev[pk(q[2], q[3])] || 0));
     return c;
   }
 
@@ -610,7 +729,12 @@ h2{font-weight:700;font-size:28px}
         const id = seats[k];
         const sc = (h.seat[id] && h.seat[id][k]) || 0;
         c += W_S * sc * sc;
-        if (useDecl) c -= W_D * bonus[k] / (1 + (h.decl[id] || 0));
+        if (useDecl) {
+          // équilibrer les quatre rôles : chacun déclare, fait le mort, entame et défend
+          const r0 = h.role[id] || { D: 0, M: 0, L: 0, F: 0 }, r = { D: r0.D, M: r0.M, L: r0.L, F: r0.F };
+          boardNums.forEach(n => { r[roleOf(k, designated(n, K))]++; });
+          c += W_D * (r.D * r.D + r.M * r.M + r.L * r.L + r.F * r.F) + 2 * W_D * r.D * r.D;
+        }
       });
       c += rng() * 0.01;
       if (c < bc) { bc = c; best = seats; }
@@ -637,12 +761,43 @@ h2{font-weight:700;font-size:28px}
     const end = timeToMs(s.end, nowMs);
     const start = timeToMs(s.start, nowMs);
     const from = Math.max(nowMs, start);
-    const remaining = (end - from) / 60000;
+    let remaining = (end - from) / 60000;
     if (remaining <= 0) return 1;
-    const roundsLeft = Math.max(1, Math.round(remaining / s.roundMin));
+    const done = (state.rounds || []).length;
+    let roundsLeft;
+    if (s.nRounds > 0) {
+      // nombre de tours fixé (ex. 4 tours d'environ 45 min) ; la pause est prise à mi-parcours
+      roundsLeft = Math.max(1, s.nRounds - done);
+      if (s.pauseMin && done < Math.ceil(s.nRounds / 2)) remaining -= s.pauseMin;
+    } else roundsLeft = Math.max(1, Math.round(remaining / s.roundMin));
     const per = remaining / roundsLeft - (s.changeMin || 0);
     const b = Math.floor(per / s.minPerBoard + 0.25);
-    return Math.max(1, Math.min(s.setSize, b));
+    return Math.max(1, Math.min(s.relay ? 8 : s.setSize, b));
+  }
+
+  function roundSlot(state, nowMs) {
+    const s = state.settings;
+    const end = timeToMs(s.end, nowMs), start = timeToMs(s.start, nowMs);
+    let remaining = (end - Math.max(nowMs, start)) / 60000;
+    if (remaining <= 0) return s.minPerBoard;
+    const done = (state.rounds || []).length;
+    let roundsLeft;
+    if (s.nRounds > 0) { roundsLeft = Math.max(1, s.nRounds - done); if (s.pauseMin && done < Math.ceil(s.nRounds / 2)) remaining -= s.pauseMin; }
+    else roundsLeft = Math.max(1, Math.round(remaining / s.roundMin));
+    return Math.max(10, remaining / roundsLeft - (s.changeMin || 0));
+  }
+
+  /* ---------- Relais des étuis ----------
+     Chaque table commence avec k étuis. Après chaque donne, l'étui passe à la table suivante.
+     La table t joue d'abord ses k étuis, puis ceux de la table t-1, puis de t-2, etc. */
+  function relayBoards(T, k, b, base, t) {
+    const out = [];
+    const n = Math.min(b, k * T);
+    for (let j = 0; j < n; j++) {
+      const origin = (((t - 1 - Math.floor(j / k)) % T) + T) % T;
+      out.push(base + origin * k + (j % k));
+    }
+    return out;
   }
 
   /* ---------- Génération d'un tour ---------- */
@@ -658,7 +813,7 @@ h2{font-weight:700;font-size:28px}
     const plan = suggestPlan(P, !!teacher);
     const T = plan.tables;
     if (T < 1) return { error: 'Il faut au moins 4 joueurs présents (ou 3 avec le professeur).' };
-    const b = Math.max(1, Math.min(K, opt.boards || autoBoards(state, opt.now || Date.now())));
+    const b = Math.max(1, Math.min(st.relay ? 8 : K, opt.boards || autoBoards(state, opt.now || Date.now())));
 
     // Qui se repose ? (ceux qui se sont le moins reposés ; jamais un joueur qui n'a pas encore joué)
     const cand = pool.map(p => ({ p, never: (h.played[p.id] || 0) === 0 ? 1 : 0, r: h.rests[p.id] || 0, l: h.lastRest[p.id] == null ? -1 : h.lastRest[p.id], x: rng() }));
@@ -668,8 +823,36 @@ h2{font-weight:700;font-size:28px}
     const players = pool.filter(p => !restIds.has(p.id));
     if (plan.teacherPlays) players.push(teacher);
 
-    // Séries de donnes de ce tour
     const warnings = [];
+    if (st.relay) {
+      // Mouvement relais : pas de lots ; on place les joueurs, puis on distribue les étuis
+      const k = Math.max(1, st.perTable || 2);
+      const base = opt.base || 1;
+      const bb = Math.min(b, k * T);
+      const ids0 = players.map(p => p.id);
+      const dummy = []; for (let t = 0; t < T; t++) dummy.push(-1 - t);
+      const res0 = anneal(ids0, dummy, h, rng, 2500 * T + 4000, 4);
+      const tables0 = [];
+      const stats0 = { repeatPartners: 0, repeatOpp: 0, replays: 0 };
+      for (let t = 0; t < T; t++) {
+        const q = res0.arr.slice(4 * t, 4 * t + 4);
+        const boards = relayBoards(T, k, bb, base, t + 1);
+        const seats = orient(q, boards, h, 4, rng, !!st.prepared);
+        if ((h.partner[pk(seats.N, seats.S)] || 0) > 0) stats0.repeatPartners++;
+        if ((h.partner[pk(seats.E, seats.O)] || 0) > 0) stats0.repeatPartners++;
+        [[seats.N, seats.E], [seats.N, seats.O], [seats.S, seats.E], [seats.S, seats.O]].forEach(x => { if (h.opp[pk(x[0], x[1])]) stats0.repeatOpp++; });
+        tables0.push({ n: t + 1, set: null, boards, own: boards.slice(0, Math.min(k, boards.length)), seats, closed: false, results: {}, extra: [], passTo: T > 1 ? (t + 1) % T + 1 : null, recvFrom: T > 1 ? ((t - 1 + T) % T) + 1 : null });
+      }
+      if (b > k * T) warnings.push('Avec ' + T + ' tables et ' + k + ' étuis par table, chaque table ne peut jouer que ' + (k * T) + ' étuis différents par période.');
+      return {
+        n: state.rounds.length + 1, startedAt: opt.now || Date.now(), b: bb,
+        tables: tables0, rest: rest.map(p => p.id), teacherPlays: plan.teacherPlays,
+        relay: { k, base, count: k * T, last: base + k * T - 1 },
+        warnings, stats: stats0
+      };
+    }
+
+    // Séries de donnes de ce tour
     const poolSize = Math.min(st.bankSets, Math.max(T + 3, h.maxSet));
     const order = [];
     for (let i = 1; i <= poolSize; i++) order.push(i);
@@ -772,6 +955,19 @@ h2{font-weight:700;font-size:28px}
     let four = w.players.slice().sort((a, c) => (h.rests[a.id] || 0) - (h.rests[c.id] || 0)).slice(0, 4);
     if (four.length === 3) four.push(w.teacher);
     const ids = four.map(p => p.id);
+    if (r.relay) {
+      const used = Math.max(r.relay.last, ...r.tables.map(t => Math.max(0, ...(t.boards || [0]))));
+      const boards = []; for (let i = 1; i <= r.b; i++) boards.push(used + i);
+      const perms = [[0, 1, 2, 3], [0, 2, 1, 3], [0, 3, 1, 2]];
+      let bp = null, bpc = Infinity;
+      perms.forEach(p => { const q = p.map(i => ids[i]); const c = tableCost(h, q, -99); if (c < bpc) { bpc = c; bp = q; } });
+      const seats = orient(bp, boards, h, 4, rng, !!st.prepared);
+      const n = Math.max.apply(null, r.tables.map(t => t.n)) + 1;
+      const table = { n, set: null, boards, own: boards.slice(), seats, closed: false, results: {}, extra: [], late: true, solo: true };
+      r.tables.push(table);
+      r.rest = (r.rest || []).filter(id => ids.indexOf(id) < 0);
+      return table;
+    }
     // série : pas déjà jouée par ces joueurs, la moins utilisée, pas déjà sur une table de ce tour
     const used = new Set(r.tables.filter(t => !t.closed).map(t => t.set));
     const nTables = r.tables.length + 1;
@@ -837,7 +1033,7 @@ h2{font-weight:700;font-size:28px}
 
   const BR = {
     SEATS, SEAT_NAME, boardInfo, setOf, designated, boardsOfSet,
-    scoreContract, nsScore, mulberry32, history, suggestPlan, autoBoards, timeToMs,
+    roleOf, relayBoards, scoreContract, nsScore, mulberry32, history, suggestPlan, autoBoards, roundSlot, timeToMs,
     planRound, currentRound, waiting, replaceSeat, dissolveTable, canOpenTable, openExtraTable, computeScores
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = BR;
@@ -863,7 +1059,7 @@ h2{font-weight:700;font-size:28px}
     return s;
   }
   function defaults() {
-    const D = { v: 2, nextId: 1, nextSess: 1, settings: { start: '15:00', end: '18:30', roundMin: 30, minPerBoard: 9, setSize: 4, bankSets: 12, changeMin: 2, prepared: false }, roster: [], sessions: [], cur: null, notes: {} };
+    const D = { v: 2, nextId: 1, nextSess: 1, settings: { start: '15:00', end: '18:30', roundMin: 30, minPerBoard: 11, setSize: 4, bankSets: 9, changeMin: 2, prepared: false, format: '45', pauseMin: 15, stock: 36, sound: true, perTable: 2, reshuffle: true }, roster: [], sessions: [], cur: null, notes: {}, avoid: [] };
     D.cur = newSession(D).id;
     return D;
   }
@@ -872,6 +1068,15 @@ h2{font-weight:700;font-size:28px}
     if (j && j.v === 2) {
       const d = defaults();
       const D = Object.assign(d, j, { settings: Object.assign(d.settings, j.settings) });
+      if (!D.settings.format) {
+        // séances déjà commencées : elles gardent la taille de lot de l'ancienne version
+        D.sessions.forEach(s => { if (s.rounds.length && !s.K) s.K = D.settings.setSize || 4; });
+        Object.assign(D.settings, { format: '45', pauseMin: 15, stock: 36, sound: true, minPerBoard: 11 });
+      }
+      if (!D.avoid) D.avoid = [];
+      if (D.settings.perTable == null) D.settings.perTable = 2;
+      if (D.settings.reshuffle == null) D.settings.reshuffle = true;
+      D.settings.format = D.settings.format || '45';
       if (!D.sessions.length) D.cur = newSession(D).id;
       if (!D.sessions.some(s => s.id === D.cur)) D.cur = D.sessions[D.sessions.length - 1].id;
       return D;
@@ -879,13 +1084,15 @@ h2{font-weight:700;font-size:28px}
     if (j && j.v === 1) {
       const D = defaults();
       D.sessions = []; D.nextSess = 1;
-      Object.assign(D.settings, j.settings || {});
+      Object.assign(D.settings, j.settings || {}, { format: '45', pauseMin: 15, stock: 36, sound: true, minPerBoard: 11, perTable: 2, reshuffle: true });
+      const oldK = (j.settings && j.settings.setSize) || 4;
       D.nextId = j.nextId || 1;
       D.notes = j.notes || {};
       D.roster = (j.players || []).map(p => ({ id: p.id, name: p.name, teacher: !!p.teacher }));
       const s = newSession(D, todayIso(), D.settings.start, D.settings.end);
       (j.players || []).forEach(p => { if (p.present) { s.rsvp[p.id] = 'yes'; s.att[p.id] = { present: true, arr: p.arrivedAt || Date.now() }; } });
       s.rounds = j.rounds || [];
+      if (s.rounds.length) s.K = oldK;
       D.cur = s.id;
       D.nextId = Math.max(D.nextId, 1 + Math.max(0, ...D.roster.map(p => p.id)));
       return D;
@@ -897,6 +1104,12 @@ h2{font-weight:700;font-size:28px}
     return defaults();
   }
   let D = load();
+  const FORMATS = {
+    '30': { label: '30 minutes', dur: 30, kmax: 4 },
+    '45': { label: '45 minutes', dur: 45, kmax: 5 },
+    '60': { label: '1 heure', dur: 60, kmax: 7 }
+  };
+  const durLabel = k => (FORMATS[k] || FORMATS['45']).label;
   const ui = { tab: 'tour', filter: '', fresh: false, salleView: 'noms', auto: true, tick: 0, pmode: null, pf: 'all', delId: null, delS: null };
   function save() { try { localStorage.setItem(LS, JSON.stringify(D)); } catch (e) { /* ignore */ } }
   function commit() { save(); render(); }
@@ -906,10 +1119,41 @@ h2{font-weight:700;font-size:28px}
   const isPresent = id => !!att(id).present;
   const rsvpOf = (s, id) => s.rsvp[id] || 'none';
   // Vue « moteur » de la séance ouverte
+  // Durée des tours de la séance (choisie par séance, sinon celle des réglages) et nombre de tours qui en découle
+  function fmt(s) {
+    s = s || cur();
+    const key = FORMATS[s.dur] ? s.dur : (FORMATS[D.settings.format] ? D.settings.format : '45');
+    const f = FORMATS[key];
+    const len = Math.max(30, (sessMs(s, s.end) - sessMs(s, s.start)) / 60000);
+    const pause = D.settings.pauseMin || 0;
+    const nRounds = Math.max(1, Math.round((len - pause) / (f.dur + (D.settings.changeMin || 0))));
+    return { key, label: f.label, dur: f.dur, kmax: f.kmax, nRounds, minPerBoard: 10 };
+  }
+  // Taille d'un lot : assez d'étuis pour (tables prévues + 1) lots, sans dépasser le format
+  function computeK(s) {
+    const f = fmt(s);
+    const plan = BR.suggestPlan(D.roster.filter(p => !p.teacher && (s.att[p.id] || {}).present).length, false).tables;
+    const T = Math.max(expected(s, true).tables, plan, 1);
+    return Math.max(2, Math.min(f.kmax, Math.floor((D.settings.stock || 36) / (T + 1))));
+  }
+  const sessK = s => s.K || 4;
+  function settingsFor(s) {
+    const f = fmt(s), k = sessK(s);
+    return Object.assign({}, D.settings, { relay: !s.K, perTable: Math.max(1, Math.min(3, D.settings.perTable || 2)), nRounds: f.nRounds, roundMin: f.dur, minPerBoard: f.minPerBoard, setSize: k, bankSets: Math.max(1, Math.floor((D.settings.stock || 36) / k)), start: s.start, end: s.end });
+  }
+  // Partenaires des 3 séances précédentes : on évite de les réunir trop vite
+  function prevPartners(s) {
+    const out = {};
+    D.sessions.filter(x => x.date < s.date).sort((a, b) => b.date.localeCompare(a.date)).slice(0, 3).forEach(x => x.rounds.forEach(r => r.tables.forEach(t => {
+      const q = t.seats; [[q.N, q.S], [q.E, q.O]].forEach(p => { const k = p[0] < p[1] ? p[0] + '-' + p[1] : p[1] + '-' + p[0]; out[k] = (out[k] || 0) + 1; });
+    })));
+    return out;
+  }
   function C() {
     const s = cur();
     return {
-      settings: Object.assign({}, D.settings, { start: s.start, end: s.end }),
+      avoid: D.avoid || [], prevPartners: prevPartners(s),
+      settings: settingsFor(s),
       players: D.roster.map(p => ({ id: p.id, name: p.name, teacher: !!p.teacher, present: !!(s.att[p.id] && s.att[p.id].present) })),
       rounds: s.rounds
     };
@@ -922,7 +1166,7 @@ h2{font-weight:700;font-size:28px}
   const fmtT = ms => { const d = new Date(ms); return pad(d.getHours()) + ':' + pad(d.getMinutes()); };
   const fmtDur = min => { min = Math.max(0, Math.round(min)); return min >= 60 ? Math.floor(min / 60) + ' h ' + pad(min % 60) : min + ' min'; };
   const plural = (n, a, b) => n + ' ' + (n > 1 ? b : a);
-  const K = () => D.settings.setSize;
+  const K = () => sessK(cur());
   const vulName = v => v === '-' ? 'personne' : v === 'ALL' ? 'tous' : v === 'NS' ? 'NS' : 'EO';
   const initials = n => n.trim().split(/\s+/).slice(0, 2).map(w => w.charAt(0)).join('').toUpperCase();
   const dateObj = iso => { const p = String(iso).split('-'); return new Date(+p[0], +p[1] - 1, +p[2]); };
@@ -952,9 +1196,10 @@ h2{font-weight:700;font-size:28px}
     if (now < z) return 'fin dans ' + fmtDur((z - now) / 60000);
     return 'séance terminée';
   }
-  function roundEnd(r) { return r.startedAt + r.b * D.settings.minPerBoard * 60000; }
+  function roundEnd(r) { return r.endAt || (r.startedAt + r.b * D.settings.minPerBoard * 60000); }
   function updateClock() {
     const now = Date.now();
+    checkAlerts(now);
     const el = $('#hclock');
     if (el) el.innerHTML = '<b>' + fmtT(now) + '</b>' + sessionStatus(now);
     const sc = $('#sclock');
@@ -964,26 +1209,73 @@ h2{font-weight:700;font-size:28px}
     if (sn) {
       if (r) {
         const m0 = (roundEnd(r) - now) / 60000;
-        sn.innerHTML = m0 > 0 ? 'Fin du tour dans <b>' + fmtDur(m0) + '</b>' : '<b>Tour terminé</b> : changez de table';
-      } else sn.innerHTML = 'Le premier tour va commencer';
+        sn.innerHTML = m0 > 0 ? 'Fin de la période dans <b>' + fmtDur(m0) + '</b>' : '<b>Période terminée</b> : changez de table';
+      } else sn.innerHTML = 'La première période va commencer';
     }
     const rc = $('#rcount');
     if (rc && r) {
       const m = (roundEnd(r) - now) / 60000;
-      rc.textContent = m > 0 ? 'fin prévue à ' + fmtT(roundEnd(r)) + ', dans ' + fmtDur(m) : 'fin prévue à ' + fmtT(roundEnd(r)) + ' : temps écoulé, passez au tour suivant dès que les tables ont fini';
+      rc.textContent = m > 0 ? 'fin prévue à ' + fmtT(roundEnd(r)) + ', dans ' + fmtDur(m) : 'fin prévue à ' + fmtT(roundEnd(r)) + ' : temps écoulé, passez à la période suivante dès que les tables ont fini';
     }
+  }
+
+  /* ---------- Alerte de fin de tour ---------- */
+  let actx = null;
+  function unlockAudio() {
+    try { if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)(); if (actx.state === 'suspended') actx.resume(); } catch (e) { actx = null; }
+  }
+  function chime(n) {
+    if (!D.settings.sound) return;
+    unlockAudio(); if (!actx) return;
+    const t0 = actx.currentTime;
+    for (let i = 0; i < n; i++) [784, 1047].forEach((fq, j) => {
+      const o = actx.createOscillator(), g = actx.createGain();
+      o.type = 'sine'; o.frequency.value = fq;
+      const t = t0 + i * 0.9 + j * 0.22;
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.35, t + 0.03); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.6);
+      o.connect(g).connect(actx.destination); o.start(t); o.stop(t + 0.65);
+    });
+  }
+  function checkAlerts(now) {
+    const s = cur();
+    if (daysUntil(s.date) !== 0) return;
+    const r = BR.currentRound(C());
+    if (!r) return;
+    const left = (roundEnd(r) - now) / 60000;
+    r.alerts = r.alerts || {};
+    if (left <= 5 && left > 0 && !r.alerts.five) {
+      r.alerts.five = 1; save(); chime(1);
+      toast('Période ' + r.n + ' : plus que 5 minutes. Terminez la donne en cours, sans en commencer une nouvelle.', true);
+      flash(); if (ui.tab !== 'salle') render();
+    }
+    if (left <= 0 && !r.alerts.end) {
+      r.alerts.end = 1; save(); chime(3);
+      toast('Fin de la période ' + r.n + ' : notez les scores' + (r.relay && !D.settings.prepared && D.settings.reshuffle !== false ? ', puis rebattez les cartes de tous les étuis' : '') + '. Ensuite, lancez la période suivante.', true);
+      flash(); if (ui.tab !== 'salle') render();
+    }
+  }
+  function flash() {
+    document.documentElement.classList.remove('flash'); void document.documentElement.offsetWidth;
+    document.documentElement.classList.add('flash');
+    setTimeout(() => document.documentElement.classList.remove('flash'), 9000);
+  }
+  // Garder l'écran allumé pendant un tour (si l'appareil le permet)
+  let wake = null;
+  function keepAwake() {
+    try { if (!wake && navigator.wakeLock && BR.currentRound(C())) navigator.wakeLock.request('screen').then(w => { wake = w; w.addEventListener('release', () => { wake = null; }); }).catch(() => {}); } catch (e) { /* ignore */ }
   }
 
   /* ---------- Rendu ---------- */
   function render() {
     document.body.className = ui.tab === 'salle' ? 'salle-on' : '';
     if (ui.tab === 'salle') { document.body.innerHTML = viewSalle(); ui.fresh = false; updateClock(); return; }
-    const tabs = [['seances', 'Séances'], ['joueurs', 'Joueurs'], ['tour', 'Tour'], ['etuis', 'Étuis'], ['reglages', 'Réglages']];
+    const tabs = [['seances', 'Séances'], ['joueurs', 'Joueurs'], ['tour', 'Période'], ['etuis', 'Étuis'], ['reglages', 'Réglages']];
     const s = cur();
     document.body.innerHTML =
       '<header><img class="logo" src="' + LOGO + '" alt=""><div class="htitle"><h1>Bridge Relax</h1><button class="hdate" data-a="tab" data-v="seances">' + esc(cap(fmtDate(s.date, { weekday: 'short', day: 'numeric', month: 'short' }))) + ' · ' + s.start.replace(':', 'h') + '–' + s.end.replace(':', 'h') + '</button></div><div class="clock" id="hclock"></div></header>' +
-      '<nav>' + tabs.map(t => '<button data-a="tab" data-v="' + t[0] + '" class="' + (ui.tab === t[0] ? 'on' : '') + '"><svg viewBox="0 0 24 24" aria-hidden="true">' + ICON[t[0]] + '</svg>' + t[1] + '</button>').join('') + '</nav>' +
-      '<main>' + ({ seances: viewSessions, joueurs: viewPlayers, tour: viewRound, etuis: viewBoards, reglages: viewSettings }[ui.tab] || viewRound)() + '</main>';
+      '<nav>' + tabs.map(t => '<button data-a="tab" data-v="' + t[0] + '" class="' + (ui.tab === t[0] || (ui.tab === 'bilan' && t[0] === 'seances') ? 'on' : '') + '"><svg viewBox="0 0 24 24" aria-hidden="true">' + ICON[t[0]] + '</svg>' + t[1] + '</button>').join('') + '</nav>' +
+      (ui.toast ? '<div id="toast" class="toast' + (ui.toast.warn ? ' warn' : '') + '" data-a="toastclose">' + esc(ui.toast.msg) + '</div>' : '') +
+      '<main>' + ({ seances: viewSessions, joueurs: viewPlayers, tour: viewRound, etuis: viewBoards, reglages: viewSettings, bilan: viewBilan }[ui.tab] || viewRound)() + '</main>';
     ui.fresh = false;
     updateClock();
   }
@@ -1001,11 +1293,18 @@ h2{font-weight:700;font-size:28px}
     });
     return c;
   }
-  function expected(s) {
+  function expected(s, raw) {
     const c = counts(s);
     const n = c.yes - (c.teacherYes ? 1 : 0);
     const plan = BR.suggestPlan(n, c.teacherYes);
-    return { players: c.yes, tables: plan.tables, etuis: plan.tables ? Math.min(D.settings.bankSets, plan.tables + 3) : 0 };
+    const e = { players: c.yes, tables: plan.tables };
+    if (raw) return e;
+    const k = Math.max(1, D.settings.perTable || 2), f = fmt(s);
+    e.k = k; e.circ = plan.tables * k;
+    // Donnes préparées, ou non préparées sans rebattre : de nouveaux étuis à chaque période
+    e.fresh = D.settings.prepared || D.settings.reshuffle === false;
+    e.etuis = e.fresh ? e.circ * f.nRounds : e.circ;
+    return e;
   }
 
   /* ---------- Situation du jour ---------- */
@@ -1020,7 +1319,7 @@ h2{font-weight:700;font-size:28px}
     else {
       if (plan.teacherPlays) txt += ' Le professeur joue à une table.';
       if (plan.rest) {
-        txt += ' ' + plural(plan.rest, 'joueur au repos', 'joueurs au repos') + ' à chaque tour.';
+        txt += ' ' + plural(plan.rest, 'joueur au repos', 'joueurs au repos') + ' à chaque période.';
         const need = teacher ? 3 - plan.rest : 4 - plan.rest;
         if (need > 0) txt += ' Encore ' + plural(need, 'arrivée', 'arrivées') + ' et une table de plus s\'ouvre.';
       }
@@ -1052,13 +1351,14 @@ h2{font-weight:700;font-size:28px}
     let h = '<div class="scwrap"><div class="scard' + (isCur ? ' cur' : '') + (dd < 0 ? ' past' : '') + '">' +
       '<div class="sdate"><b>' + d.getDate() + '</b><span>' + esc(fmtDate(s.date, { month: 'short' })) + '</span></div>' +
       '<div class="sinfo"><div class="st">' + esc(cap(fmtDate(s.date, { weekday: 'long' }))) + ' <small>' + when + '</small></div>' +
-      '<div class="sh">' + s.start.replace(':', 'h') + ' à ' + s.end.replace(':', 'h') + (s.rounds.length ? ', ' + plural(s.rounds.length, 'tour joué', 'tours joués') : '') + '</div>' +
+      '<div class="sh">' + s.start.replace(':', 'h') + ' à ' + s.end.replace(':', 'h') + ', ' + fmt(s).nRounds + ' périodes de ' + fmt(s).label + (s.rounds.length ? ', ' + plural(s.rounds.length, 'période jouée', 'périodes jouées') : '') + '</div>' +
       '<div class="cnt"><span class="k yes">' + c.yes + ' inscrits</span><span class="k none">' + c.none + ' sans réponse</span><span class="k no">' + c.no + ' refus</span></div>' +
       (e.tables ? '<div class="mute">Prévu : ' + plural(e.tables, 'table', 'tables') + ', ' + plural(e.etuis, 'étui', 'étuis') + ' à apporter.</div>' : '') + '</div>' +
       '<div class="sact">' + (isCur ? '<span class="pill">ouverte</span>' : '<button class="btn sm pri" data-a="sopen" data-id="' + s.id + '">Ouvrir</button>') +
+      (s.rounds.length || dd < 0 ? '<button class="btn sm" data-a="bilan" data-id="' + s.id + '">Bilan</button>' : '') +
       (D.sessions.length > 1 ? (ui.delS === s.id ? '<button class="x ask" data-a="sdel" data-id="' + s.id + '">Supprimer ?</button>' : '<button class="x" data-a="sdel" data-id="' + s.id + '" aria-label="Supprimer la séance">✕</button>') : '') + '</div></div>';
     if (isCur) {
-      h += '<div class="sedit"><div class="grow"><label class="f">Date</label><input type="date" data-f="sess" data-k="date" value="' + s.date + '"></div><div><label class="f">Début</label><input type="time" data-f="sess" data-k="start" value="' + s.start + '"></div><div><label class="f">Fin</label><input type="time" data-f="sess" data-k="end" value="' + s.end + '"></div></div>';
+      h += '<div class="sedit"><div class="grow"><label class="f">Date</label><input type="date" data-f="sess" data-k="date" value="' + s.date + '"></div><div><label class="f">Début</label><input type="time" data-f="sess" data-k="start" value="' + s.start + '"></div><div><label class="f">Fin</label><input type="time" data-f="sess" data-k="end" value="' + s.end + '"></div><div><label class="f">Durée des périodes</label><select data-f="sess" data-k="dur">' + Object.keys(FORMATS).map(k => '<option value="' + k + '"' + (fmt(s).key === k ? ' selected' : '') + '>' + FORMATS[k].label + '</option>').join('') + '</select></div></div>';
     }
     return h + '</div>';
   }
@@ -1075,7 +1375,7 @@ h2{font-weight:700;font-size:28px}
     const up = D.sessions.filter(s => s.date >= t).sort((a, b) => a.date.localeCompare(b.date));
     const past = D.sessions.filter(s => s.date < t).sort((a, b) => b.date.localeCompare(a.date));
     let h = '<div class="sec"><h2>Séances</h2><p class="lead">Chaque après-midi a sa date, ses heures et ses inscriptions. La liste des joueurs est commune à toutes les séances.</p></div>';
-    h += '<div class="panel newsess"><h3>Nouvelle séance</h3><div class="sedit"><div class="grow"><label class="f">Date</label><input type="date" id="ns-date" value="' + suggestNextDate() + '"></div><div><label class="f">Début</label><input type="time" id="ns-start" value="' + D.settings.start + '"></div><div><label class="f">Fin</label><input type="time" id="ns-end" value="' + D.settings.end + '"></div></div><button class="btn pri" style="margin-top:10px" data-a="snew">Créer et ouvrir</button></div>';
+    h += '<div class="panel newsess"><h3>Nouvelle séance</h3><div class="sedit"><div class="grow"><label class="f">Date</label><input type="date" id="ns-date" value="' + suggestNextDate() + '"></div><div><label class="f">Début</label><input type="time" id="ns-start" value="' + D.settings.start + '"></div><div><label class="f">Fin</label><input type="time" id="ns-end" value="' + D.settings.end + '"></div><div><label class="f">Durée des périodes</label><select id="ns-dur">' + Object.keys(FORMATS).map(k => '<option value="' + k + '"' + ((D.settings.format || '45') === k ? ' selected' : '') + '>' + FORMATS[k].label + '</option>').join('') + '</select></div></div><button class="btn pri" style="margin-top:10px" data-a="snew">Créer et ouvrir</button></div>';
     h += '<h3 class="lbl">À venir</h3>' + (up.length ? '<div class="slist">' + up.map(sessionCard).join('') + '</div>' : '<p class="mute">Aucune séance à venir.</p>');
     if (past.length) h += '<h3 class="lbl">Passées</h3><div class="slist">' + past.map(sessionCard).join('') + '</div>';
     return h;
@@ -1084,35 +1384,43 @@ h2{font-weight:700;font-size:28px}
   /* ---------- Joueurs : inscriptions, accueil, liste ---------- */
   const playedAny = id => D.sessions.some(s => s.rounds.some(r => r.tables.some(t => SEATS.some(k => t.seats[k] === id) || (t.extra || []).indexOf(id) >= 0)));
   function pmode() { return ui.pmode || (daysUntil(cur().date) === 0 ? 'accueil' : 'insc'); }
+  const RS = { yes: 'Réponse oui', no: 'Réponse non', none: 'Pas répondu' };
   function rowStatus(p) {
     const s = cur(), a = s.att[p.id] || {}, v = rsvpOf(s, p.id);
-    if (a.present) return 'là depuis ' + fmtT(a.arr);
-    if (a.left) return 'parti à ' + fmtT(a.left);
-    return v === 'yes' ? 'inscrit' : v === 'no' ? 'a refusé' : 'pas répondu';
+    const pres = a.present ? '<span class="bd here">Présent depuis ' + fmtT(a.arr) + '</span>' : '<span class="bd abs">Absent' + (a.left ? ', parti à ' + fmtT(a.left) : '') + '</span>';
+    return '<span class="bd r-' + v + '">' + RS[v] + '</span>' + (pmode() === 'accueil' ? pres : '');
   }
   function filtered() {
     const s = cur(), m = pmode(), f = ui.filter.trim().toLowerCase();
     let list = D.roster.filter(p => !p.archived).sort((a, b) => a.name.localeCompare(b.name, 'fr'));
     if (f) list = list.filter(p => p.name.toLowerCase().includes(f));
     const pf = ui.pf;
-    if (m === 'insc' && pf !== 'all') list = list.filter(p => rsvpOf(s, p.id) === pf);
+    if (m === 'insc' && pf !== 'all' && !f) list = list.filter(p => rsvpOf(s, p.id) === pf);
     if (m === 'accueil') {
-      if (!f) list = list.filter(p => rsvpOf(s, p.id) !== 'no' || isPresent(p.id) || att(p.id).left);
-      if (pf === 'wait') list = list.filter(p => !isPresent(p.id) && !att(p.id).left);
+      // « Qui manque » : tous les absents, les attendus d'abord ; pas répondu et refus restent visibles en dessous
+      if (f) { /* une recherche porte toujours sur toute la liste */ }
+      else if (pf === 'wait') list = list.filter(p => !isPresent(p.id));
+      else if (pf === 'abs') list = list.filter(p => !isPresent(p.id));
       else if (pf === 'here') list = list.filter(p => isPresent(p.id));
-      else if (pf === 'gone') list = list.filter(p => !isPresent(p.id) && att(p.id).left);
     }
+    const G = { yes: 0, none: 1, no: 2 };
+    if (m !== 'liste') list.sort((a, b) => G[rsvpOf(s, a.id)] - G[rsvpOf(s, b.id)] || a.name.localeCompare(b.name, 'fr'));
     return list;
   }
   function playersListHtml() {
     const s = cur(), m = pmode();
     const list = filtered();
     if (!list.length) return '<div class="empty" style="padding:18px 0">' + (D.roster.length ? (ui.filter ? 'Aucun nom ne correspond. Touchez « Ajouter » pour créer ce joueur.' : 'Personne dans ce filtre.') : 'La liste est vide. Tapez un nom ci-dessus, ou collez votre liste de diffusion dans l\'onglet « Liste ».') + '</div>';
+    const GT = { yes: 'Réponse oui', none: 'Pas répondu', no: 'Réponse non' };
+    const nG = {}; list.forEach(p => { const g = rsvpOf(s, p.id); nG[g] = (nG[g] || 0) + 1; });
+    let lastG = null;
     return list.map(p => {
       const v = rsvpOf(s, p.id), a = s.att[p.id] || {};
+      let head = '';
+      if (m !== 'liste' && v !== lastG) { lastG = v; head = '<div class="ghead g-' + v + '">' + GT[v] + ' <span>' + nG[v] + '</span></div>'; }
       let right = '';
       if (m === 'insc') {
-        right = '<div class="rsvp">' + [['yes', 'Inscrit'], ['none', '?'], ['no', 'Refus']].map(x => '<button class="' + x[0] + (v === x[0] ? ' on' : '') + '" data-a="rsvp" data-id="' + p.id + '" data-v="' + x[0] + '">' + x[1] + '</button>').join('') + '</div>';
+        right = '<div class="rsvp">' + [['yes', 'Oui'], ['none', '?'], ['no', 'Non']].map(x => '<button class="' + x[0] + (v === x[0] ? ' on' : '') + '" data-a="rsvp" data-id="' + p.id + '" data-v="' + x[0] + '">' + x[1] + '</button>').join('') + '</div>';
       } else if (m === 'accueil') {
         right = a.present ? '<button class="btn dep" data-a="depart" data-id="' + p.id + '">Départ</button>' : '<button class="btn arr" data-a="arrive" data-id="' + p.id + '">' + (a.left ? 'Revenu' : 'Arrivé') + '</button>';
       } else {
@@ -1120,8 +1428,8 @@ h2{font-weight:700;font-size:28px}
           (ui.delId === p.id ? '<button class="x ask" data-a="del" data-id="' + p.id + '">' + (playedAny(p.id) ? 'Retirer ?' : 'Supprimer ?') + '</button>' : '<button class="x" data-a="del" data-id="' + p.id + '" aria-label="Retirer de la liste">✕</button>');
       }
       const cls = m === 'accueil' ? (a.present ? 'here' : a.left ? 'off' : '') : (m === 'insc' ? 'r-' + v : '');
-      return '<div class="prow ' + cls + '"><span class="av c' + (p.id % 4 + 1) + '">' + esc(initials(p.name)) + '</span>' +
-        '<span class="nm">' + esc(p.name) + (p.teacher ? ' <span class="pill">professeur</span>' : '') + (m !== 'liste' ? '<small>' + rowStatus(p) + '</small>' : '') + '</span>' + right + '</div>';
+      return head + '<div class="prow ' + cls + '"><span class="av c' + (p.id % 4 + 1) + '">' + esc(initials(p.name)) + '</span>' +
+        '<span class="nm">' + esc(p.name) + (p.teacher ? ' <span class="pill">professeur</span>' : '') + (m !== 'liste' ? '<small class="bds">' + rowStatus(p) + '</small>' : '') + '</span>' + right + '</div>';
     }).join('');
   }
   function viewPlayers() {
@@ -1129,26 +1437,38 @@ h2{font-weight:700;font-size:28px}
     const seg = '<div class="seg3">' + [['insc', 'Inscriptions'], ['accueil', 'Accueil'], ['liste', 'Liste']].map(x => '<button class="' + (m === x[0] ? 'on' : '') + '" data-a="pmode" data-v="' + x[0] + '">' + x[1] + '</button>').join('') + '</div>';
     let top = '';
     let chips = '';
-    const SING = { inscrits: 'inscrit', attendus: 'attendu', 'présents': 'présent', partis: 'parti' };
+    const SING = { attendus: 'attendu', 'présents': 'présent', absents: 'absent' };
     const chip = (v, label, n, cls) => '<button class="fchip ' + cls + (ui.pf === v ? ' on' : '') + '" data-a="pf" data-v="' + v + '"><b>' + n + '</b>' + (n === 1 ? (SING[label] || label) : label) + '</button>';
     if (m === 'insc') {
-      top = '<p class="lead">Pour le ' + esc(fmtDate(s.date)) + '. Notez la réponse de chacun.' + (e.tables ? ' Avec ' + plural(e.players, 'inscrit', 'inscrits') + ' : environ ' + plural(e.tables, 'table', 'tables') + ', apportez ' + plural(e.etuis, 'étui', 'étuis') + '.' : '') + '</p>';
-      chips = chip('all', 'tous', c.yes + c.none + c.no, '') + chip('yes', 'inscrits', c.yes, 'yes') + chip('none', 'sans réponse', c.none, 'none') + chip('no', 'refus', c.no, 'no');
+      top = '<p class="lead">Pour le ' + esc(fmtDate(s.date)) + '. Notez la réponse de chacun à l\'invitation (par défaut : pas répondu).' + (e.tables ? ' Avec ' + plural(e.players, 'inscrit', 'inscrits') + ' : environ ' + plural(e.tables, 'table', 'tables') + ', apportez ' + plural(e.etuis, 'étui', 'étuis') + '.' : '') + '</p>';
+      chips = chip('all', 'tous', c.yes + c.none + c.no, '') + chip('none', 'pas répondu', c.none, 'none') + chip('yes', 'oui', c.yes, 'yes') + chip('no', 'non', c.no, 'no');
     } else if (m === 'accueil') {
-      top = planBlock();
       const wait = D.roster.filter(p => !p.archived && rsvpOf(s, p.id) === 'yes' && !isPresent(p.id) && !att(p.id).left).length;
-      chips = chip('all', 'tous', D.roster.filter(p => !p.archived && (rsvpOf(s, p.id) !== 'no' || isPresent(p.id) || att(p.id).left)).length, '') + chip('wait', 'attendus', wait, 'none') + chip('here', 'présents', c.present, 'yes') + chip('gone', 'partis', c.left, 'no');
+      top = planBlock() + (ui.pf === 'wait'
+        ? '<div class="missing on"><div><b>' + (wait ? plural(wait, 'personne attendue', 'personnes attendues') + ' pas encore ' + (wait > 1 ? 'arrivées' : 'arrivée') : 'Tous les inscrits sont arrivés') + '</b><small>Réponse oui, pas encore marquées présentes. En dessous, les absents qui n\'ont pas répondu ou ont dit non : ils peuvent venir quand même.</small></div><div class="row">' + (wait ? '<button class="btn sm" data-a="copywait">Copier les noms</button>' : '') + '<button class="btn sm" data-a="pf" data-v="all">Voir tout</button></div></div>'
+        : '<button class="missing" data-a="pf" data-v="wait"><b>' + wait + '</b><span>Qui manque encore ?<small>' + (wait ? 'Les attendus pas encore arrivés en premier, puis les autres absents' : 'Tous les inscrits sont arrivés') + '</small></span></button>');
+      chips = chip('all', 'tous', D.roster.filter(p => !p.archived).length, '') + chip('here', 'présents', c.present, 'yes') + chip('abs', 'absents', D.roster.filter(p => !p.archived && !isPresent(p.id)).length, 'no') + chip('wait', 'attendus', wait, 'none');
     } else {
-      top = '<p class="lead">La liste de diffusion, commune à toutes les séances. L\'étoile désigne le professeur : il complète une table quand il manque un joueur.</p>';
+      top = '<p class="lead">La liste de diffusion, commune à toutes les séances. Pour chaque séance, chacun a deux statuts : sa réponse à l\'invitation, et sa présence le jour même (absent par défaut). L\'étoile désigne le professeur : il complète une table quand il manque un joueur.</p>';
     }
     let tools = '';
-    if (m === 'insc') tools = '<div class="row" style="margin-top:10px"><button class="btn sm" data-a="copynone">Copier les noms sans réponse</button><button class="btn sm" data-a="allnone">Tout remettre à « ? »</button></div>';
-    if (m === 'liste') tools = '<details style="margin:10px 0 0"><summary>Coller une liste de noms</summary><textarea id="bulk" rows="6" placeholder="Un nom par ligne"></textarea><button class="btn" data-a="bulk" style="margin-top:8px">Ajouter ces noms</button></details>';
+    if (m === 'insc') tools = '<div class="row" style="margin-top:10px"><button class="btn sm pri" data-a="msg" data-v="invit">Rédiger l\'invitation</button><button class="btn sm" data-a="msg" data-v="relance">Relancer les sans-réponse</button><button class="btn sm" data-a="msg" data-v="veille">Rappel aux inscrits</button></div><div class="row" style="margin-top:6px"><button class="btn sm" data-a="copynone">Copier les noms sans réponse</button><button class="btn sm" data-a="allnone">Tout remettre à « ? »</button></div>';
+    if (m === 'liste') tools = avoidPanel() + '<details style="margin:10px 0 0"><summary>Coller une liste de noms</summary><textarea id="bulk" rows="6" placeholder="Un nom par ligne"></textarea><button class="btn" data-a="bulk" style="margin-top:8px">Ajouter ces noms</button></details>';
     const ph = m === 'accueil' ? 'Chercher un nom, ou ajouter quelqu\'un qui arrive' : 'Taper un nom pour chercher ou ajouter';
     return '<div class="sec"><h2>' + (m === 'accueil' ? 'Accueil' : m === 'insc' ? 'Inscriptions' : 'Liste des joueurs') + '</h2>' + seg + top + '</div>' +
       (chips ? '<div class="fchips">' + chips + '</div>' : '') +
       '<div class="panel"><div class="row"><input type="text" id="pname" class="grow" placeholder="' + ph + '" autocomplete="off" value="' + esc(ui.filter) + '"><button class="btn pri" data-a="add">Ajouter</button></div>' + tools + '</div>' +
+      (m === 'insc' ? msgPanel() : '') +
       '<div class="plist" id="plist">' + playersListHtml() + '</div>';
+  }
+  function avoidPanel() {
+    const act = D.roster.filter(p => !p.archived).sort((a, b) => a.name.localeCompare(b.name, 'fr'));
+    const opts = '<option value="">Choisir…</option>' + act.map(p => '<option value="' + p.id + '">' + esc(p.name) + '</option>').join('');
+    const list = (D.avoid || []).map((x, i) => '<div class="avr"><span>' + esc(nm(x[0])) + ' <span class="mute">et</span> ' + esc(nm(x[1])) + '</span><button class="x" data-a="avoiddel" data-i="' + i + '" aria-label="Retirer">✕</button></div>').join('');
+    return '<details class="avoid"' + (ui.avoidOpen ? ' open' : '') + '><summary>Ne jamais réunir à la même table' + (D.avoid && D.avoid.length ? ' (' + D.avoid.length + ')' : '') + '</summary>' +
+      '<p class="mute">Ces deux personnes ne seront jamais placées à la même table, ni comme partenaires ni comme adversaires. Cette liste n\'apparaît que dans cet onglet.</p>' +
+      '<div class="row"><select id="av1" class="grow">' + opts + '</select><select id="av2" class="grow">' + opts + '</select><button class="btn" data-a="avoidadd">Ajouter</button></div>' + list +
+      '<p class="mute" style="margin-top:8px">Par ailleurs, l\'application évite de redonner les mêmes partenaires que lors des trois séances précédentes.</p></details>';
   }
   function addPlayer(name) {
     name = name.trim();
@@ -1162,28 +1482,70 @@ h2{font-weight:700;font-size:28px}
   function arrive(p) {
     const s = cur();
     s.att[p.id] = { present: true, arr: Date.now() };
-    if (rsvpOf(s, p.id) !== 'yes') s.rsvp[p.id] = 'yes';
+    fillGap(p);
+  }
+  // Place libérée par un départ pendant le tour : la personne qui arrive la prend aussitôt
+  function fillGap(p) {
+    const c = C(), r = BR.currentRound(c);
+    if (!r) return;
+    for (const t of r.tables) {
+      if (t.closed) continue;
+      for (const k of SEATS) {
+        if (!isPresent(t.seats[k]) && SEATS.every(x => t.seats[x] !== p.id)) {
+          const old = nm(t.seats[k]);
+          BR.replaceSeat(c, t.n, k, p.id);
+          toast(p.name + ' prend la place de ' + old + ' : table ' + t.n + ', ' + SN[k] + '.');
+          return;
+        }
+      }
+    }
+  }
+  // Départ pendant un tour : on remplace aussitôt par quelqu'un qui attend, sinon par le professeur
+  function onLeave(id) {
+    const c = C(), r = BR.currentRound(c);
+    if (!r) { toast('Départ de ' + nm(id) + ' noté.'); return; }
+    const t = r.tables.find(x => !x.closed && SEATS.some(k => x.seats[k] === id));
+    if (!t) { toast('Départ de ' + nm(id) + ' noté.'); return; }
+    const k = SEATS.find(x => t.seats[x] === id);
+    const h = BR.history(c), w = BR.waiting(c);
+    const sub = w.players.slice().sort((a, b) => (h.played[a.id] || 0) - (h.played[b.id] || 0))[0] || w.teacher;
+    if (sub) { BR.replaceSeat(c, t.n, k, sub.id); toast('Départ de ' + nm(id) + ' : ' + sub.name + ' prend sa place, table ' + t.n + ', ' + SN[k] + '.'); }
+    else toast('Départ de ' + nm(id) + ' : la table ' + t.n + ' est incomplète. Personne n\'attend ; voyez l\'onglet Tour (fermer la table ou attendre une arrivée).', true);
+  }
+  function toast(msg, warn) {
+    ui.toast = { msg, warn: !!warn };
+    clearTimeout(ui.toastT);
+    ui.toastT = setTimeout(() => { ui.toast = null; const el = $('#toast'); if (el) el.remove(); }, 7000);
   }
 
-  /* ---------- Tour ---------- */
+  /* ---------- Période en cours ---------- */
+  const isRelay = r => !!(r && r.relay);
   function viewRound() {
     const c = C(), s = cur();
     const r = BR.currentRound(c);
     const now = Date.now();
+    const f = fmt();
     const auto = BR.autoBoards(c, now);
     let h = '<div class="sec">' + planBlock() + timeline();
     const nextN = s.rounds.length + 1;
-    const opts = []; for (let i = 1; i <= K(); i++) opts.push('<option value="' + i + '"' + (i === auto ? ' selected' : '') + '>' + i + ' donne' + (i > 1 ? 's' : '') + (i === auto ? ' (conseillé)' : '') + '</option>');
-    h += '<div class="go-row"><select id="bsel" aria-label="Donnes par tour">' + opts.join('') + '</select><button class="btn go" data-a="next">Lancer le tour ' + nextN + '</button></div>';
-    h += '<div class="mute">' + (r ? 'Le tour tient compte des arrivées et des départs notés à l\'accueil.' : 'Marquez les arrivées dans Joueurs, Accueil, puis lancez le premier tour.') + '</div>' +
+    const opts = []; for (let i = 1; i <= 8; i++) opts.push('<option value="' + i + '"' + (i === auto ? ' selected' : '') + '>' + i + ' donne' + (i > 1 ? 's' : '') + ' par table' + (i === auto ? ' (conseillé)' : '') + '</option>');
+    h += '<div class="go-row"><select id="bsel" aria-label="Donnes par table">' + opts.join('') + '</select><button class="btn go" data-a="next">Lancer la période ' + nextN + ' sur ' + f.nRounds + '</button></div>';
+    h += '<div class="mute">' + (r ? 'La période suivante tient compte des arrivées et des départs notés à l\'accueil.' : 'Marquez les arrivées dans Joueurs, Accueil, puis lancez la première période.') + '</div>' +
       (daysUntil(s.date) !== 0 ? '<div class="note warn" style="margin-top:10px">Cette séance n\'est pas celle d\'aujourd\'hui. Ouvrez la bonne séance dans l\'onglet Séances.</div>' : '') +
-      '<div style="margin-top:12px"><button class="btn sm noprint" data-a="salle">Afficher sur grand écran</button></div></div>';
+      '<div class="row" style="margin-top:12px"><button class="btn sm noprint" data-a="salle">Afficher sur grand écran</button>' + (s.rounds.length ? '<button class="btn sm noprint" data-a="bilan" data-id="' + s.id + '">Bilan de la séance</button>' : '') + '</div></div>';
     if (!r) {
-      return h + '<div class="empty"><svg viewBox="0 0 150 150" aria-hidden="true"><rect x="45" y="45" width="60" height="60" rx="10" fill="none" stroke="currentColor" stroke-width="3"/><rect x="58" y="12" width="34" height="22" rx="7" fill="none" stroke="currentColor" stroke-width="3"/><rect x="58" y="116" width="34" height="22" rx="7" fill="none" stroke="currentColor" stroke-width="3"/><rect x="12" y="58" width="22" height="34" rx="7" fill="none" stroke="currentColor" stroke-width="3"/><rect x="116" y="58" width="22" height="34" rx="7" fill="none" stroke="currentColor" stroke-width="3"/><path d="M75 62c5 8 12 9 12 16 0 5-4 7-8 6 1 4 2 6 4 9H67c2-3 3-5 4-9-4 1-8-1-8-6 0-7 7-8 12-16z" fill="currentColor"/></svg><div>Les tables apparaîtront ici dès le premier tour.</div></div>';
+      return h + '<div class="empty"><svg viewBox="0 0 150 150" aria-hidden="true"><rect x="45" y="45" width="60" height="60" rx="10" fill="none" stroke="currentColor" stroke-width="3"/><rect x="58" y="12" width="34" height="22" rx="7" fill="none" stroke="currentColor" stroke-width="3"/><rect x="58" y="116" width="34" height="22" rx="7" fill="none" stroke="currentColor" stroke-width="3"/><rect x="12" y="58" width="22" height="34" rx="7" fill="none" stroke="currentColor" stroke-width="3"/><rect x="116" y="58" width="22" height="34" rx="7" fill="none" stroke="currentColor" stroke-width="3"/><path d="M75 62c5 8 12 9 12 16 0 5-4 7-8 6 1 4 2 6 4 9H67c2-3 3-5 4-9-4 1-8-1-8-6 0-7 7-8 12-16z" fill="currentColor"/></svg><div>Les tables apparaîtront ici dès la première période.</div></div>';
     }
-    h += '<div class="sec"><h2>Tour ' + r.n + '</h2><p class="lead">' + plural(r.b, 'donne', 'donnes') + (r.b < K() ? ' à jouer, plus ' + (K() - r.b) + ' de réserve' : ' à jouer') + '. Début à ' + fmtT(r.startedAt) + ', <span id="rcount"></span>.</p>' +
-      '<div class="note ok">Après chaque donne, notez sur la feuille de l\'étui : contrat, entame et score.</div>' +
-      (r.stats ? '<div class="mute">Partenaires déjà rencontrés : ' + r.stats.repeatPartners + '. Adversaires déjà rencontrés : ' + r.stats.repeatOpp + '.' + (r.stats.replays ? ' <b class="red">Étuis déjà joués : ' + r.stats.replays + '.</b>' : '') + '</div>' : '') + '</div>';
+    const relay = isRelay(r);
+    h += '<div class="sec"><h2>Période ' + r.n + '</h2><p class="lead">' + plural(r.b, 'donne', 'donnes') + ' par table, à votre rythme. Début à ' + fmtT(r.startedAt) + ', <span id="rcount"></span>.</p>';
+    if (relay) {
+      const act = r.tables.filter(t => !t.closed && !t.solo);
+      h += '<div class="relay"><div class="rbig"><b>' + r.relay.count + '</b><span>étuis en circulation<small>n° ' + r.relay.base + ' à ' + r.relay.last + '</small></span></div>' +
+        '<p>Chaque table commence avec ' + plural(r.relay.k, 'étui', 'étuis') + '. <b>Après chaque donne, passez l\'étui à la table suivante</b>' + (act.length > 1 ? ' (la table ' + act[act.length - 1].n + ' passe à la table ' + act[0].n + ')' : '') + '. Une table qui attend un étui joue une donne libre avec son jeu de secours.</p>' +
+        (D.settings.prepared ? '' : (D.settings.reshuffle !== false ? '<p class="mute">À la fin de chaque période, on rebat toutes les cartes de tous les étuis : personne ne rejoue jamais une donne.</p>' : '')) + '</div>';
+    }
+    h += '<div class="note ok">Après chaque donne, notez sur la feuille rangée dans l\'étui : contrat, entame et score.</div>' +
+      (r.stats ? '<div class="mute">Partenaires déjà rencontrés : ' + r.stats.repeatPartners + '. Adversaires déjà rencontrés : ' + r.stats.repeatOpp + '.' + (r.stats.replays ? ' <b class="red">Lots déjà joués : ' + r.stats.replays + '.</b>' : '') + '</div>' : '') + '</div>';
     (r.warnings || []).forEach(w => { h += '<div class="note bad">' + esc(w) + '</div>'; });
 
     const w = BR.waiting(c);
@@ -1191,7 +1553,7 @@ h2{font-weight:700;font-size:28px}
     if (rest.length || w.teacherFree) {
       h += '<div class="note ' + (BR.canOpenTable(c) ? 'ok' : 'warn') + '"><b>' + (rest.length ? plural(rest.length, 'joueur sans table', 'joueurs sans table') : 'Le professeur est libre') + '</b>' +
         (rest.length ? ' : ' + rest.map(p => esc(p.name)).join(', ') : '') + (rest.length && w.teacherFree ? '. Le professeur est libre.' : '') +
-        (BR.canOpenTable(c) ? '<div style="margin-top:8px"><button class="btn pri" data-a="opentable">Ouvrir une table avec eux</button></div>' : '<div class="mute" style="margin-top:4px">Ils jouent au prochain tour, ou remplacent quelqu\'un qui part.</div>') + '</div>';
+        (BR.canOpenTable(c) ? '<div style="margin-top:8px"><button class="btn pri" data-a="opentable">Ouvrir une table avec eux</button></div>' : '<div class="mute" style="margin-top:4px">Ils jouent à la période suivante, ou remplacent quelqu\'un qui part.</div>') + '</div>';
     }
     let idx = 0;
     let tw = '<div class="tables">' + r.tables.map(t => tableCard(r, t, w, idx++)).join('') + '</div>';
@@ -1201,16 +1563,35 @@ h2{font-weight:700;font-size:28px}
     r.tables.filter(t => !t.closed).forEach(t => SEATS.forEach(k => rows.push({ name: nm(t.seats[k]), txt: 'table ' + t.n + ', ' + SN[k] })));
     w.players.forEach(p => rows.push({ name: p.name, txt: 'sans table' }));
     rows.sort((a, b) => a.name.localeCompare(b.name, 'fr'));
-    const prev = s.rounds.length > 1 ? s.rounds[s.rounds.length - 2] : null;
     let moves;
-    if (prev) {
-      const mv = r.tables.filter(t => !t.closed).map(t => 'Étui ' + t.set + (t.from ? ' : de la table ' + t.from + ' à la table ' + t.n : ' : nouvel étui, à poser table ' + t.n));
-      moves = '<h3 style="margin-top:14px">Étuis à déplacer</h3><div>' + mv.join('<br>') + '</div>';
-    } else moves = '<div class="mute" style="margin-top:12px">Premier tour : posez l\'étui indiqué sur chaque table.</div>';
+    if (relay) {
+      moves = '<h3 style="margin-top:14px">Étuis de départ</h3><div class="dist">' + r.tables.filter(t => !t.closed).map(t => '<div><b>Table ' + t.n + '</b> : ' + (t.own || []).map(n => 'étui ' + n).join(', ') + (t.solo ? ' (hors relais)' : ', puis passe à la table ' + nextActive(r, t)) + '</div>').join('') + '</div>';
+    } else {
+      const prev = s.rounds.length > 1 ? s.rounds[s.rounds.length - 2] : null;
+      moves = prev ? '<h3 style="margin-top:14px">Lots d\'étuis à déplacer</h3><div>' + r.tables.filter(t => !t.closed).map(t => 'Lot ' + t.set + (t.from ? ' : de la table ' + t.from + ' à la table ' + t.n : ' : nouveau lot, à poser table ' + t.n)).join('<br>') + '</div>' : '';
+    }
     const annc = '<div class="panel"><details open><summary>Qui va où ? (à annoncer)</summary><div style="columns:2 230px">' + rows.map(x => '<div>' + esc(x.name) + ' : <b>' + esc(x.txt) + '</b></div>').join('') + '</div>' + moves + '<button class="btn sm noprint" style="margin-top:10px" data-a="print">Imprimer</button></details></div>';
     return '<div class="split"><div class="side">' + h + '</div><div class="tw">' + tw + '</div><div class="annc">' + annc + '</div></div>';
   }
+  // Table suivante dans le relais (on saute les tables fermées et la table hors relais)
+  function nextActive(r, t) {
+    const act = r.tables.filter(x => !x.closed && !x.solo).map(x => x.n);
+    if (act.length < 2) return t.n;
+    const i = act.indexOf(t.n);
+    return act[(i + 1) % act.length];
+  }
+  function prevActive(r, t) {
+    const act = r.tables.filter(x => !x.closed && !x.solo).map(x => x.n);
+    const i = act.indexOf(t.n);
+    return act[(i - 1 + act.length) % act.length];
+  }
 
+  const ROLES = { D: 'Déclarant', M: 'Mort', L: 'Entame', F: 'Défense' };
+  // Pour un étui préparé : qui déclare, qui entame, qui fait le mort
+  function roleSeats(bn, kk) {
+    const d = BR.designated(bn, kk || 4), i = SEATS.indexOf(d);
+    return { D: d, L: SEATS[(i + 1) % 4], M: SEATS[(i + 2) % 4], F: SEATS[(i + 3) % 4] };
+  }
   function alreadyDealt(r, bn) {
     for (const q of cur().rounds) {
       if (q === r) break;
@@ -1219,8 +1600,10 @@ h2{font-weight:700;font-size:28px}
     return false;
   }
   function tableCard(r, t, w, i) {
+    const relay = isRelay(r);
+    const kk = relay ? 4 : sessK(cur());
     const cands = w.players.concat(w.teacher ? [w.teacher] : []);
-    let h = '<div class="tcard' + (t.closed ? ' closed' : '') + (ui.fresh ? ' deal' : '') + '" style="--i:' + Math.min(i, 10) + ';--tc:' + tcol(t.n) + '"><div class="felt"><div class="tag"><b>Étui ' + t.set + '</b>' + (t.late ? 'ajouté en cours de tour' : t.closed ? 'fermée' : '') + '</div><div class="seats">';
+    let h = '<div class="tcard' + (t.closed ? ' closed' : '') + (ui.fresh ? ' deal' : '') + '" style="--i:' + Math.min(i, 10) + ';--tc:' + tcol(t.n) + '"><div class="felt"><div class="tag"><b>' + (relay ? 'Étuis ' + (t.own || []).join(' et ') : 'Lot ' + t.set) + '</b>' + (t.late ? 'ajoutée en cours de période' : t.closed ? 'fermée' : '') + '</div><div class="seats">';
     SEATS.forEach(k => {
       const p = getP(t.seats[k]);
       const gone = p && !isPresent(p.id);
@@ -1232,7 +1615,7 @@ h2{font-weight:700;font-size:28px}
       SEATS.forEach(k => {
         const p = getP(t.seats[k]);
         if (p && !isPresent(p.id)) {
-          fix += '<div class="note bad"><b>' + esc(p.name) + '</b> est parti (' + SN[k] + '). ' +
+          fix += '<div class="note bad"><b>' + esc(p.name) + '</b> a quitté la table (' + SN[k] + '). ' +
             (cands.length ? 'Remplaçant :<div class="row" style="margin-top:6px"><select id="rep-' + t.n + '-' + k + '" class="grow">' + cands.map(c => '<option value="' + c.id + '">' + esc(c.name) + (c.teacher ? ' (professeur)' : '') + '</option>').join('') + '</select><button class="btn sm pri" data-a="replace" data-t="' + t.n + '" data-s="' + k + '">Remplacer</button></div>' : 'Personne n\'est disponible pour le remplacer.') + '</div>';
         }
       });
@@ -1240,21 +1623,29 @@ h2{font-weight:700;font-size:28px}
       if (gone && !cands.length) fix += '<div style="margin-top:8px"><button class="btn sm danger" data-a="dissolve" data-t="' + t.n + '">Fermer cette table</button></div>';
     }
     if (fix) h += '<div class="fix">' + fix + '</div>';
-    if (t.from) h += '<div class="from">Étui reçu de la table ' + t.from + '</div>';
+    if (relay && !t.closed) {
+      h += '<div class="pass">' + (t.solo ? 'Table hors relais : gardez vos étuis.' : 'Après chaque donne, passez l\'étui à la <b>table ' + nextActive(r, t) + '</b>. Vous recevez ceux de la table ' + prevActive(r, t) + '.') + '</div>';
+    } else if (t.from) h += '<div class="from">Lot reçu de la table ' + t.from + '</div>';
     h += '<div class="boards">';
-    t.boards.forEach(bn => {
-      const b = BR.boardInfo(bn), des = BR.designated(bn, K());
-      h += '<div class="brow">' + miniBoard(b) + '<div class="info"><b>Donne ' + bn + '</b> <small>donneur ' + SN[b.dealer].toLowerCase() + ', vulnérable : ' + vulName(b.vul) + '</small><br>' +
-        (D.settings.prepared
-          ? '<small>Main prévue : ' + SN[des] + ', ' + esc(nm(t.seats[des])) + '</small>'
-          : (alreadyDealt(r, bn)
-            ? '<small>Déjà distribuée : jouez-la telle quelle, sans rebattre.</small>'
-            : '<small>À battre et distribuer : donneur ' + SN[b.dealer] + ', ' + esc(nm(t.seats[b.dealer])) + '.</small>')) + '</div></div>';
+    t.boards.forEach((bn, j) => {
+      const b = BR.boardInfo(bn);
+      const own = relay ? (t.own || []).indexOf(bn) >= 0 : !alreadyDealt(r, bn);
+      let line;
+      if (D.settings.prepared) { const rs = roleSeats(bn, kk); line = '<small class="roles"><span class="rl rD">Déclarant</span> ' + SN[rs.D] + ', ' + esc(nm(t.seats[rs.D])) + ' <span class="rl rL">Entame</span> ' + SN[rs.L] + ', ' + esc(nm(t.seats[rs.L])) + ' <span class="rl rM">Mort</span> ' + SN[rs.M] + '</small>'; }
+      else if (own) line = '<small>' + (relay ? 'Votre étui de départ : battez et distribuez' : 'À battre et distribuer') + ', donneur ' + SN[b.dealer] + ', ' + esc(nm(t.seats[b.dealer])) + '.</small>';
+      else line = '<small>' + (relay ? 'Arrive de la table ' + originTable(r, bn) + ' : jouez la donne telle quelle.' : 'Déjà distribuée : jouez-la telle quelle, sans rebattre.') + '</small>';
+      h += '<div class="brow">' + (relay ? '<span class="ord">' + (j + 1) + '</span>' : '') + miniBoard(b) + '<div class="info"><b>Étui ' + bn + '</b> <small>donneur ' + SN[b.dealer].toLowerCase() + ', vulnérable : ' + vulName(b.vul) + '</small><br>' + line + '</div></div>';
     });
     h += '</div>';
-    const bonus = BR.boardsOfSet(t.set, K()).filter(n => t.boards.indexOf(n) < 0);
-    if (bonus.length) h += '<div class="buf">Donne de réserve si vous finissez en avance : ' + bonus.map(bn => '<span class="bchip">' + bn + '</span>').join('') + '</div>';
+    if (!relay) {
+      const bonus = BR.boardsOfSet(t.set, kk).filter(n => t.boards.indexOf(n) < 0);
+      if (bonus.length) h += '<div class="buf">Étui de réserve si vous finissez en avance : ' + bonus.map(bn => '<span class="bchip">' + bn + '</span>').join('') + '</div>';
+    } else if (!t.closed) h += '<div class="buf">En attente d\'un étui ? Jouez une donne libre avec le jeu de secours de la table.</div>';
     return h + '</div>';
+  }
+  function originTable(r, bn) {
+    const t = r.tables.find(x => (x.own || []).indexOf(bn) >= 0);
+    return t ? t.n : '?';
   }
   function miniBoard(b) {
     return '<span class="mb' + (b.vulNS ? ' vns' : '') + (b.vulEW ? ' veo' : '') + '"><i class="d' + b.dealer + '"></i>' + b.n + '</span>';
@@ -1262,52 +1653,162 @@ h2{font-weight:700;font-size:28px}
 
   /* ---------- Étuis et feuilles ---------- */
   function sheetRows() {
-    const s = cur();
-    const mins = (sessMs(s, s.end) - sessMs(s, s.start)) / 60000;
-    return Math.max(5, Math.min(9, Math.ceil(mins / Math.max(10, D.settings.roundMin))));
+    const f = fmt(), k = Math.max(1, D.settings.perTable || 2);
+    const perPeriod = Math.ceil(4 / k) + 1;
+    const fresh = D.settings.prepared || D.settings.reshuffle === false;
+    return Math.min(9, fresh ? perPeriod + 1 : perPeriod * f.nRounds);
   }
-  function sheetHtml(set) {
-    const s = cur(), n = sheetRows();
-    let h = '<section class="sheet-p"><div class="sp-head"><div><b>Étui ' + set + '</b><span>Bridge Relax, ' + esc(fmtDate(s.date)) + '</span></div><div class="sp-tip">Notez chaque donne jouée : une ligne par table. Score : seulement dans la colonne du camp qui marque.</div></div>';
-    BR.boardsOfSet(set, K()).forEach((bn, i) => {
-      const b = BR.boardInfo(bn);
-      h += '<div class="sp-board"><div class="sp-bt"><span class="sp-n' + (b.vulNS ? ' vns' : '') + (b.vulEW ? ' veo' : '') + '">' + bn + '</span>Donne ' + bn + ' <small>Donneur : ' + SN[b.dealer] + '. Vulnérable : ' + vulName(b.vul) + '.' + (D.settings.prepared ? ' Main prévue : ' + SN[BR.designated(bn, K())] + '.' : '') + (i >= K() - 1 && K() > 1 ? ' Donne de réserve.' : '') + '</small></div>' +
-        '<table class="sp-t"><thead><tr><th class="w1">Table</th><th>Nord-Sud</th><th>Est-Ouest</th><th class="w2">Contrat</th><th class="w1">Décl.</th><th class="w2">Entame</th><th class="w1">Levées</th><th class="w2">Score NS</th><th class="w2">Score EO</th></tr></thead><tbody>' +
-        '<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>'.repeat(n) + '</tbody></table></div>';
-    });
-    return h + '</section>';
+  function sheetHtml(bn) {
+    const s = cur(), n = sheetRows(), b = BR.boardInfo(bn);
+    const fresh = D.settings.prepared || D.settings.reshuffle === false;
+    return '<div class="sp-board"><div class="sp-bt"><span class="sp-n' + (b.vulNS ? ' vns' : '') + (b.vulEW ? ' veo' : '') + '">' + bn + '</span>Étui ' + bn + ' <small>Donneur : ' + SN[b.dealer] + '. Vulnérable : ' + vulName(b.vul) + '.' + (D.settings.prepared ? ' Déclarant prévu : ' + SN[roleSeats(bn).D] + ', entame : ' + SN[roleSeats(bn).L] + '.' : '') + '</small><span class="sp-d">Bridge Relax, ' + esc(fmtDate(s.date, { day: 'numeric', month: 'long' })) + '</span></div>' +
+      '<table class="sp-t"><thead><tr>' + (fresh ? '' : '<th class="w0">Pér.</th>') + '<th class="w1">Table</th><th>Nord-Sud</th><th>Est-Ouest</th><th class="w2">Contrat</th><th class="w1">Décl.</th><th class="w2">Entame</th><th class="w1">Levées</th><th class="w2">Score NS</th><th class="w2">Score EO</th></tr></thead><tbody>' +
+      ('<tr>' + (fresh ? '' : '<td></td>') + '<td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>').repeat(n) + '</tbody></table></div>';
   }
   function viewBoards() {
-    const e = expected(cur());
-    const nSets = D.settings.bankSets;
-    let h = '<div class="sec"><h2>Étuis</h2><p class="lead">' + (D.settings.prepared
-      ? 'Mode donnes préparées. À chaque donne, un siège est la « main prévue » : composez la donne pour que sa paire ait le contrat (environ 24 à 27 points, une belle couleur, une petite difficulté de jeu). Le siège change d\'une donne à l\'autre, pour que chacun joue des contrats.'
-      : 'Les étuis sont numérotés et vides au départ. La première table qui reçoit un étui bat et distribue ses donnes, puis l\'étui passe à une autre table : personne ne rejoue une donne déjà vue.') + ' Chaque étui contient ' + K() + ' donnes, dont une de réserve.</p>' +
-      (e.tables ? '<div class="note ok">Pour ' + plural(e.players, 'inscrit', 'inscrits') + ' : environ ' + plural(e.tables, 'table', 'tables') + '. Apportez les étuis 1 à ' + e.etuis + ', avec leur feuille.</div>' : '') +
-      '<div class="row"><button class="btn pri" data-a="printsheets">Imprimer les feuilles d\'étui (' + nSets + ')</button></div>' +
-      '<p class="mute">Une feuille A4 par étui, rangée dedans. Chaque table y note le contrat, l\'entame et le score. Les scores ne sont pas saisis dans l\'application.</p>' +
+    const s = cur(), e = expected(s), f = fmt(s);
+    const k = e.k;
+    const r = BR.currentRound(C());
+    const T = (r && r.relay) ? r.tables.filter(t => !t.closed && !t.solo).length : e.tables;
+    const circ = (r && r.relay) ? r.relay.count : e.circ;
+    const total = Math.max(e.etuis, r && r.relay ? r.relay.last : 0);
+    const upto = Math.min(ui.printTo || total || k * 6, 200);
+    let h = '<div class="sec"><h2>Étuis</h2>' +
+      '<div class="relay"><div class="rbig"><b>' + (circ || '–') + '</b><span>étuis en circulation' + (circ ? '<small>n° ' + (r && r.relay ? r.relay.base + ' à ' + r.relay.last : '1 à ' + circ) + (r && r.relay ? ', période ' + r.n : ', pour ' + plural(T, 'table', 'tables')) + '</small>' : '<small>marquez les inscriptions pour le calcul</small>') + '</span></div>' +
+      '<p>Chaque table commence avec ' + plural(k, 'étui', 'étuis') + '. Les joueurs restent à leur table pendant toute la période ; <b>après chaque donne, l\'étui passe à la table suivante</b>. Ainsi, personne ne joue deux fois le même étui dans une période. Entre deux périodes, les joueurs changent de table et de partenaire.</p>' +
+      (D.settings.prepared
+        ? '<p><b>Donnes préparées :</b> chaque période utilise de nouveaux étuis. Pour ' + plural(f.nRounds, 'période', 'périodes') + ' et environ ' + plural(T, 'table', 'tables') + ', préparez les étuis 1 à ' + e.etuis + '.</p>'
+        : (D.settings.reshuffle !== false
+          ? '<p><b>Donnes non préparées :</b> au début de chaque période, chaque table bat et distribue ses étuis de départ. À la fin de la période, on rebat toutes les cartes : personne ne rejouera jamais une donne. Les mêmes étuis 1 à ' + circ + ' servent à chaque période.</p>'
+          : '<p><b>Donnes non préparées, sans rebattre :</b> chaque période utilise de nouveaux étuis (1 à ' + e.etuis + ' au total).</p>')) +
+      '<p class="mute">Prévoyez aussi un jeu de cartes de secours par table : une table qui attend un étui joue une donne libre en attendant.</p></div>';
+    if (total > D.settings.stock) h += '<div class="note bad">Il faut ' + total + ' étuis, vous en avez ' + D.settings.stock + ' (Réglages). Mettez 1 étui par table au départ, ou rebattez les cartes à chaque période.</div>';
+    // Plan de départ de la période en cours, ou plan prévu
+    const plan = r && r.relay ? r.tables.filter(t => !t.closed) : Array.from({ length: T }, (_, i) => ({ n: i + 1, own: Array.from({ length: k }, (_, j) => i * k + j + 1) }));
+    if (plan.length) h += '<div class="panel"><h3>' + (r && r.relay ? 'Étuis de départ, période ' + r.n : 'Étuis de départ prévus') + '</h3><div class="dgrid">' + plan.map(t => '<div class="dcell" style="--tc:' + tcol(t.n) + '"><b>Table ' + t.n + '</b><span>' + (t.own || []).map(n => '<i>' + n + '</i>').join('') + '</span><small>' + (t.solo ? 'hors relais' : 'passe à la table ' + (r && r.relay ? nextActive(r, t) : (t.n % plan.length) + 1)) + '</small></div>').join('') + '</div></div>';
+    h += '<div class="panel"><h3>Feuilles d\'étui</h3><div class="row"><label class="f" style="margin:0">Imprimer les feuilles des étuis 1 à</label><input type="number" min="1" max="200" value="' + upto + '" data-f="printto" style="width:90px"><button class="btn pri" data-a="printsheets">Imprimer (' + Math.ceil(upto / 3) + ' pages)</button></div>' +
+      '<p class="mute">Trois feuilles par page A4, à découper et à glisser chacune dans son étui. Chaque table y note le contrat, l\'entame et le score. Les scores ne sont pas saisis dans l\'application.</p>' +
       '<div class="legend"><span class="mb vns" style="display:flex">9</span>Bords rouges : camp vulnérable. Point doré : donneur.</div></div>';
-    h += '<div class="sets">';
-    for (let s = 1; s <= nSets; s++) {
-      h += '<div class="setcard"><h3>Étui ' + s + '</h3>' + BR.boardsOfSet(s, K()).map((bn, i) => {
-        const b = BR.boardInfo(bn);
-        return '<div class="brow" style="align-items:flex-start">' + miniBoard(b) + '<div class="info"><b>Donne ' + bn + '</b> <small>donneur ' + SN[b.dealer].toLowerCase() + ', vulnérable : ' + vulName(b.vul) + '</small><br>' + (D.settings.prepared ? 'Main prévue : <b>' + SN[BR.designated(bn, K())] + '</b>' : '') + (i >= K() - 1 ? ' <span class="pill">réserve</span>' : '') +
-          (D.settings.prepared ? '<input type="text" data-f="note" data-b="' + bn + '" placeholder="Thème ou idée de la donne" value="' + esc(D.notes[bn] || '') + '">' : '') + '</div></div>';
-      }).join('') + '</div>';
+    if (D.settings.prepared) {
+      h += '<div class="panel prepbox"><h3>Préparer les donnes</h3><p class="mute">Pour chaque étui : le déclarant prévu, qui entame et qui fait le mort. L\'application place les joueurs pour que chacun soit tour à tour déclarant, mort, à l\'entame et en défense. Composez chaque donne pour que la paire du déclarant joue le contrat (environ 24 à 27 points, une belle couleur, une petite difficulté de jeu ou d\'entame).</p><div class="row"><button class="btn pri" data-a="printprep">Imprimer la fiche de préparation</button>' + (D.settings.prepLink ? '<a class="btn" target="_blank" rel="noopener" href="' + esc(D.settings.prepLink) + '">Ouvrir l\'application de préparation</a>' : '') + '</div></div>';
+      h += '<div class="sets">';
+      const per = Math.max(1, e.circ || k * Math.max(1, T));
+      for (let p = 0; p * per < upto; p++) {
+        h += '<div class="setcard"><h3>Période ' + (p + 1) + ' <small class="mute">étuis ' + (p * per + 1) + ' à ' + Math.min(upto, (p + 1) * per) + '</small></h3>';
+        for (let bn = p * per + 1; bn <= Math.min(upto, (p + 1) * per); bn++) {
+          const b = BR.boardInfo(bn), rs = roleSeats(bn);
+          h += '<div class="brow" style="align-items:flex-start">' + miniBoard(b) + '<div class="info"><b>Étui ' + bn + '</b> <small>donneur ' + SN[b.dealer].toLowerCase() + ', vulnérable : ' + vulName(b.vul) + '</small><br><span class="rl rD">Déclarant</span> ' + SN[rs.D] + ' <span class="rl rL">Entame</span> ' + SN[rs.L] + ' <span class="rl rM">Mort</span> ' + SN[rs.M] +
+            '<div class="prepf"><input type="text" data-f="pc" data-b="' + bn + '" placeholder="Contrat visé, joué par ' + SN[rs.D] + ' (ex. 4♠)" value="' + esc((D.prep && D.prep[bn]) || '') + '"><input type="text" data-f="note" data-b="' + bn + '" placeholder="Thème (ex. impasse, entame sous l\'as, affranchissement)" value="' + esc(D.notes[bn] || '') + '"></div></div></div>';
+        }
+        h += '</div>';
+      }
+      h += '</div>';
     }
-    h += '</div>';
     let sh = '';
-    for (let s = 1; s <= nSets; s++) sh += sheetHtml(s);
-    return h + '<div class="sheets">' + sh + '</div>';
+    for (let bn = 1; bn <= upto; bn++) sh += (bn % 3 === 1 ? '<section class="sheet-p">' : '') + sheetHtml(bn) + (bn % 3 === 0 || bn === upto ? '</section>' : '');
+    let pr = '';
+    if (D.settings.prepared) {
+      pr = '<div class="prepsheet"><h2>Bridge Relax, ' + esc(fmtDate(s.date)) + ' : fiche de préparation des étuis</h2><p>Composez chaque donne pour que la paire du déclarant joue le contrat ; l\'entame part de la main indiquée.</p><table><thead><tr><th>Étui</th><th>Donneur</th><th>Vulnérable</th><th>Déclarant</th><th>Entame</th><th>Mort</th><th>Contrat visé</th><th>Thème</th></tr></thead><tbody>';
+      for (let bn = 1; bn <= upto; bn++) { const b = BR.boardInfo(bn), rs = roleSeats(bn); pr += '<tr><td><b>' + bn + '</b></td><td>' + SN[b.dealer] + '</td><td>' + vulName(b.vul) + '</td><td><b>' + SN[rs.D] + '</b></td><td>' + SN[rs.L] + '</td><td>' + SN[rs.M] + '</td><td>' + esc((D.prep && D.prep[bn]) || '') + '</td><td>' + esc(D.notes[bn] || '') + '</td></tr>'; }
+      pr += '</tbody></table></div>';
+    }
+    return h + '<div class="sheets">' + sh + '</div>' + pr;
+  }
+
+  /* ---------- Bilan de la séance ---------- */
+  function viewBilan() {
+    const s = D.sessions.find(x => x.id === ui.bilanId) || cur();
+    const A = id => s.att[id] || {};
+    const people = D.roster.filter(p => A(p.id).arr || A(p.id).present).sort((a, b) => a.name.localeCompare(b.name, 'fr'));
+    const ouiAbs = D.roster.filter(p => !p.archived && rsvpOf(s, p.id) === 'yes' && !A(p.id).arr).sort((a, b) => a.name.localeCompare(b.name, 'fr'));
+    const sansOui = people.filter(p => rsvpOf(s, p.id) !== 'yes');
+    const partis = people.filter(p => A(p.id).left && !A(p.id).present);
+    const boards = new Set(), lots = new Set(); let donnes = 0;
+    s.rounds.forEach(r => r.tables.forEach(t => { if (t.closed) return; t.boards.forEach(b => boards.add(b)); lots.add(t.set); donnes += t.boards.length; }));
+    const names = l => l.length ? l.map(p => esc(p.name)).join(', ') : '<span class="mute">personne</span>';
+    let h = '<div class="sec"><button class="btn sm" data-a="tab" data-v="seances">‹ Séances</button><h2 style="margin-top:12px">Bilan du ' + esc(fmtDate(s.date)) + '</h2></div>' +
+      '<div class="kpis"><div><b>' + people.length + '</b>présents</div><div><b>' + s.rounds.length + '</b>' + (s.rounds.length > 1 ? 'périodes jouées' : 'période jouée') + '</div><div><b>' + boards.size + '</b>étuis utilisés</div><div><b>' + (Math.max(0, ...s.rounds.map(r => r.relay ? r.relay.count : 0)) || lots.size) + '</b>étuis en circulation (au plus)</div></div>' +
+      '<div class="cols2"><div class="panel"><h3>Ont dit oui mais ne sont pas venus <span class="cnt1">' + ouiAbs.length + '</span></h3><p>' + names(ouiAbs) + '</p></div>' +
+      '<div class="panel"><h3>Venus sans avoir dit oui <span class="cnt1">' + sansOui.length + '</span></h3><p>' + (sansOui.length ? sansOui.map(p => esc(p.name) + ' <small class="mute">(' + (rsvpOf(s, p.id) === 'no' ? 'avait dit non' : 'pas répondu') + ')</small>').join(', ') : '<span class="mute">personne</span>') + '</p></div>' +
+      '<div class="panel"><h3>Partis avant la fin <span class="cnt1">' + partis.length + '</span></h3><p>' + (partis.length ? partis.map(p => esc(p.name) + ' <small class="mute">(' + fmtT(A(p.id).left) + ')</small>').join(', ') : '<span class="mute">personne</span>') + '</p></div>' +
+      '<div class="panel"><h3>Présents</h3><p>' + names(people) + '</p></div></div>';
+    if (s.rounds.length) {
+      const cell = (r, id) => {
+        for (const t of r.tables) {
+          if (t.closed) continue;
+          const q = t.seats, k = SEATS.find(x => q[x] === id);
+          if (k) { const pt = q[{ N: 'S', S: 'N', E: 'O', O: 'E' }[k]]; return '<b>' + esc(nm(pt)) + '</b><small>table ' + t.n + '</small>'; }
+          if ((t.extra || []).indexOf(id) >= 0) return '<span class="mute">remplacé</span>';
+        }
+        return (r.rest || []).indexOf(id) >= 0 ? '<span class="mute">repos</span>' : '<span class="mute">·</span>';
+      };
+      h += '<div class="panel"><h3>Qui a joué avec qui</h3><p class="mute">Le partenaire de chacun, période par période.</p><div class="tscroll"><table class="who"><thead><tr><th>Joueur</th>' + s.rounds.map(r => '<th>Période ' + r.n + '</th>').join('') + '</tr></thead><tbody>' +
+        people.map(p => '<tr><td>' + esc(p.name) + '</td>' + s.rounds.map(r => '<td>' + cell(r, p.id) + '</td>').join('') + '</tr>').join('') + '</tbody></table></div></div>';
+    }
+    if (D.settings.prepared && s.rounds.length) {
+      const kk = sessK(s), cnt = {};
+      s.rounds.forEach(r => r.tables.forEach(t => { if (t.closed) return; t.boards.forEach(bn => { const dz = BR.designated(bn, kk); SEATS.forEach(x => { const id = t.seats[x]; cnt[id] = cnt[id] || { D: 0, M: 0, L: 0, F: 0 }; cnt[id][BR.roleOf(x, dz)]++; }); }); }));
+      h += '<div class="panel"><h3>Rôles joués (donnes préparées)</h3><div class="tscroll"><table class="who"><thead><tr><th>Joueur</th><th>Déclarant</th><th>Mort</th><th>Entame</th><th>Défense</th></tr></thead><tbody>' +
+        people.filter(p => cnt[p.id]).map(p => { const c = cnt[p.id]; const z = v => v ? v : '<b class="red">0</b>'; return '<tr><td>' + esc(p.name) + '</td><td>' + z(c.D) + '</td><td>' + z(c.M) + '</td><td>' + z(c.L) + '</td><td>' + z(c.F) + '</td></tr>'; }).join('') + '</tbody></table></div></div>';
+    }
+    h += '<div class="row noprint"><button class="btn" data-a="print">Imprimer le bilan</button><button class="btn" data-a="copybilan">Copier le résumé</button></div>';
+    return h;
+  }
+  function bilanText() {
+    const s = D.sessions.find(x => x.id === ui.bilanId) || cur();
+    const A = id => s.att[id] || {};
+    const people = D.roster.filter(p => A(p.id).arr || A(p.id).present);
+    const ouiAbs = D.roster.filter(p => !p.archived && rsvpOf(s, p.id) === 'yes' && !A(p.id).arr).map(p => p.name);
+    return 'Bridge Relax du ' + fmtDate(s.date) + ' : ' + people.length + ' présents, ' + s.rounds.length + ' périodes jouées.' + (ouiAbs.length ? ' Inscrits absents : ' + ouiAbs.join(', ') + '.' : '');
+  }
+
+  /* ---------- Messages ---------- */
+  function msgText(type) {
+    const s = cur(), d = fmtDate(s.date), h1 = s.start.replace(':', 'h').replace('h00', 'h'), h2 = s.end.replace(':', 'h').replace('h00', 'h');
+    const f = fmt(), prof = D.roster.find(p => p.teacher && !p.archived);
+    const sign = D.settings.sign ? '\n' + D.settings.sign : '';
+    const c = counts(s);
+    if (type === 'relance') {
+      const l = D.roster.filter(p => !p.archived && !p.teacher && rsvpOf(s, p.id) === 'none').map(p => p.name.split(' ')[0]).sort((a, b) => a.localeCompare(b, 'fr'));
+      return 'Bonjour ' + (l.length ? l.join(', ') : 'à tous') + ',\n\nPetit rappel : Bridge Relax le ' + d + ', de ' + h1 + ' à ' + h2 + '.\nJe n\'ai pas encore ta réponse : viens-tu ? Un simple oui ou non me suffit, pour que je prépare les tables.\n\nMerci !' + sign;
+    }
+    if (type === 'veille') {
+      const dd = daysUntil(s.date);
+      return 'Bonjour à tous,\n\nRappel : Bridge Relax ' + (dd === 1 ? 'demain, ' : 'le ') + d + ', de ' + h1 + ' à ' + h2 + '.\nNous sommes déjà ' + c.yes + ' inscrits. Merci d\'arriver quelques minutes avant ' + h1 + ' pour que les tables soient prêtes à l\'heure.\nUn empêchement ? Prévenez-moi, cela m\'aide à préparer les tables.\n\nÀ ' + (dd === 1 ? 'demain' : 'bientôt') + ' !' + sign;
+    }
+    return 'Bonjour à tous,\n\nProchain Bridge Relax le ' + d + ', de ' + h1 + ' à ' + h2 + '.\n' + f.nRounds + ' périodes d\'environ ' + (f.dur === 60 ? 'une heure' : f.dur + ' minutes') + ', avec un nouveau partenaire à chaque période.' + (D.settings.prepared ? ' Donnes préparées : chacun jouera des contrats, entamera, fera le mort et défendra.' : '') + (prof ? ' ' + prof.name + ' sera là pour répondre à vos questions.' : '') + ' Tous niveaux bienvenus.\n\nMerci de me répondre dès que possible, oui ou non, pour que je prépare les tables.\n\nÀ bientôt !' + sign;
+  }
+  function msgPanel() {
+    if (!ui.msg) return '';
+    const t = msgText(ui.msg), s = cur();
+    const subj = 'Bridge Relax du ' + fmtDate(s.date);
+    return '<div class="panel msgp"><h3>' + { invit: 'Invitation', relance: 'Relance des personnes sans réponse', veille: 'Rappel aux inscrits' }[ui.msg] + '</h3>' +
+      '<textarea id="msgt" rows="10">' + esc(t) + '</textarea>' +
+      '<label class="f">Signature (facultatif)</label><input type="text" data-f="sign" value="' + esc(D.settings.sign || '') + '" placeholder="Par exemple : Nathalie">' +
+      '<div class="row" style="margin-top:10px"><a class="btn pri" id="wa" target="_blank" rel="noopener" href="https://wa.me/?text=' + encodeURIComponent(t) + '">WhatsApp</a>' +
+      '<a class="btn" id="ml" href="mailto:?subject=' + encodeURIComponent(subj) + '&body=' + encodeURIComponent(t) + '">E-mail</a>' +
+      '<button class="btn" data-a="copymsg">Copier</button><button class="btn" data-a="msgclose">Fermer</button></div>' +
+      '<p class="mute">Vous pouvez modifier le texte avant de l\'envoyer.</p></div>';
   }
 
   /* ---------- Réglages ---------- */
   function viewSettings() {
     const s = D.settings;
     const num = (k, label, min, max) => '<label class="f">' + label + '</label><input type="number" inputmode="numeric" min="' + min + '" max="' + max + '" data-f="set" data-k="' + k + '" value="' + s[k] + '">';
-    return '<div class="sec"><h2>Réglages</h2></div><div class="cols2"><div class="panel"><h3>Jeu</h3><label class="f">Étuis</label><select data-f="mode"><option value="live"' + (s.prepared ? '' : ' selected') + '>Donnes non préparées : les joueurs battent et distribuent</option><option value="prep"' + (s.prepared ? ' selected' : '') + '>Donnes préparées à l\'avance (main prévue par donne)</option></select>' +
-      num('roundMin', 'Durée visée d\'un tour (minutes)', 10, 90) + num('minPerBoard', 'Minutes par donne, feuille remplie comprise', 4, 20) + num('changeMin', 'Minutes pour changer de table', 0, 10) + num('setSize', 'Donnes par étui (dont 1 de réserve)', 2, 6) + num('bankSets', 'Nombre d\'étuis disponibles', 3, 30) +
-      '<p class="mute">Le nombre de donnes par tour est calculé pour que le dernier tour se termine à l\'heure de fin.</p></div>' +
+    return '<div class="sec"><h2>Réglages</h2></div><div class="cols2">' +
+      '<div class="panel"><h3>Déroulement de l\'après-midi</h3><label class="f">Durée des périodes par défaut</label><select data-f="format">' + Object.keys(FORMATS).map(k => '<option value="' + k + '"' + ((s.format || '45') === k ? ' selected' : '') + '>' + FORMATS[k].label + (k === '45' ? ' (par défaut)' : '') + '</option>').join('') + '</select>' +
+      '<p class="mute">Par défaut : 4 périodes de 45 minutes. Chaque séance peut avoir sa propre durée (onglet Séances). De 15h à 18h30 avec 15 min de pause : 6 périodes de 30 min, 4 de 45 min ou 3 d\'1 heure.</p>' +
+      num('pauseMin', 'Pause au milieu (minutes, 0 = sans pause)', 0, 45) +
+      num('changeMin', 'Minutes pour changer de table', 0, 10) +
+      '<p class="mute">La durée exacte de chaque période est ajustée pour finir à l\'heure, pause comprise.</p></div>' +
+      '<div class="panel"><h3>Étuis</h3>' +
+      '<label class="f">Donnes</label><select data-f="mode"><option value="live"' + (s.prepared ? '' : ' selected') + '>Non préparées (par défaut) : chaque table bat et distribue ses étuis de départ</option><option value="prep"' + (s.prepared ? ' selected' : '') + '>Préparées à l\'avance : chacun déclare, entame, fait le mort et défend</option></select>' +
+      (!s.prepared ? '<label class="chk"><input type="checkbox" data-f="reshuffle"' + (s.reshuffle !== false ? ' checked' : '') + '> Rebattre toutes les cartes à la fin de chaque période (conseillé)</label><p class="mute" style="margin-top:0">Personne ne rejoue jamais une donne, et les mêmes étuis servent à chaque période.</p>' : '') +
+      (s.prepared ? '<label class="f">Adresse de l\'application qui sert à préparer les donnes (facultatif)</label><input type="text" data-f="plink" inputmode="url" placeholder="https://…" value="' + esc(s.prepLink || '') + '">' : '') +
+      '<label class="f">Étuis par table au départ de chaque période</label><select data-f="perTable"><option value="1"' + ((s.perTable || 2) === 1 ? ' selected' : '') + '>1 étui (moins d\'étuis, un peu plus d\'attente)</option><option value="2"' + ((s.perTable || 2) === 2 ? ' selected' : '') + '>2 étuis (conseillé : moins d\'attente)</option></select>' +
+      num('stock', 'Nombre d\'étuis que vous possédez', 8, 200) +
+      '<p class="mute">Étuis en circulation = nombre de tables × étuis par table. Exemple : 7 tables × 2 = 14 étuis.' + (s.prepared ? ' En donnes préparées, chaque période utilise de nouveaux étuis : 4 périodes × 14 = 56 étuis à préparer (28 avec 1 étui par table).' : '') + '</p></div>' +
+      '<div class="panel"><h3>Alerte de fin de période</h3><label class="chk"><input type="checkbox" data-f="sound"' + (s.sound ? ' checked' : '') + '> Signal sonore 5 minutes avant la fin, puis à la fin</label><p class="mute">Un message apparaît aussi à l\'écran, et l\'écran de salle clignote. Gardez l\'appareil allumé, application ouverte.</p><button class="btn sm" data-a="testsound">Essayer le son</button></div>' +
       '<div class="panel"><h3>Heures par défaut des nouvelles séances</h3><div class="row"><div class="grow"><label class="f">Début</label><input type="time" data-f="set" data-k="start" value="' + s.start + '"></div><div class="grow"><label class="f">Fin</label><input type="time" data-f="set" data-k="end" value="' + s.end + '"></div></div></div>' +
       '<div class="panel"><h3>Sauvegarde</h3><div class="row"><button class="btn" data-a="export">Exporter dans un fichier</button><label class="btn" style="margin:0">Importer un fichier<input type="file" id="imp" accept=".json,application/json" style="display:none"></label></div>' +
       '<p class="mute">Les données restent dans ce navigateur. Exportez pour les passer sur un autre appareil ou les garder en sécurité.</p></div>' +
@@ -1320,13 +1821,13 @@ h2{font-weight:700;font-size:28px}
       const p = getP(t.seats[k]);
       return '<div class="trw' + (p && p.teacher ? ' prof' : '') + '"><span class="sl">' + k + '</span><span class="tn2">' + esc(p ? p.name : '?') + '</span></div>';
     };
-    return '<div class="tile" style="--tc:' + tcol(t.n) + '"><div class="th"><b>' + t.n + '</b><span>table · étui ' + t.set + '</span></div><div class="grp">' + row('N') + row('S') + '</div><div class="grp g2">' + row('E') + row('O') + '</div></div>';
+    return '<div class="tile" style="--tc:' + tcol(t.n) + '"><div class="th"><b>' + t.n + '</b><span>table' + (t.own ? ' · étuis ' + t.own.join(', ') : (t.set ? ' · lot ' + t.set : '')) + '</span></div><div class="grp">' + row('N') + row('S') + '</div><div class="grp g2">' + row('E') + row('O') + '</div></div>';
   }
   function viewSalle() {
     const c = C();
     const r = BR.currentRound(c);
     const present = c.players.filter(p => p.present);
-    const top = '<div class="stop"><div class="sl1"><img class="logo" src="' + LOGO + '" alt=""><div><b>' + (r ? 'Tour ' + r.n : 'Bridge Relax') + '</b><span>' + (r ? plural(r.b, 'donne', 'donnes') : plural(present.length, 'joueur présent', 'joueurs présents')) + '</span></div></div><div class="scount" id="scount"></div><div class="sclock" id="sclock"></div></div>';
+    const top = '<div class="stop"><div class="sl1"><img class="logo" src="' + LOGO + '" alt=""><div><b>' + (r ? 'Période ' + r.n : 'Bridge Relax') + '</b><span>' + (r ? plural(r.b, 'donne', 'donnes') : plural(present.length, 'joueur présent', 'joueurs présents')) + '</span></div></div><div class="scount" id="scount"></div><div class="sclock" id="sclock"></div></div>';
     let body;
     if (!r) {
       body = '<div class="swait"><div>Bienvenue</div><small>Installez-vous : les tables vont être annoncées ici.</small></div>';
@@ -1357,7 +1858,7 @@ h2{font-weight:700;font-size:28px}
     ui[key] = null; return true;
   }
   function copyText(txt) {
-    const done = () => alert('Copié : ' + txt);
+    const done = () => toast('Copié. Collez-le dans WhatsApp ou dans un e-mail.') || render();
     if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(done, () => prompt('Copiez ce texte :', txt));
     else prompt('Copiez ce texte :', txt);
   }
@@ -1379,12 +1880,18 @@ h2{font-weight:700;font-size:28px}
     },
     rsvp(el) { const s = cur(), id = +el.dataset.id; s.rsvp[id] = el.dataset.v; commit(); },
     arrive(el) { const p = getP(+el.dataset.id); if (p) { arrive(p); commit(); } },
-    depart(el) { const s = cur(), id = +el.dataset.id; s.att[id] = Object.assign({}, s.att[id], { present: false, left: Date.now() }); commit(); },
+    depart(el) { const s = cur(), id = +el.dataset.id; s.att[id] = Object.assign({}, s.att[id], { present: false, left: Date.now() }); onLeave(id); commit(); },
+    toastclose() { ui.toast = null; render(); },
     copynone() {
       const s = cur();
       const l = D.roster.filter(p => !p.archived && !p.teacher && rsvpOf(s, p.id) === 'none').map(p => p.name).sort((a, b) => a.localeCompare(b, 'fr'));
       if (!l.length) { alert('Tout le monde a répondu.'); return; }
       copyText(l.join(', '));
+    },
+    copywait() {
+      const s = cur();
+      const l = D.roster.filter(p => !p.archived && rsvpOf(s, p.id) === 'yes' && !isPresent(p.id) && !att(p.id).left).map(p => p.name).sort((a, b) => a.localeCompare(b, 'fr'));
+      if (l.length) copyText(l.join(', '));
     },
     allnone() { if (confirm('Remettre toutes les réponses à « pas répondu » ?')) { cur().rsvp = {}; commit(); } },
     teach(el) { const p = getP(+el.dataset.id); if (!p) return; const v = !p.teacher; D.roster.forEach(x => { x.teacher = false; }); p.teacher = v; commit(); },
@@ -1398,6 +1905,7 @@ h2{font-weight:700;font-size:28px}
     snew() {
       const d = $('#ns-date').value || todayIso();
       const s = newSession(D, d, $('#ns-start').value || D.settings.start, $('#ns-end').value || D.settings.end);
+      s.dur = $('#ns-dur').value;
       D.cur = s.id; ui.pmode = null; commit();
     },
     sopen(el) { D.cur = +el.dataset.id; ui.pmode = null; commit(); },
@@ -1409,10 +1917,21 @@ h2{font-weight:700;font-size:28px}
       commit();
     },
     next() {
+      unlockAudio();
+      const s = cur();
       const b = +$('#bsel').value;
-      const r = BR.planRound(C(), { boards: b, now: Date.now() });
+      const c = C(), now = Date.now();
+      const slot = BR.roundSlot(c, now);
+      // Numéros des étuis : les mêmes à chaque période si l'on rebat tout, sinon de nouveaux
+      let base = 1;
+      const fresh = D.settings.prepared || D.settings.reshuffle === false;
+      const lastR = s.rounds[s.rounds.length - 1];
+      if (fresh && lastR) base = 1 + Math.max(0, ...s.rounds.map(x => x.relay ? x.relay.last : 0), ...s.rounds.flatMap(x => x.tables.flatMap(t => t.boards || [])));
+      const r = BR.planRound(c, { boards: b, now, base });
       if (r.error) { alert(r.error); return; }
-      cur().rounds.push(r); ui.fresh = true; commit(); window.scrollTo(0, 0);
+      r.endAt = now + Math.round(slot) * 60000;
+      if (r.relay && r.relay.last > (D.settings.stock || 36)) r.warnings.push('Cette période utilise les étuis ' + r.relay.base + ' à ' + r.relay.last + ' : c\'est plus que les ' + D.settings.stock + ' étuis indiqués dans les réglages.');
+      s.rounds.push(r); ui.fresh = true; commit(); window.scrollTo(0, 0);
     },
     opentable() { if (!BR.openExtraTable(C())) alert('Impossible d\'ouvrir une table.'); ui.fresh = false; commit(); },
     replace(el) {
@@ -1421,6 +1940,24 @@ h2{font-weight:700;font-size:28px}
     },
     dissolve(el) { if (confirm('Fermer cette table ?')) { BR.dissolveTable(C(), +el.dataset.t); commit(); } },
     print() { window.print(); },
+    msg(el) { ui.msg = el.dataset.v; render(); const p = $('.msgp'); if (p && p.scrollIntoView) p.scrollIntoView({ block: 'start' }); },
+    msgclose() { ui.msg = null; render(); },
+    copymsg() { copyText($('#msgt').value); },
+    avoidadd() {
+      const a = +$('#av1').value, b = +$('#av2').value;
+      if (!a || !b || a === b) { alert('Choisissez deux personnes différentes.'); return; }
+      D.avoid = D.avoid || [];
+      if (!D.avoid.some(x => (x[0] === a && x[1] === b) || (x[0] === b && x[1] === a))) D.avoid.push([a, b]);
+      ui.avoidOpen = true; commit();
+    },
+    avoiddel(el) { D.avoid.splice(+el.dataset.i, 1); ui.avoidOpen = true; commit(); },
+    bilan(el) { ui.bilanId = +el.dataset.id; ui.tab = 'bilan'; render(); window.scrollTo(0, 0); },
+    copybilan() { copyText(bilanText()); },
+    testsound() { const was = D.settings.sound; D.settings.sound = true; chime(1); D.settings.sound = was; },
+    printprep() {
+      document.body.classList.add('pprep');
+      setTimeout(() => { window.print(); setTimeout(() => document.body.classList.remove('pprep'), 800); }, 50);
+    },
     printsheets() {
       document.body.classList.add('psheets');
       setTimeout(() => { window.print(); setTimeout(() => document.body.classList.remove('psheets'), 800); }, 50);
@@ -1456,10 +1993,25 @@ h2{font-weight:700;font-size:28px}
     const el = e.target;
     if (el.id === 'pname') { ui.filter = el.value; const l = $('#plist'); if (l) l.innerHTML = playersListHtml(); }
     else if (el.dataset.f === 'note') { D.notes[el.dataset.b] = el.value; save(); }
+    else if (el.dataset.f === 'pc') { D.prep = D.prep || {}; D.prep[el.dataset.b] = el.value; save(); }
+    else if (el.dataset.f === 'plink') { D.settings.prepLink = el.value.trim(); save(); }
+    else if (el.dataset.f === 'sign' || el.id === 'msgt') {
+      if (el.dataset.f === 'sign') { D.settings.sign = el.value; save(); const t = $('#msgt'); if (t) t.value = msgText(ui.msg); }
+      const t = $('#msgt').value, s = cur();
+      const wa = $('#wa'), ml = $('#ml');
+      if (wa) wa.href = 'https://wa.me/?text=' + encodeURIComponent(t);
+      if (ml) ml.href = 'mailto:?subject=' + encodeURIComponent('Bridge Relax du ' + fmtDate(s.date)) + '&body=' + encodeURIComponent(t);
+    }
   });
   document.addEventListener('change', e => {
     const el = e.target;
-    if (el.dataset.f === 'mode') { D.settings.prepared = el.value === 'prep'; commit(); }
+    if (el.dataset.f === 'format') { D.settings.format = el.value; commit(); }
+    else if (el.dataset.f === 'reshuffle') { D.settings.reshuffle = el.checked; commit(); }
+    else if (el.dataset.f === 'perTable') { D.settings.perTable = +el.value; commit(); }
+    else if (el.dataset.f === 'sound') { D.settings.sound = el.checked; save(); unlockAudio(); }
+    else if (el.dataset.f === 'printto') { ui.printTo = Math.max(1, +el.value || 1); render(); }
+    else if (el.dataset.f === 'avoidsel') { /* choix en attente */ }
+    else if (el.dataset.f === 'mode') { D.settings.prepared = el.value === 'prep'; commit(); }
     else if (el.dataset.f === 'sess') { if (el.value) { cur()[el.dataset.k] = el.value; commit(); } }
     else if (el.dataset.f === 'set') {
       const k = el.dataset.k;
@@ -1475,7 +2027,9 @@ h2{font-weight:700;font-size:28px}
   });
 
   render();
-  setInterval(updateClock, 15000);
+  setInterval(updateClock, 5000);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) { keepAwake(); updateClock(); } });
+  document.addEventListener('click', () => { unlockAudio(); keepAwake(); }, { capture: true });
   setInterval(() => {
     if (ui.tab !== 'salle') return;
     updateClock();
