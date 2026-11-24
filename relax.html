@@ -672,6 +672,9 @@ header .logo{cursor:pointer}
 }
 @media print{body.pacc .acc .c-pm{display:none!important}body.pacc .acc .c-p{display:table-cell!important}
   body.pacc .rsvp.sm3 button:not(.on){display:none}body.pacc .rsvp.sm3{border:0}body.pacc .rsvp.sm3 button.on{background:none!important;color:#000!important;font-weight:700}}
+/* Bloc professeur, toujours en tête */
+.ghead.g-prof,.ghead-row.g-prof th{background:color-mix(in srgb,var(--brass) 22%,var(--paper));color:var(--ink)}
+.ghead.g-prof::before,.ghead-row.g-prof .ghead-t::before{content:"★ ";color:var(--brass)}
 
 </style>
 </head>
@@ -1173,9 +1176,10 @@ header .logo{cursor:pointer}
 (function () {
   'use strict';
   const LS = 'bridge-relax-v1';
-  const VERSION = '5.2';
+  const VERSION = '5.3';
   const VERSION_DATE = '24 novembre 2026';
   const NEWS = [
+    'Le professeur apparaît toujours en tête des listes',
     'Réponse Oui, ? ou Non modifiable directement dans le tableau d\'accueil',
     'Tableau d\'accueil : oui, puis pas répondu, puis non, avec la présence de chacun (imprimable)',
     '4 périodes de 45 minutes par défaut (30 min ou 1 heure au choix)',
@@ -1578,7 +1582,9 @@ header .logo{cursor:pointer}
       else if (pf === 'here') list = list.filter(p => isPresent(p.id));
     }
     const G = { yes: 0, none: 1, no: 2 };
-    if (m !== 'liste') list.sort((a, b) => G[rsvpOf(s, a.id)] - G[rsvpOf(s, b.id)] || a.name.localeCompare(b.name, 'fr'));
+    const T = p => p.teacher ? 0 : 1;
+    if (m !== 'liste') list.sort((a, b) => T(a) - T(b) || G[rsvpOf(s, a.id)] - G[rsvpOf(s, b.id)] || a.name.localeCompare(b.name, 'fr'));
+    else list.sort((a, b) => T(a) - T(b) || a.name.localeCompare(b.name, 'fr'));
     return list;
   }
   function playersListHtml() {
@@ -1592,7 +1598,8 @@ header .logo{cursor:pointer}
     return list.map(p => {
       const v = rsvpOf(s, p.id), a = s.att[p.id] || {};
       let head = '';
-      if (m !== 'liste' && v !== lastG) { lastG = v; head = '<div class="ghead g-' + v + '">' + GT[v] + ' <span>' + nG[v] + '</span></div>'; }
+      const gk = p.teacher ? 'prof' : v;
+      if (m !== 'liste' && gk !== lastG) { lastG = gk; head = p.teacher ? '<div class="ghead g-prof">Professeur</div>' : '<div class="ghead g-' + v + '">' + GT[v] + ' <span>' + list.filter(x => !x.teacher && rsvpOf(s, x.id) === v).length + '</span></div>'; }
       let right = '';
       if (m === 'insc') {
         right = '<div class="rsvp">' + [['yes', 'Oui'], ['none', '?'], ['no', 'Non']].map(x => '<button class="' + x[0] + (v === x[0] ? ' on' : '') + '" data-a="rsvp" data-id="' + p.id + '" data-v="' + x[0] + '">' + x[1] + '</button>').join('') + '</div>';
@@ -1610,12 +1617,13 @@ header .logo{cursor:pointer}
   // Tableau d'accueil : trois blocs (oui, pas répondu, non), chaque personne avec sa présence
   function accueilTable(list, s, GT) {
     let h = '<table class="acc"><thead><tr><th>Nom</th><th class="c-r">Réponse</th><th class="c-p">Présence</th><th class="c-a"><span class="sr">Action</span></th></tr></thead>';
-    ['yes', 'none', 'no'].forEach(g => {
-      const l = list.filter(p => rsvpOf(s, p.id) === g);
+    ['prof', 'yes', 'none', 'no'].forEach(gg => {
+      const l = gg === 'prof' ? list.filter(p => p.teacher) : list.filter(p => !p.teacher && rsvpOf(s, p.id) === gg);
       if (!l.length) return;
       const here = l.filter(p => isPresent(p.id)).length;
-      h += '<tbody class="grp-' + g + '"><tr class="ghead-row g-' + g + '"><th colspan="4"><span class="ghead-t">' + GT[g] + '</span> <span class="gn">' + l.length + '</span><small>' + here + ' présent' + (here > 1 ? 's' : '') + ', ' + (l.length - here) + ' absent' + (l.length - here > 1 ? 's' : '') + '</small></th></tr>';
+      h += '<tbody class="grp-' + gg + '"><tr class="ghead-row g-' + gg + '"><th colspan="4"><span class="ghead-t">' + (gg === 'prof' ? 'Professeur' : GT[gg]) + '</span>' + (gg === 'prof' ? '' : ' <span class="gn">' + l.length + '</span><small>' + here + ' présent' + (here > 1 ? 's' : '') + ', ' + (l.length - here) + ' absent' + (l.length - here > 1 ? 's' : '') + '</small>') + '</th></tr>';
       l.forEach(p => {
+        const g = rsvpOf(s, p.id);
         const a = s.att[p.id] || {};
         const pres = a.present ? '<span class="bd here">Présent</span><small>depuis ' + fmtT(a.arr) + '</small>' : '<span class="bd abs">Absent</span>' + (a.left ? '<small>parti à ' + fmtT(a.left) + '</small>' : '');
         const btn = a.present ? '<button class="btn dep" data-a="depart" data-id="' + p.id + '">Départ</button>' : '<button class="btn arr" data-a="arrive" data-id="' + p.id + '">' + (a.left ? 'Revenu' : 'Arrivé') + '</button>';
