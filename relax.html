@@ -654,6 +654,24 @@ header .logo{cursor:pointer}
   body.pacc .acc tr{break-inside:avoid}
 }
 .plist.accw{display:block!important;columns:auto!important}
+/* Réponse modifiable dans le tableau d'accueil */
+.rsvp.sm3{display:inline-flex}
+.rsvp.sm3 button{min-width:42px;min-height:42px;padding:6px 8px;font-size:14px}
+.acc .c-pm{display:none}
+.acc tr.moved td{animation:moved 2.2s ease-out}
+@keyframes moved{0%{background:color-mix(in srgb,var(--accent) 35%,transparent)}100%{background:transparent}}
+@media (prefers-reduced-motion:reduce){.acc tr.moved td{animation:none;outline:2px solid var(--accent)}}
+@media (max-width:480px){
+  .acc .c-r{display:table-cell!important}
+  .acc .c-p{display:none}
+  .acc .c-pm{display:block;margin-top:3px}
+  .acc .c-pm small{display:inline;margin-left:4px}
+  .acc .c-n b{font-size:16px}
+  .rsvp.sm3 button{min-width:38px;padding:6px 5px;font-size:13px}
+  .acc .c-a .btn{min-width:78px;font-size:15px;padding:8px 8px}
+}
+@media print{body.pacc .acc .c-pm{display:none!important}body.pacc .acc .c-p{display:table-cell!important}
+  body.pacc .rsvp.sm3 button:not(.on){display:none}body.pacc .rsvp.sm3{border:0}body.pacc .rsvp.sm3 button.on{background:none!important;color:#000!important;font-weight:700}}
 
 </style>
 </head>
@@ -1155,9 +1173,10 @@ header .logo{cursor:pointer}
 (function () {
   'use strict';
   const LS = 'bridge-relax-v1';
-  const VERSION = '5.1';
+  const VERSION = '5.2';
   const VERSION_DATE = '24 novembre 2026';
   const NEWS = [
+    'Réponse Oui, ? ou Non modifiable directement dans le tableau d\'accueil',
     'Tableau d\'accueil : oui, puis pas répondu, puis non, avec la présence de chacun (imprimable)',
     '4 périodes de 45 minutes par défaut (30 min ou 1 heure au choix)',
     'Étuis numérotés qui passent de table en table après chaque donne',
@@ -1600,7 +1619,8 @@ header .logo{cursor:pointer}
         const a = s.att[p.id] || {};
         const pres = a.present ? '<span class="bd here">Présent</span><small>depuis ' + fmtT(a.arr) + '</small>' : '<span class="bd abs">Absent</span>' + (a.left ? '<small>parti à ' + fmtT(a.left) + '</small>' : '');
         const btn = a.present ? '<button class="btn dep" data-a="depart" data-id="' + p.id + '">Départ</button>' : '<button class="btn arr" data-a="arrive" data-id="' + p.id + '">' + (a.left ? 'Revenu' : 'Arrivé') + '</button>';
-        h += '<tr class="' + (a.present ? 'is-here' : '') + '"><td class="c-n"><b>' + esc(p.name) + '</b>' + (p.teacher ? ' <span class="pill">professeur</span>' : '') + '</td><td class="c-r"><span class="bd r-' + g + '">' + { yes: 'Oui', none: 'Pas répondu', no: 'Non' }[g] + '</span></td><td class="c-p">' + pres + '</td><td class="c-a">' + btn + '</td></tr>';
+        const seg = '<div class="rsvp sm3">' + [['yes', 'Oui'], ['none', '?'], ['no', 'Non']].map(x => '<button class="' + x[0] + (g === x[0] ? ' on' : '') + '" data-a="rsvp" data-id="' + p.id + '" data-v="' + x[0] + '" aria-label="Réponse ' + (x[0] === 'none' ? 'pas répondu' : x[1].toLowerCase()) + '">' + x[1] + '</button>').join('') + '</div>';
+        h += '<tr class="' + (a.present ? 'is-here' : '') + (ui.moved === p.id ? ' moved' : '') + '"><td class="c-n"><b>' + esc(p.name) + '</b>' + (p.teacher ? ' <span class="pill">professeur</span>' : '') + '<span class="c-pm">' + pres + '</span></td><td class="c-r">' + seg + '</td><td class="c-p">' + pres + '</td><td class="c-a">' + btn + '</td></tr>';
       });
       h += '</tbody>';
     });
@@ -2056,7 +2076,17 @@ header .logo{cursor:pointer}
       $('#bulk').value.split(/\n/).map(x => x.trim()).filter(Boolean).forEach(addPlayer);
       commit();
     },
-    rsvp(el) { const s = cur(), id = +el.dataset.id; s.rsvp[id] = el.dataset.v; commit(); },
+    rsvp(el) {
+      const s = cur(), id = +el.dataset.id, v = el.dataset.v;
+      if (rsvpOf(s, id) === v) return;
+      s.rsvp[id] = v;
+      if (pmode() === 'accueil') {
+        ui.moved = id; clearTimeout(ui.movedT); ui.movedT = setTimeout(() => { ui.moved = null; const r = $('.acc tr.moved'); if (r) r.classList.remove('moved'); }, 2500);
+        toast(nm(id) + ' : ' + { yes: 'réponse oui', none: 'pas répondu', no: 'réponse non' }[v] + '.');
+      }
+      commit();
+      if (pmode() === 'accueil') { const r = $('.acc tr.moved'); if (r && r.scrollIntoView) r.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
+    },
     arrive(el) { const p = getP(+el.dataset.id); if (p) { arrive(p); commit(); } },
     depart(el) { const s = cur(), id = +el.dataset.id; s.att[id] = Object.assign({}, s.att[id], { present: false, left: Date.now() }); onLeave(id); commit(); },
     toastclose() { ui.toast = null; render(); },
