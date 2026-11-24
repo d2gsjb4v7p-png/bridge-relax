@@ -675,6 +675,22 @@ header .logo{cursor:pointer}
 /* Bloc professeur, toujours en tête */
 .ghead.g-prof,.ghead-row.g-prof th{background:color-mix(in srgb,var(--brass) 22%,var(--paper));color:var(--ink)}
 .ghead.g-prof::before,.ghead-row.g-prof .ghead-t::before{content:"★ ";color:var(--brass)}
+/* Niveaux */
+.lv{display:inline-block;border-radius:7px;padding:0 6px;font:800 11.5px/1.7 var(--sans);vertical-align:middle;color:#fff}
+.lv1{background:#0f9aa8}.lv2{background:#8a3fc7}.lvm{background:#6a7890}
+.lvsel{display:inline-flex;border:2px solid var(--line);border-radius:12px;overflow:hidden;flex:none}
+.lvsel button{border:0;background:var(--paper);color:var(--mute);font-weight:800;font-size:13px;min-width:42px;min-height:40px}
+.lvsel button+button{border-left:2px solid var(--line)}
+.lvsel button.lv1.on{background:#0f9aa8;color:#fff}.lvsel button.lv2.on{background:#8a3fc7;color:#fff}
+@media (prefers-color-scheme:dark){.lvsel button{background:var(--paper-2)}}
+.lvleg{background:var(--paper);border-radius:14px;padding:10px 12px;margin:-4px 0 12px;font-size:14px;line-height:1.9;box-shadow:var(--shadow)}
+.lvleg .lv{margin-right:4px}.lvleg .lv2{margin-left:10px}
+.lvleg small{color:var(--ink-2);line-height:1.4;display:block}
+.tag .lv{margin-left:6px}
+.side .go-row{flex-direction:column;align-items:stretch}
+.side .go-row select,.side .go-row .btn{width:100%}
+.side .go-row .btn.go{min-height:56px}
+.tag .lv{box-shadow:0 0 0 2px rgba(255,255,255,.85)}
 
 </style>
 </head>
@@ -694,6 +710,8 @@ header .logo{cursor:pointer}
   const W_R = 3000;  // rejouer une série déjà jouée
   const W_AV = 60000; // deux personnes à ne jamais réunir à la même table
   const W_PREV = 60;  // partenaires des séances précédentes (variété sur la saison)
+  const W_LP = 150;   // partenaires de niveaux différents
+  const W_LO = 30;    // adversaires de niveau différent (tables homogènes si possible)
   const W_S = 10;    // même siège qu'avant
   const W_D = 30;    // donner la main (déclarant prévu) à qui a le moins déclaré
 
@@ -768,7 +786,7 @@ header .logo{cursor:pointer}
 
   /* ---------- Historique ---------- */
   function history(state) {
-    const h = { partner: {}, opp: {}, seat: {}, seen: {}, rests: {}, lastRest: {}, played: {}, decl: {}, setUse: {}, setLast: {}, maxSet: 0, role: {}, avoid: {}, prev: state.prevPartners || {} };
+    const h = { partner: {}, opp: {}, seat: {}, seen: {}, rests: {}, lastRest: {}, played: {}, decl: {}, setUse: {}, setLast: {}, maxSet: 0, role: {}, avoid: {}, prev: state.prevPartners || {}, level: state.levels || {} };
     (state.avoid || []).forEach(x => { h.avoid[pk(x[0], x[1])] = 1; });
     state.rounds.forEach((r, ri) => {
       (r.rest || []).forEach(id => { inc(h.rests, id); h.lastRest[id] = ri; });
@@ -811,6 +829,11 @@ header .logo{cursor:pointer}
     for (let i = 0; i < 4; i++) { const s = h.seen[q[i]]; if (s && s.has(set)) c += W_R; }
     for (let i = 0; i < 4; i++) for (let j = i + 1; j < 4; j++) if (h.avoid[pk(q[i], q[j])]) c += W_AV;
     c += W_PREV * ((h.prev[pk(q[0], q[1])] || 0) + (h.prev[pk(q[2], q[3])] || 0));
+    // Niveaux : partenaires de même niveau d'abord, puis tables homogènes (niveau inconnu ou professeur : neutre)
+    const L = h.level, dif = (a, b) => L[a] && L[b] && L[a] !== L[b];
+    if (dif(q[0], q[1])) c += W_LP;
+    if (dif(q[2], q[3])) c += W_LP;
+    for (let i = 0; i < 2; i++) for (let j = 2; j < 4; j++) if (dif(q[i], q[j])) c += W_LO;
     return c;
   }
 
@@ -1176,9 +1199,10 @@ header .logo{cursor:pointer}
 (function () {
   'use strict';
   const LS = 'bridge-relax-v1';
-  const VERSION = '5.3';
+  const VERSION = '5.4';
   const VERSION_DATE = '24 novembre 2026';
   const NEWS = [
+    'Niveau par joueur (N1 débutant/intermédiaire, N2 moyen+/confirmé) et association par niveau',
     'Le professeur apparaît toujours en tête des listes',
     'Réponse Oui, ? ou Non modifiable directement dans le tableau d\'accueil',
     'Tableau d\'accueil : oui, puis pas répondu, puis non, avec la présence de chacun (imprimable)',
@@ -1253,6 +1277,8 @@ header .logo{cursor:pointer}
     '60': { label: '1 heure', dur: 60, kmax: 7 }
   };
   const durLabel = k => (FORMATS[k] || FORMATS['45']).label;
+  const LVL = { 1: 'Débutant ou intermédiaire', 2: 'Moyen+ ou confirmé' };
+  const lvlChip = p => p.level ? '<span class="lv lv' + p.level + '" title="' + LVL[p.level] + '">N' + p.level + '</span>' : '';
   const ui = { cover: true, tab: 'tour', filter: '', fresh: false, salleView: 'noms', auto: true, tick: 0, pmode: null, pf: 'all', delId: null, delS: null };
   function save() { try { localStorage.setItem(LS, JSON.stringify(D)); } catch (e) { /* ignore */ } }
   function commit() { save(); render(); }
@@ -1296,6 +1322,7 @@ header .logo{cursor:pointer}
     const s = cur();
     return {
       avoid: D.avoid || [], prevPartners: prevPartners(s),
+      levels: D.settings.levelMatch === false ? {} : D.roster.reduce((m, p) => { if (p.level && !p.teacher) m[p.id] = p.level; return m; }, {}),
       settings: settingsFor(s),
       players: D.roster.map(p => ({ id: p.id, name: p.name, teacher: !!p.teacher, present: !!(s.att[p.id] && s.att[p.id].present) })),
       rounds: s.rounds
@@ -1425,7 +1452,7 @@ header .logo{cursor:pointer}
     const step = (n, t, d) => '<div class="hstep"><b>' + n + '</b><div><h3>' + t + '</h3><p>' + d + '</p></div></div>';
     return '<div class="sec"><button class="btn sm" data-a="tab" data-v="tour">‹ Retour</button><h2 style="margin-top:12px">Mode d\'emploi</h2></div>' +
       '<div class="panel"><h3 class="hh">Une fois pour toutes</h3>' +
-      step(1, 'La liste des joueurs', 'Joueurs, Liste : collez la liste de diffusion (un nom par ligne). L\'étoile désigne le professeur.') +
+      step(1, 'La liste des joueurs', 'Joueurs, Liste : collez la liste de diffusion (un nom par ligne). L\'étoile désigne le professeur ; N1 ou N2 donne le niveau de chacun.') +
       step(2, 'Les incompatibilités', 'Joueurs, Liste, « Incompatibilités » : choisissez deux personnes qui ne seront jamais à la même table.') +
       step(3, 'Les réglages', 'Durée des périodes (45 min par défaut), étuis par table, donnes préparées ou non, nombre d\'étuis possédés.') + '</div>' +
       '<div class="panel"><h3 class="hh">Avant chaque séance</h3>' +
@@ -1606,12 +1633,13 @@ header .logo{cursor:pointer}
       } else if (m === 'accueil') {
         right = a.present ? '<button class="btn dep" data-a="depart" data-id="' + p.id + '">Départ</button>' : '<button class="btn arr" data-a="arrive" data-id="' + p.id + '">' + (a.left ? 'Revenu' : 'Arrivé') + '</button>';
       } else {
-        right = '<button class="star ' + (p.teacher ? 'on' : '') + '" data-a="teach" data-id="' + p.id + '" aria-label="Professeur">' + (p.teacher ? '★' : '☆') + '</button>' +
+        right = (p.teacher ? '' : '<div class="lvsel" role="group" aria-label="Niveau">' + [1, 2].map(n => '<button class="lv' + n + (p.level === n ? ' on' : '') + '" data-a="level" data-id="' + p.id + '" data-v="' + n + '" title="' + LVL[n] + '">N' + n + '</button>').join('') + '</div>') +
+          '<button class="star ' + (p.teacher ? 'on' : '') + '" data-a="teach" data-id="' + p.id + '" aria-label="Professeur">' + (p.teacher ? '★' : '☆') + '</button>' +
           (ui.delId === p.id ? '<button class="x ask" data-a="del" data-id="' + p.id + '">' + (playedAny(p.id) ? 'Retirer ?' : 'Supprimer ?') + '</button>' : '<button class="x" data-a="del" data-id="' + p.id + '" aria-label="Retirer de la liste">✕</button>');
       }
       const cls = m === 'accueil' ? (a.present ? 'here' : a.left ? 'off' : '') : (m === 'insc' ? 'r-' + v : '');
       return head + '<div class="prow ' + cls + '"><span class="av c' + (p.id % 4 + 1) + '">' + esc(initials(p.name)) + '</span>' +
-        '<span class="nm">' + esc(p.name) + (p.teacher ? ' <span class="pill">professeur</span>' : '') + (m !== 'liste' ? '<small class="bds">' + rowStatus(p) + '</small>' : '') + '</span>' + right + '</div>';
+        '<span class="nm">' + esc(p.name) + ' ' + lvlChip(p) + (p.teacher ? ' <span class="pill">professeur</span>' : '') + (m !== 'liste' ? '<small class="bds">' + rowStatus(p) + '</small>' : '') + '</span>' + right + '</div>';
     }).join('');
   }
   // Tableau d'accueil : trois blocs (oui, pas répondu, non), chaque personne avec sa présence
@@ -1628,7 +1656,7 @@ header .logo{cursor:pointer}
         const pres = a.present ? '<span class="bd here">Présent</span><small>depuis ' + fmtT(a.arr) + '</small>' : '<span class="bd abs">Absent</span>' + (a.left ? '<small>parti à ' + fmtT(a.left) + '</small>' : '');
         const btn = a.present ? '<button class="btn dep" data-a="depart" data-id="' + p.id + '">Départ</button>' : '<button class="btn arr" data-a="arrive" data-id="' + p.id + '">' + (a.left ? 'Revenu' : 'Arrivé') + '</button>';
         const seg = '<div class="rsvp sm3">' + [['yes', 'Oui'], ['none', '?'], ['no', 'Non']].map(x => '<button class="' + x[0] + (g === x[0] ? ' on' : '') + '" data-a="rsvp" data-id="' + p.id + '" data-v="' + x[0] + '" aria-label="Réponse ' + (x[0] === 'none' ? 'pas répondu' : x[1].toLowerCase()) + '">' + x[1] + '</button>').join('') + '</div>';
-        h += '<tr class="' + (a.present ? 'is-here' : '') + (ui.moved === p.id ? ' moved' : '') + '"><td class="c-n"><b>' + esc(p.name) + '</b>' + (p.teacher ? ' <span class="pill">professeur</span>' : '') + '<span class="c-pm">' + pres + '</span></td><td class="c-r">' + seg + '</td><td class="c-p">' + pres + '</td><td class="c-a">' + btn + '</td></tr>';
+        h += '<tr class="' + (a.present ? 'is-here' : '') + (ui.moved === p.id ? ' moved' : '') + '"><td class="c-n"><b>' + esc(p.name) + '</b> ' + lvlChip(p) + (p.teacher ? ' <span class="pill">professeur</span>' : '') + '<span class="c-pm">' + pres + '</span></td><td class="c-r">' + seg + '</td><td class="c-p">' + pres + '</td><td class="c-a">' + btn + '</td></tr>';
       });
       h += '</tbody>';
     });
@@ -1651,11 +1679,12 @@ header .logo{cursor:pointer}
         : '<button class="missing" data-a="pf" data-v="wait"><b>' + wait + '</b><span>Qui manque encore ?<small>' + (wait ? 'Les attendus pas encore arrivés en premier, puis les autres absents' : 'Tous les inscrits sont arrivés') + '</small></span></button>');
       chips = chip('all', 'tous', D.roster.filter(p => !p.archived).length, '') + chip('here', 'présents', c.present, 'yes') + chip('abs', 'absents', D.roster.filter(p => !p.archived && !isPresent(p.id)).length, 'no') + chip('wait', 'attendus', wait, 'none');
     } else {
-      top = '<p class="lead">La liste de diffusion, commune à toutes les séances. Pour chaque séance, chacun a deux statuts : sa réponse à l\'invitation, et sa présence le jour même (absent par défaut). L\'étoile désigne le professeur : il complète une table quand il manque un joueur. Les incompatibilités se règlent juste en dessous.</p>';
+      top = '<p class="lead">La liste de diffusion, commune à toutes les séances. Pour chaque séance, chacun a deux statuts : sa réponse à l\'invitation, et sa présence le jour même (absent par défaut). L\'étoile désigne le professeur : il complète une table quand il manque un joueur. Les incompatibilités se règlent juste en dessous.</p>' +
+        '<div class="lvleg"><span class="lv lv1">N1</span> ' + LVL[1] + ' <span class="lv lv2">N2</span> ' + LVL[2] + '<br><small>' + (() => { const a = D.roster.filter(p => !p.archived && !p.teacher); const n1 = a.filter(p => p.level === 1).length, n2 = a.filter(p => p.level === 2).length; return n1 + ' en niveau 1, ' + n2 + ' en niveau 2' + (a.length - n1 - n2 ? ', ' + (a.length - n1 - n2) + ' sans niveau indiqué' : '') + '. ' + (D.settings.levelMatch === false ? 'Association par niveau désactivée (Réglages).' : 'Les partenaires, et si possible les tables, sont formés par niveau.'); })() + '</small></div>';
     }
     let tools = '';
     if (m === 'insc') tools = '<div class="row" style="margin-top:10px"><button class="btn sm pri" data-a="msg" data-v="invit">Rédiger l\'invitation</button><button class="btn sm" data-a="msg" data-v="relance">Relancer les sans-réponse</button><button class="btn sm" data-a="msg" data-v="veille">Rappel aux inscrits</button></div><div class="row" style="margin-top:6px"><button class="btn sm" data-a="copynone">Copier les noms sans réponse</button><button class="btn sm" data-a="allnone">Tout remettre à « ? »</button></div>';
-    if (m === 'liste') tools = avoidPanel() + '<details style="margin:10px 0 0"><summary>Coller une liste de noms</summary><textarea id="bulk" rows="6" placeholder="Un nom par ligne"></textarea><button class="btn" data-a="bulk" style="margin-top:8px">Ajouter ces noms</button></details>';
+    if (m === 'liste') tools = avoidPanel() + '<details style="margin:10px 0 0"><summary>Coller une liste de noms</summary><textarea id="bulk" rows="6" placeholder="Un nom par ligne. Pour le niveau, ajoutez 1 ou 2 après le nom (ex. Marie Dupont ; 2)"></textarea><button class="btn" data-a="bulk" style="margin-top:8px">Ajouter ces noms</button></details>';
     if (m === 'accueil') tools = '<div class="row" style="margin-top:10px"><button class="btn sm" data-a="printacc">Imprimer le tableau d\'accueil</button></div>';
     const ph = m === 'accueil' ? 'Chercher un nom, ou ajouter quelqu\'un qui arrive' : 'Taper un nom pour chercher ou ajouter';
     return '<div class="sec"><h2>' + (m === 'accueil' ? 'Accueil' : m === 'insc' ? 'Inscriptions' : 'Liste des joueurs') + '</h2>' + seg + top + '</div>' +
@@ -1807,7 +1836,7 @@ header .logo{cursor:pointer}
     const relay = isRelay(r);
     const kk = relay ? 4 : sessK(cur());
     const cands = w.players.concat(w.teacher ? [w.teacher] : []);
-    let h = '<div class="tcard' + (t.closed ? ' closed' : '') + (ui.fresh ? ' deal' : '') + '" style="--i:' + Math.min(i, 10) + ';--tc:' + tcol(t.n) + '"><div class="felt"><div class="tag"><b>' + (relay ? 'Étuis ' + (t.own || []).join(' et ') : 'Lot ' + t.set) + '</b>' + (t.late ? 'ajoutée en cours de période' : t.closed ? 'fermée' : '') + '</div><div class="seats">';
+    let h = '<div class="tcard' + (t.closed ? ' closed' : '') + (ui.fresh ? ' deal' : '') + '" style="--i:' + Math.min(i, 10) + ';--tc:' + tcol(t.n) + '"><div class="felt"><div class="tag"><b>' + (relay ? 'Étuis ' + (t.own || []).join(' et ') : 'Lot ' + t.set) + '</b>' + (t.late ? 'ajoutée en cours de période' : t.closed ? 'fermée' : '') + tableLevel(t) + '</div><div class="seats">';
     SEATS.forEach(k => {
       const p = getP(t.seats[k]);
       const gone = p && !isPresent(p.id);
@@ -1846,6 +1875,12 @@ header .logo{cursor:pointer}
       if (bonus.length) h += '<div class="buf">Étui de réserve si vous finissez en avance : ' + bonus.map(bn => '<span class="bchip">' + bn + '</span>').join('') + '</div>';
     } else if (!t.closed) h += '<div class="buf">En attente d\'un étui ? Jouez une donne libre avec le jeu de secours de la table.</div>';
     return h + '</div>';
+  }
+  function tableLevel(t) {
+    const ls = SEATS.map(k => getP(t.seats[k])).filter(p => p && !p.teacher).map(p => p.level);
+    if (!ls.length || ls.some(x => !x)) return '';
+    const u0 = [...new Set(ls)];
+    return u0.length === 1 ? ' <span class="lv lv' + u0[0] + '">N' + u0[0] + '</span>' : ' <span class="lv lvm">N1+N2</span>';
   }
   function originTable(r, bn) {
     const t = r.tables.find(x => (x.own || []).indexOf(bn) >= 0);
@@ -2016,6 +2051,7 @@ header .logo{cursor:pointer}
       '<div class="panel"><h3>Heures par défaut des nouvelles séances</h3><div class="row"><div class="grow"><label class="f">Début</label><input type="time" data-f="set" data-k="start" value="' + s.start + '"></div><div class="grow"><label class="f">Fin</label><input type="time" data-f="set" data-k="end" value="' + s.end + '"></div></div></div>' +
       '<div class="panel"><h3>Sauvegarde</h3><div class="row"><button class="btn" data-a="export">Exporter dans un fichier</button><label class="btn" style="margin:0">Importer un fichier<input type="file" id="imp" accept=".json,application/json" style="display:none"></label></div>' +
       '<p class="mute">Les données restent dans ce navigateur. Exportez pour les passer sur un autre appareil ou les garder en sécurité.</p></div>' +
+      '<div class="panel"><h3>Niveaux</h3><label class="chk"><input type="checkbox" data-f="levelMatch"' + (s.levelMatch !== false ? ' checked' : '') + '> Associer les joueurs de même niveau quand c\'est possible</label><p class="mute">Niveau 1 : débutant ou intermédiaire. Niveau 2 : moyen+ ou confirmé. Priorité aux partenaires de même niveau, puis aux tables d\'un même niveau, sans jamais redonner un même partenaire. Le niveau se choisit dans Joueurs, Liste (N1 ou N2).</p></div>' +
       '<div class="panel"><h3>Incompatibilités</h3><p class="mute">Deux personnes qui ne doivent jamais être à la même table. ' + plural((D.avoid || []).length, 'incompatibilité enregistrée', 'incompatibilités enregistrées') + '.</p><button class="btn sm" data-a="goavoid">Gérer les incompatibilités</button></div>' +
       '<div class="panel"><h3>À propos</h3><p><b>Bridge Relax, version ' + VERSION + '</b> du ' + VERSION_DATE + '.</p><div class="row"><button class="btn sm" data-a="help">Mode d\'emploi</button><button class="btn sm" data-a="cover">Page de garde</button></div></div>' +
       '<div class="panel"><h3>Tout effacer</h3><button class="btn danger" data-a="reset">Effacer séances et liste</button></div></div>';
@@ -2081,7 +2117,11 @@ header .logo{cursor:pointer}
       ui.filter = ''; commit(); const i = $('#pname'); if (i) i.focus();
     },
     bulk() {
-      $('#bulk').value.split(/\n/).map(x => x.trim()).filter(Boolean).forEach(addPlayer);
+      $('#bulk').value.split(/\n/).map(x => x.trim()).filter(Boolean).forEach(line => {
+        const m = line.match(/^(.*?)\s*[;,\t]\s*([12])$/);
+        const p = addPlayer(m ? m[1] : line);
+        if (p && m) p.level = +m[2];
+      });
       commit();
     },
     rsvp(el) {
@@ -2110,6 +2150,7 @@ header .logo{cursor:pointer}
       if (l.length) copyText(l.join(', '));
     },
     allnone() { if (confirm('Remettre toutes les réponses à « pas répondu » ?')) { cur().rsvp = {}; commit(); } },
+    level(el) { const p = getP(+el.dataset.id); if (!p) return; const v = +el.dataset.v; p.level = p.level === v ? undefined : v; commit(); },
     teach(el) { const p = getP(+el.dataset.id); if (!p) return; const v = !p.teacher; D.roster.forEach(x => { x.teacher = false; }); p.teacher = v; commit(); },
     del(el) {
       const id = +el.dataset.id, p = getP(id); if (!p) return;
@@ -2231,6 +2272,7 @@ header .logo{cursor:pointer}
   document.addEventListener('change', e => {
     const el = e.target;
     if (el.dataset.f === 'format') { D.settings.format = el.value; commit(); }
+    else if (el.dataset.f === 'levelMatch') { D.settings.levelMatch = el.checked; commit(); }
     else if (el.dataset.f === 'reshuffle') { D.settings.reshuffle = el.checked; commit(); }
     else if (el.dataset.f === 'perTable') { D.settings.perTable = +el.value; commit(); }
     else if (el.dataset.f === 'sound') { D.settings.sound = el.checked; save(); unlockAudio(); }
