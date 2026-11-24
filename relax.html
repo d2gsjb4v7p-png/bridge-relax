@@ -712,6 +712,9 @@ header .logo{cursor:pointer}
   .hub b{font-size:36px}
 }
 .plate .pn{flex:1 1 0%;width:0;min-width:0}
+button.cv-next{display:block;width:100%;font:inherit;color:#fff;cursor:pointer;text-align:center}
+.cv-next em{display:block;font-style:normal;color:#f0cf86;font-weight:700;font-size:14px;margin-top:6px}
+.cv-ended{display:block;width:100%;margin:-8px 0 20px;background:transparent;border:0;color:#c9d6ea;font:600 14px var(--sans);text-decoration:underline;cursor:pointer}
 
 </style>
 </head>
@@ -1220,9 +1223,10 @@ header .logo{cursor:pointer}
 (function () {
   'use strict';
   const LS = 'bridge-relax-v1';
-  const VERSION = '5.6';
+  const VERSION = '5.7';
   const VERSION_DATE = '24 novembre 2026';
   const NEWS = [
+    'Page de garde : séance en cours ou vraie prochaine séance, à ouvrir d\'un geste',
     'Noms jamais coupés au milieu sur les tables',
     'Bouton « Supprimer la séance » avec confirmation',
     'Niveau par joueur (N1 débutant/intermédiaire, N2 moyen+/confirmé) et association par niveau',
@@ -1459,13 +1463,32 @@ header .logo{cursor:pointer}
   }
 
   /* ---------- Rendu ---------- */
+  // Séance à mettre en avant : celle en cours, sinon la vraie prochaine (jamais une séance terminée)
+  function coverSession() {
+    const now = Date.now();
+    const list = D.sessions.slice().sort((a, b) => a.date.localeCompare(b.date) || a.start.localeCompare(b.start));
+    const live = list.find(s => sessMs(s, s.start) <= now && now < sessMs(s, s.end));
+    if (live) return { s: live, label: 'Séance en cours' };
+    const next = list.find(s => sessMs(s, s.start) > now);
+    if (next) { const dd = daysUntil(next.date); return { s: next, label: 'Prochaine séance ' + (dd === 0 ? 'aujourd\'hui' : dd === 1 ? 'demain' : 'dans ' + dd + ' jours') }; }
+    return null;
+  }
   function viewCover() {
-    const s = cur(), c = counts(s), dd = daysUntil(s.date);
-    const when = dd === 0 ? 'aujourd\'hui' : dd === 1 ? 'demain' : dd > 1 ? 'dans ' + dd + ' jours' : 'passée';
+    const cs = coverSession(), now = Date.now();
+    // séance terminée aujourd'hui : accès direct au bilan
+    const ended = D.sessions.find(s => daysUntil(s.date) === 0 && now >= sessMs(s, s.end) && s.rounds.length);
+    let block;
+    if (cs) {
+      const s = cs.s, c = counts(s);
+      block = '<button class="cv-next" data-a="openfromcover" data-id="' + s.id + '"><span>' + cs.label + '</span><b>' + esc(cap(fmtDate(s.date))) + '</b><small>' + hh(s.start) + ' à ' + hh(s.end) + ', ' + fmt(s).nRounds + ' périodes de ' + fmt(s).label + ' · ' + plural(c.yes, 'inscrit', 'inscrits') + '</small><em>Ouvrir cette séance ›</em></button>';
+    } else {
+      block = '<button class="cv-next" data-a="newfromcover"><span>Aucune séance prévue</span><b>Créer la prochaine séance</b><em>Ouvrir l\'onglet Séances ›</em></button>';
+    }
+    if (ended) block += '<button class="cv-ended" data-a="bilan" data-id="' + ended.id + '">Séance d\'aujourd\'hui terminée : voir le bilan ›</button>';
     return '<div class="cover"><div class="cv-in">' +
       '<img class="cv-logo" src="' + LOGO + '" alt="">' +
       '<h1>Bridge Relax</h1><p class="cv-sub">Organiser les après-midis de bridge, sans temps mort</p>' +
-      '<div class="cv-next"><span>Prochaine séance ' + when + '</span><b>' + esc(cap(fmtDate(s.date))) + '</b><small>' + hh(s.start) + ' à ' + hh(s.end) + ', ' + fmt(s).nRounds + ' périodes de ' + fmt(s).label + ' · ' + plural(c.yes, 'inscrit', 'inscrits') + '</small></div>' +
+      block +
       '<button class="btn cv-go" data-a="enter">Entrer</button>' +
       '<button class="btn cv-help" data-a="help">Mode d\'emploi</button>' +
       '<div class="cv-ver"><b>Version ' + VERSION + '</b> du ' + VERSION_DATE + '<details><summary>Nouveautés</summary><ul>' + NEWS.map(n => '<li>' + esc(n) + '</li>').join('') + '</ul></details></div>' +
@@ -2254,6 +2277,8 @@ header .logo{cursor:pointer}
     },
     dissolve(el) { if (confirm('Fermer cette table ?')) { BR.dissolveTable(C(), +el.dataset.t); commit(); } },
     print() { window.print(); },
+    openfromcover(el) { D.cur = +el.dataset.id; save(); ui.cover = false; ui.pmode = null; ui.tab = daysUntil(cur().date) === 0 ? 'joueurs' : 'seances'; render(); window.scrollTo(0, 0); },
+    newfromcover() { ui.cover = false; ui.tab = 'seances'; render(); window.scrollTo(0, 0); },
     enter() { ui.cover = false; render(); window.scrollTo(0, 0); },
     goavoid() { ui.cover = false; ui.tab = 'joueurs'; ui.pmode = 'liste'; ui.avoidOpen = true; render(); const a = $('.avoid'); if (a && a.scrollIntoView) a.scrollIntoView({ block: 'center' }); },
     help() { ui.cover = false; ui.tab = 'aide'; render(); window.scrollTo(0, 0); },
@@ -2269,7 +2294,7 @@ header .logo{cursor:pointer}
       ui.avoidOpen = true; commit();
     },
     avoiddel(el) { D.avoid.splice(+el.dataset.i, 1); ui.avoidOpen = true; commit(); },
-    bilan(el) { ui.bilanId = +el.dataset.id; ui.tab = 'bilan'; render(); window.scrollTo(0, 0); },
+    bilan(el) { ui.cover = false; ui.bilanId = +el.dataset.id; ui.tab = 'bilan'; render(); window.scrollTo(0, 0); },
     copybilan() { copyText(bilanText()); },
     testsound() { const was = D.settings.sound; D.settings.sound = true; chime(1); D.settings.sound = was; },
     printacc() {
