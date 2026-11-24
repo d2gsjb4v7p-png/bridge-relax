@@ -621,6 +621,39 @@ header .logo{cursor:pointer}
 .fchip.on b{color:var(--hi-ink)!important}
 .cv-ver details{display:block;margin:10px auto 0;max-width:340px}
 @media (prefers-color-scheme:dark){.btn.pri{color:#fff}}
+/* ===== Tableau d'accueil ===== */
+.plist.accw{padding:0;overflow:hidden}
+.acc{width:100%;border-collapse:collapse}
+.acc thead th{text-align:left;font-size:13px;color:var(--ink-2);font-weight:700;padding:10px 12px;border-bottom:2px solid var(--line)}
+.acc td{padding:8px 12px;border-bottom:1px solid var(--line);vertical-align:middle}
+.acc .c-n b{font-size:17px}
+.acc .c-p small{display:block;color:var(--mute);font-size:12px;margin-top:2px}
+.acc .c-a{text-align:right;width:1%;white-space:nowrap}
+.acc .c-a .btn{min-width:96px;min-height:46px;font-size:16px}
+.acc tr.is-here td{background:color-mix(in srgb,var(--green) 9%,transparent)}
+.ghead-row th{text-align:left;padding:10px 12px;font-size:15px;border-top:2px solid var(--line)}
+.ghead-row.g-yes th{background:var(--green-soft);color:var(--green)}
+.ghead-row.g-none th{background:var(--brass-soft);color:#8a6416}
+.ghead-row.g-no th{background:var(--red-soft);color:var(--red)}
+@media (prefers-color-scheme:dark){.ghead-row.g-none th{color:var(--brass)}}
+.ghead-row .gn{display:inline-block;min-width:24px;text-align:center;border-radius:99px;padding:0 7px;margin-left:4px;color:#fff;font-size:13px}
+.g-yes .gn{background:var(--green)}.g-none .gn{background:#d6a017}.g-no .gn{background:var(--red)}
+.ghead-row small{font-weight:600;color:var(--ink-2);margin-left:10px;font-size:13px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.ptitle{display:none}
+@media (max-width:480px){.acc .c-r{display:none}.acc td,.acc thead th{padding:8px 8px}.acc .c-a .btn{min-width:86px}}
+@media print{
+  body.pacc header,body.pacc nav,body.pacc .sec,body.pacc .fchips,body.pacc .panel,body.pacc .missing,body.pacc .toast{display:none!important}
+  body.pacc{background:#fff!important;color:#000;padding:0}
+  body.pacc .ptitle{display:block;font:800 16pt var(--sans);margin:0 0 4mm}
+  body.pacc .plist{box-shadow:none;border:0}
+  body.pacc .acc .c-r{display:table-cell}
+  body.pacc .acc td,body.pacc .acc th{padding:1.6mm 2mm;font-size:10.5pt;border-bottom:.5pt solid #999;color:#000}
+  body.pacc .acc .c-a{display:none}
+  body.pacc .ghead-row th{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body.pacc .acc tr{break-inside:avoid}
+}
+.plist.accw{display:block!important;columns:auto!important}
 
 </style>
 </head>
@@ -1122,9 +1155,10 @@ header .logo{cursor:pointer}
 (function () {
   'use strict';
   const LS = 'bridge-relax-v1';
-  const VERSION = '5.0';
+  const VERSION = '5.1';
   const VERSION_DATE = '24 novembre 2026';
   const NEWS = [
+    'Tableau d\'accueil : oui, puis pas répondu, puis non, avec la présence de chacun (imprimable)',
     '4 périodes de 45 minutes par défaut (30 min ou 1 heure au choix)',
     'Étuis numérotés qui passent de table en table après chaque donne',
     'On rebat toutes les cartes à la fin de chaque période',
@@ -1534,6 +1568,7 @@ header .logo{cursor:pointer}
     if (!list.length) return '<div class="empty" style="padding:18px 0">' + (D.roster.length ? (ui.filter ? 'Aucun nom ne correspond. Touchez « Ajouter » pour créer ce joueur.' : 'Personne dans ce filtre.') : 'La liste est vide. Tapez un nom ci-dessus, ou collez votre liste de diffusion dans l\'onglet « Liste ».') + '</div>';
     const GT = { yes: 'Réponse oui', none: 'Pas répondu', no: 'Réponse non' };
     const nG = {}; list.forEach(p => { const g = rsvpOf(s, p.id); nG[g] = (nG[g] || 0) + 1; });
+    if (m === 'accueil') return accueilTable(list, s, GT);
     let lastG = null;
     return list.map(p => {
       const v = rsvpOf(s, p.id), a = s.att[p.id] || {};
@@ -1552,6 +1587,24 @@ header .logo{cursor:pointer}
       return head + '<div class="prow ' + cls + '"><span class="av c' + (p.id % 4 + 1) + '">' + esc(initials(p.name)) + '</span>' +
         '<span class="nm">' + esc(p.name) + (p.teacher ? ' <span class="pill">professeur</span>' : '') + (m !== 'liste' ? '<small class="bds">' + rowStatus(p) + '</small>' : '') + '</span>' + right + '</div>';
     }).join('');
+  }
+  // Tableau d'accueil : trois blocs (oui, pas répondu, non), chaque personne avec sa présence
+  function accueilTable(list, s, GT) {
+    let h = '<table class="acc"><thead><tr><th>Nom</th><th class="c-r">Réponse</th><th class="c-p">Présence</th><th class="c-a"><span class="sr">Action</span></th></tr></thead>';
+    ['yes', 'none', 'no'].forEach(g => {
+      const l = list.filter(p => rsvpOf(s, p.id) === g);
+      if (!l.length) return;
+      const here = l.filter(p => isPresent(p.id)).length;
+      h += '<tbody class="grp-' + g + '"><tr class="ghead-row g-' + g + '"><th colspan="4"><span class="ghead-t">' + GT[g] + '</span> <span class="gn">' + l.length + '</span><small>' + here + ' présent' + (here > 1 ? 's' : '') + ', ' + (l.length - here) + ' absent' + (l.length - here > 1 ? 's' : '') + '</small></th></tr>';
+      l.forEach(p => {
+        const a = s.att[p.id] || {};
+        const pres = a.present ? '<span class="bd here">Présent</span><small>depuis ' + fmtT(a.arr) + '</small>' : '<span class="bd abs">Absent</span>' + (a.left ? '<small>parti à ' + fmtT(a.left) + '</small>' : '');
+        const btn = a.present ? '<button class="btn dep" data-a="depart" data-id="' + p.id + '">Départ</button>' : '<button class="btn arr" data-a="arrive" data-id="' + p.id + '">' + (a.left ? 'Revenu' : 'Arrivé') + '</button>';
+        h += '<tr class="' + (a.present ? 'is-here' : '') + '"><td class="c-n"><b>' + esc(p.name) + '</b>' + (p.teacher ? ' <span class="pill">professeur</span>' : '') + '</td><td class="c-r"><span class="bd r-' + g + '">' + { yes: 'Oui', none: 'Pas répondu', no: 'Non' }[g] + '</span></td><td class="c-p">' + pres + '</td><td class="c-a">' + btn + '</td></tr>';
+      });
+      h += '</tbody>';
+    });
+    return h + '</table>';
   }
   function viewPlayers() {
     const s = cur(), m = pmode(), c = counts(s), e = expected(s);
@@ -1575,12 +1628,14 @@ header .logo{cursor:pointer}
     let tools = '';
     if (m === 'insc') tools = '<div class="row" style="margin-top:10px"><button class="btn sm pri" data-a="msg" data-v="invit">Rédiger l\'invitation</button><button class="btn sm" data-a="msg" data-v="relance">Relancer les sans-réponse</button><button class="btn sm" data-a="msg" data-v="veille">Rappel aux inscrits</button></div><div class="row" style="margin-top:6px"><button class="btn sm" data-a="copynone">Copier les noms sans réponse</button><button class="btn sm" data-a="allnone">Tout remettre à « ? »</button></div>';
     if (m === 'liste') tools = avoidPanel() + '<details style="margin:10px 0 0"><summary>Coller une liste de noms</summary><textarea id="bulk" rows="6" placeholder="Un nom par ligne"></textarea><button class="btn" data-a="bulk" style="margin-top:8px">Ajouter ces noms</button></details>';
+    if (m === 'accueil') tools = '<div class="row" style="margin-top:10px"><button class="btn sm" data-a="printacc">Imprimer le tableau d\'accueil</button></div>';
     const ph = m === 'accueil' ? 'Chercher un nom, ou ajouter quelqu\'un qui arrive' : 'Taper un nom pour chercher ou ajouter';
     return '<div class="sec"><h2>' + (m === 'accueil' ? 'Accueil' : m === 'insc' ? 'Inscriptions' : 'Liste des joueurs') + '</h2>' + seg + top + '</div>' +
       (chips ? '<div class="fchips">' + chips + '</div>' : '') +
       '<div class="panel"><div class="row"><input type="text" id="pname" class="grow" placeholder="' + ph + '" autocomplete="off" value="' + esc(ui.filter) + '"><button class="btn pri" data-a="add">Ajouter</button></div>' + tools + '</div>' +
       (m === 'insc' ? msgPanel() : '') +
-      '<div class="plist" id="plist">' + playersListHtml() + '</div>';
+      (m === 'accueil' ? '<div class="ptitle">Bridge Relax, accueil du ' + esc(fmtDate(s.date)) + ' (' + hh(s.start) + ' à ' + hh(s.end) + ')</div>' : '') +
+      '<div class="plist' + (m === 'accueil' ? ' accw' : '') + '" id="plist">' + playersListHtml() + '</div>';
   }
   function avoidPanel() {
     const act = D.roster.filter(p => !p.archived).sort((a, b) => a.name.localeCompare(b.name, 'fr'));
@@ -2081,6 +2136,11 @@ header .logo{cursor:pointer}
     bilan(el) { ui.bilanId = +el.dataset.id; ui.tab = 'bilan'; render(); window.scrollTo(0, 0); },
     copybilan() { copyText(bilanText()); },
     testsound() { const was = D.settings.sound; D.settings.sound = true; chime(1); D.settings.sound = was; },
+    printacc() {
+      const keep = ui.pf; ui.pf = 'all'; ui.filter = ''; render();
+      document.body.classList.add('pacc');
+      setTimeout(() => { window.print(); setTimeout(() => { document.body.classList.remove('pacc'); ui.pf = keep; render(); }, 800); }, 50);
+    },
     printprep() {
       document.body.classList.add('pprep');
       setTimeout(() => { window.print(); setTimeout(() => document.body.classList.remove('pprep'), 800); }, 50);
