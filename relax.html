@@ -691,6 +691,17 @@ header .logo{cursor:pointer}
 .side .go-row select,.side .go-row .btn{width:100%}
 .side .go-row .btn.go{min-height:56px}
 .tag .lv{box-shadow:0 0 0 2px rgba(255,255,255,.85)}
+/* Suppression d'une séance */
+.sdelz{margin:-4px 0 0;padding:8px 14px 12px}
+.slist .scwrap .sdelz{background:transparent}
+.btn.sdelb{display:inline-flex;align-items:center;gap:8px;border-color:var(--red);color:var(--red);background:var(--paper)}
+.btn.sdelb svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.sdelask{border:3px solid var(--red);background:var(--red-soft);border-radius:16px;padding:12px 14px}
+.sdelask b{font-size:17px;color:var(--red)}
+.sdelask p{margin:6px 0 10px;color:var(--ink)}
+.mute.small{font-size:13px}
+.sdelask .btn.danger{background:var(--red);border-color:var(--red);color:#fff}
+.slist .scwrap .sedit + .sdelz{padding-top:10px}
 
 </style>
 </head>
@@ -1199,9 +1210,10 @@ header .logo{cursor:pointer}
 (function () {
   'use strict';
   const LS = 'bridge-relax-v1';
-  const VERSION = '5.4';
+  const VERSION = '5.5';
   const VERSION_DATE = '24 novembre 2026';
   const NEWS = [
+    'Bouton « Supprimer la séance » avec confirmation',
     'Niveau par joueur (N1 débutant/intermédiaire, N2 moyen+/confirmé) et association par niveau',
     'Le professeur apparaît toujours en tête des listes',
     'Réponse Oui, ? ou Non modifiable directement dans le tableau d\'accueil',
@@ -1561,11 +1573,16 @@ header .logo{cursor:pointer}
       (e.tables ? '<div class="mute">Prévu : ' + plural(e.tables, 'table', 'tables') + ', ' + plural(e.etuis, 'étui', 'étuis') + ' à apporter.</div>' : '') + '</div>' +
       '<div class="sact">' + (isCur ? '<span class="pill">ouverte</span>' : '<button class="btn sm pri" data-a="sopen" data-id="' + s.id + '">Ouvrir</button>') +
       (s.rounds.length || dd < 0 ? '<button class="btn sm" data-a="bilan" data-id="' + s.id + '">Bilan</button>' : '') +
-      (D.sessions.length > 1 ? (ui.delS === s.id ? '<button class="x ask" data-a="sdel" data-id="' + s.id + '">Supprimer ?</button>' : '<button class="x" data-a="sdel" data-id="' + s.id + '" aria-label="Supprimer la séance">✕</button>') : '') + '</div></div>';
+      '' + '</div></div>';
+    // Suppression : bouton clair, puis confirmation explicite
+    const c0 = counts(s);
+    const delz = '<div class="sdelz">' + (ui.delS === s.id
+      ? '<div class="sdelask"><b>Supprimer la séance du ' + esc(fmtDate(s.date)) + ' ?</b><p>Les réponses (' + plural(c0.yes, 'oui', 'oui') + ', ' + c0.no + ' non), les présences' + (s.rounds.length ? ' et les ' + plural(s.rounds.length, 'période jouée', 'périodes jouées') : '') + ' de cette séance seront effacées. La liste des joueurs est conservée.</p><div class="row"><button class="btn danger" data-a="sdelok" data-id="' + s.id + '">Oui, supprimer</button><button class="btn" data-a="sdelno">Non, garder</button></div></div>'
+      : (D.sessions.length > 1 ? '<button class="btn sm sdelb" data-a="sdel" data-id="' + s.id + '"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4.5h6V7M6.5 7l1 13h9l1-13M10 11v6M14 11v6"/></svg>Supprimer la séance</button>' : '<span class="mute small">Seule séance : modifiez sa date plutôt que de la supprimer.</span>')) + '</div>';
     if (isCur) {
       h += '<div class="sedit"><div class="grow"><label class="f">Date</label><input type="date" data-f="sess" data-k="date" value="' + s.date + '"></div><div><label class="f">Début</label><input type="time" data-f="sess" data-k="start" value="' + s.start + '"></div><div><label class="f">Fin</label><input type="time" data-f="sess" data-k="end" value="' + s.end + '"></div><div><label class="f">Durée des périodes</label><select data-f="sess" data-k="dur">' + Object.keys(FORMATS).map(k => '<option value="' + k + '"' + (fmt(s).key === k ? ' selected' : '') + '>' + FORMATS[k].label + '</option>').join('') + '</select></div></div>';
     }
-    return h + '</div>';
+    return h + delz + '</div>';
   }
   function suggestNextDate() {
     const last = D.sessions.map(s => s.date).sort().pop();
@@ -2166,11 +2183,16 @@ header .logo{cursor:pointer}
       D.cur = s.id; ui.pmode = null; commit();
     },
     sopen(el) { D.cur = +el.dataset.id; ui.pmode = null; commit(); },
-    sdel(el) {
+    sdel(el) { ui.delS = +el.dataset.id; render(); const z = $('.sdelask'); if (z && z.scrollIntoView) z.scrollIntoView({ block: 'center' }); },
+    sdelno() { ui.delS = null; render(); },
+    sdelok(el) {
       const id = +el.dataset.id;
-      if (D.sessions.length < 2 || !twoTap('delS', id)) return;
-      D.sessions = D.sessions.filter(s => s.id !== id);
+      if (D.sessions.length < 2) return;
+      const s = D.sessions.find(x => x.id === id);
+      D.sessions = D.sessions.filter(x => x.id !== id);
       if (D.cur === id) D.cur = D.sessions[0].id;
+      ui.delS = null;
+      toast('Séance du ' + fmtDate(s.date) + ' supprimée.');
       commit();
     },
     next() {
