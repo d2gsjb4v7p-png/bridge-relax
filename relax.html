@@ -294,12 +294,16 @@ body.salle-on{padding:0;background:#0a2018}
 .sctl button.on{background:#f0cf86;color:#14233b;border-color:#f0cf86}
 
 /* ===== Version colorée et très lisible ===== */
-:root{
-  --bg:#eef3fb;--ns:#2b6fd6;--eo:#e0661e;
-  --shadow:0 2px 0 rgba(20,35,59,.06),0 14px 30px -16px rgba(20,35,59,.45);
+:root{--ns:#2b6fd6;--eo:#e0661e;--accent:#2b6fd6;--hi:#14233b;--hi-ink:#fff;--warn-bg:#fff7e0}
+@media (prefers-color-scheme:light){
+  :root{--bg:#eef3fb;--shadow:0 2px 0 rgba(20,35,59,.06),0 14px 30px -16px rgba(20,35,59,.45)}
+  body{background:linear-gradient(180deg,#e3ecfb 0,#eef3fb 260px) fixed,var(--bg)}
 }
-body{font-size:17px;background:linear-gradient(180deg,#e3ecfb 0,#eef3fb 260px) fixed,var(--bg)}
-@media (prefers-color-scheme:dark){body{background:var(--bg)}}
+@media (prefers-color-scheme:dark){
+  :root{--ns:#5b9bff;--eo:#ff8a45;--accent:#6ea8ff;--hi:#f0cf86;--hi-ink:#14233b;--warn-bg:#3a2f17}
+  body{background:var(--bg)}
+}
+body{font-size:17px}
 header{background:linear-gradient(100deg,#14233b 0%,#1d4a7a 55%,#1f8a57 100%)}
 header h1{font-weight:700;font-size:25px}
 nav{background:linear-gradient(100deg,#14233b,#1d3d66)}
@@ -545,6 +549,78 @@ html.flash .salle{animation:flashbg 1.2s ease-in-out 7}
 .dcell small{color:var(--ink-2);font-weight:600}
 .dist div{padding:2px 0}
 @media print{.sp-t .w0{width:9mm}}
+
+/* ===== Mode sombre : contrastes vérifiés ===== */
+.seg3 button.on,.fchip.on{background:var(--hi);color:var(--hi-ink);border-color:var(--hi)}
+.fchip.on b{color:var(--hi-ink)}
+.missing.on{background:var(--warn-bg)}
+.kpis b{color:var(--ink)}
+.cnt1{background:var(--hi);color:var(--hi-ink)}
+.relay{border-left-color:var(--accent)}
+.rbig b{color:var(--accent)}
+.dcell{border-top-color:var(--tc,var(--accent))}
+.scard.cur,.msgp,.prepbox{border-color:var(--accent)}
+.slist .sedit{border-color:var(--accent)}
+@media (prefers-color-scheme:dark){
+  .missing>b{color:var(--brass)}
+  .fchip.none b,.k.none,.ghead.g-none,.bd.r-none{color:var(--brass)}
+  .k.yes,.bd.r-yes,.ghead.g-yes{color:var(--green)}
+  .plan .big,.plan .big small{color:var(--ink)}
+  .pass{background:color-mix(in srgb,var(--tc,#2b6fd6) 22%,var(--paper));color:var(--ink)}
+  .pass b{color:#fff}
+  .from{color:var(--ink)}
+  .tcard .btn.sm{color:#fff}
+  .sdate{background:linear-gradient(160deg,#2b6fd6,#1d4a7a)}
+  .note.warn{color:var(--ink)}
+  .go-row select{color:var(--ink)}
+  .who tbody tr:nth-child(even){background:var(--paper-2)}
+  .rsvp button{background:var(--paper-2)}
+  .x{color:var(--ink-2)}
+  .bchip{color:#fff}
+}
+/* Bouton de lancement : pleine largeur sur téléphone */
+@media (max-width:600px){
+  .go-row{flex-direction:column;align-items:stretch}
+  .go-row select,.go-row .btn{width:100%}
+  .go-row .btn.go{font-size:20px;min-height:58px}
+}
+/* ===== Page de garde ===== */
+body.cover-on{padding:0}
+.cover{min-height:100vh;min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:28px 20px calc(28px + env(safe-area-inset-bottom));box-sizing:border-box;
+  background:radial-gradient(120% 80% at 50% 0%,#1d4a7a 0%,#14233b 55%,#0b1424 100%);color:#fff;text-align:center;position:relative;overflow:hidden}
+.cover::before{content:"♠ ♥ ♦ ♣";position:absolute;top:-30px;left:50%;transform:translateX(-50%);font-size:180px;letter-spacing:30px;white-space:nowrap;opacity:.05;pointer-events:none}
+.cv-in{max-width:440px;width:100%;position:relative}
+.cv-logo{width:112px;height:112px;border-radius:26px;box-shadow:0 18px 40px -12px rgba(0,0,0,.7),0 0 0 3px rgba(240,207,134,.55);animation:cvin .6s ease-out both}
+.cover h1{font:700 44px/1.05 var(--serif);margin:22px 0 6px;letter-spacing:.5px}
+.cv-sub{margin:0 0 24px;color:#c9d6ea;font-size:17px}
+.cv-next{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);border-radius:18px;padding:14px 16px;margin:0 0 20px}
+.cv-next span{display:block;color:#f0cf86;font-weight:700;font-size:14px}
+.cv-next b{display:block;font-size:22px;margin:2px 0}
+.cv-next small{color:#c9d6ea;font-size:14px}
+.btn.cv-go{display:block;width:100%;background:linear-gradient(135deg,#1f8a57,#17694a);border-color:#17694a;color:#fff;font-size:20px;min-height:58px;margin-bottom:10px}
+.btn.cv-help{display:block;width:100%;background:transparent;border-color:rgba(255,255,255,.35);color:#fff}
+.cv-ver{margin-top:22px;color:#c9d6ea;font-size:14px}
+.cv-ver b{color:#f0cf86}
+.cv-ver details{margin-top:8px;text-align:left;display:inline-block}
+.cv-ver summary{cursor:pointer;text-align:center}
+.cv-ver ul{margin:8px 0 0;padding-left:20px;line-height:1.5}
+@keyframes cvin{from{transform:scale(.85);opacity:0}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.cv-logo{animation:none}}
+header .logo{cursor:pointer}
+/* Mode d'emploi */
+.hh{color:var(--accent)}
+.hstep{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--line)}
+.hstep:first-of-type{border-top:0}
+.hstep>b{flex:none;width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;font:800 15px/32px var(--sans);text-align:center}
+.hstep h3{margin:2px 0 2px;font-size:16px}
+.hstep p{margin:0;color:var(--ink-2)}
+/* Incompatibilités */
+.avoid summary{font-size:17px}
+.avoid summary small{font-weight:500;color:var(--mute);font-size:14px;margin-left:4px}
+.avi{font-size:16px}
+.fchip.on b{color:var(--hi-ink)!important}
+.cv-ver details{display:block;margin:10px auto 0;max-width:340px}
+@media (prefers-color-scheme:dark){.btn.pri{color:#fff}}
 
 </style>
 </head>
@@ -1046,6 +1122,15 @@ html.flash .salle{animation:flashbg 1.2s ease-in-out 7}
 (function () {
   'use strict';
   const LS = 'bridge-relax-v1';
+  const VERSION = '5.0';
+  const VERSION_DATE = '24 novembre 2026';
+  const NEWS = [
+    '4 périodes de 45 minutes par défaut (30 min ou 1 heure au choix)',
+    'Étuis numérotés qui passent de table en table après chaque donne',
+    'On rebat toutes les cartes à la fin de chaque période',
+    'Incompatibilités : deux personnes jamais à la même table',
+    'Mode sombre plus lisible'
+  ];
   const LOGO = (document.querySelector('link[rel="apple-touch-icon"]') || {}).href || '';
   const SEATS = BR.SEATS, SN = BR.SEAT_NAME;
   const pad = n => String(n).padStart(2, '0');
@@ -1104,13 +1189,14 @@ html.flash .salle{animation:flashbg 1.2s ease-in-out 7}
     return defaults();
   }
   let D = load();
+  { const t = isoDay(new Date()); const s = D.sessions.find(x => x.date === t); if (s) D.cur = s.id; }
   const FORMATS = {
     '30': { label: '30 minutes', dur: 30, kmax: 4 },
     '45': { label: '45 minutes', dur: 45, kmax: 5 },
     '60': { label: '1 heure', dur: 60, kmax: 7 }
   };
   const durLabel = k => (FORMATS[k] || FORMATS['45']).label;
-  const ui = { tab: 'tour', filter: '', fresh: false, salleView: 'noms', auto: true, tick: 0, pmode: null, pf: 'all', delId: null, delS: null };
+  const ui = { cover: true, tab: 'tour', filter: '', fresh: false, salleView: 'noms', auto: true, tick: 0, pmode: null, pf: 'all', delId: null, delS: null };
   function save() { try { localStorage.setItem(LS, JSON.stringify(D)); } catch (e) { /* ignore */ } }
   function commit() { save(); render(); }
 
@@ -1266,16 +1352,51 @@ html.flash .salle{animation:flashbg 1.2s ease-in-out 7}
   }
 
   /* ---------- Rendu ---------- */
+  function viewCover() {
+    const s = cur(), c = counts(s), dd = daysUntil(s.date);
+    const when = dd === 0 ? 'aujourd\'hui' : dd === 1 ? 'demain' : dd > 1 ? 'dans ' + dd + ' jours' : 'passée';
+    return '<div class="cover"><div class="cv-in">' +
+      '<img class="cv-logo" src="' + LOGO + '" alt="">' +
+      '<h1>Bridge Relax</h1><p class="cv-sub">Organiser les après-midis de bridge, sans temps mort</p>' +
+      '<div class="cv-next"><span>Prochaine séance ' + when + '</span><b>' + esc(cap(fmtDate(s.date))) + '</b><small>' + hh(s.start) + ' à ' + hh(s.end) + ', ' + fmt(s).nRounds + ' périodes de ' + fmt(s).label + ' · ' + plural(c.yes, 'inscrit', 'inscrits') + '</small></div>' +
+      '<button class="btn cv-go" data-a="enter">Entrer</button>' +
+      '<button class="btn cv-help" data-a="help">Mode d\'emploi</button>' +
+      '<div class="cv-ver"><b>Version ' + VERSION + '</b> du ' + VERSION_DATE + '<details><summary>Nouveautés</summary><ul>' + NEWS.map(n => '<li>' + esc(n) + '</li>').join('') + '</ul></details></div>' +
+      '</div></div>';
+  }
+  function viewHelp() {
+    const step = (n, t, d) => '<div class="hstep"><b>' + n + '</b><div><h3>' + t + '</h3><p>' + d + '</p></div></div>';
+    return '<div class="sec"><button class="btn sm" data-a="tab" data-v="tour">‹ Retour</button><h2 style="margin-top:12px">Mode d\'emploi</h2></div>' +
+      '<div class="panel"><h3 class="hh">Une fois pour toutes</h3>' +
+      step(1, 'La liste des joueurs', 'Joueurs, Liste : collez la liste de diffusion (un nom par ligne). L\'étoile désigne le professeur.') +
+      step(2, 'Les incompatibilités', 'Joueurs, Liste, « Incompatibilités » : choisissez deux personnes qui ne seront jamais à la même table.') +
+      step(3, 'Les réglages', 'Durée des périodes (45 min par défaut), étuis par table, donnes préparées ou non, nombre d\'étuis possédés.') + '</div>' +
+      '<div class="panel"><h3 class="hh">Avant chaque séance</h3>' +
+      step(4, 'Créer la séance', 'Séances : date, heures et durée des périodes.') +
+      step(5, 'Inviter et noter les réponses', 'Joueurs, Inscriptions : « Rédiger l\'invitation », puis Oui, ? ou Non pour chacun. « Relancer les sans-réponse » quelques jours avant.') +
+      step(6, 'Préparer les étuis', 'Étuis : nombre d\'étuis à apporter et feuilles à imprimer (une par étui).') + '</div>' +
+      '<div class="panel"><h3 class="hh">Le jour même</h3>' +
+      step(7, 'Accueillir', 'Joueurs, Accueil : « Arrivé » pour chaque personne. « Qui manque encore ? » montre les inscrits absents.') +
+      step(8, 'Lancer la période', 'Période : « Lancer la période ». Chaque table voit ses joueurs, ses étuis de départ et la table à qui passer chaque étui.') +
+      step(9, 'Annoncer', '« Afficher sur grand écran » (sur une télé reliée à l\'appareil) ou lire « Qui va où ? ».') +
+      step(10, 'Départs', 'Joueurs, Accueil : « Départ ». La place est aussitôt reprise par quelqu\'un qui attend, ou par le professeur.') +
+      step(11, 'Fin de période', 'Un signal sonne 5 minutes avant la fin, puis à la fin. On note les scores, on rebat les cartes, on lance la période suivante.') + '</div>' +
+      '<div class="panel"><h3 class="hh">Après la séance</h3>' +
+      step(12, 'Le bilan', 'Séances, « Bilan » : présents, absents inscrits, qui a joué avec qui. À imprimer ou copier.') + '</div>' +
+      '<p class="mute">Bridge Relax, version ' + VERSION + ' du ' + VERSION_DATE + '. Les données restent sur cet appareil : pensez à exporter une sauvegarde (Réglages).</p>';
+  }
+  const hh = t => String(t).replace(':00', 'h').replace(':', 'h');
   function render() {
+    if (ui.cover) { document.body.className = 'cover-on'; document.body.innerHTML = viewCover(); return; }
     document.body.className = ui.tab === 'salle' ? 'salle-on' : '';
     if (ui.tab === 'salle') { document.body.innerHTML = viewSalle(); ui.fresh = false; updateClock(); return; }
     const tabs = [['seances', 'Séances'], ['joueurs', 'Joueurs'], ['tour', 'Période'], ['etuis', 'Étuis'], ['reglages', 'Réglages']];
     const s = cur();
     document.body.innerHTML =
-      '<header><img class="logo" src="' + LOGO + '" alt=""><div class="htitle"><h1>Bridge Relax</h1><button class="hdate" data-a="tab" data-v="seances">' + esc(cap(fmtDate(s.date, { weekday: 'short', day: 'numeric', month: 'short' }))) + ' · ' + s.start.replace(':', 'h') + '–' + s.end.replace(':', 'h') + '</button></div><div class="clock" id="hclock"></div></header>' +
+      '<header><img class="logo" src="' + LOGO + '" alt="Page de garde" data-a="cover"><div class="htitle"><h1>Bridge Relax</h1><button class="hdate" data-a="tab" data-v="seances">' + esc(cap(fmtDate(s.date, { weekday: 'short', day: 'numeric', month: 'short' }))) + ' · ' + hh(s.start) + '–' + hh(s.end) + '</button></div><div class="clock" id="hclock"></div></header>' +
       '<nav>' + tabs.map(t => '<button data-a="tab" data-v="' + t[0] + '" class="' + (ui.tab === t[0] || (ui.tab === 'bilan' && t[0] === 'seances') ? 'on' : '') + '"><svg viewBox="0 0 24 24" aria-hidden="true">' + ICON[t[0]] + '</svg>' + t[1] + '</button>').join('') + '</nav>' +
       (ui.toast ? '<div id="toast" class="toast' + (ui.toast.warn ? ' warn' : '') + '" data-a="toastclose">' + esc(ui.toast.msg) + '</div>' : '') +
-      '<main>' + ({ seances: viewSessions, joueurs: viewPlayers, tour: viewRound, etuis: viewBoards, reglages: viewSettings, bilan: viewBilan }[ui.tab] || viewRound)() + '</main>';
+      '<main>' + ({ seances: viewSessions, joueurs: viewPlayers, tour: viewRound, etuis: viewBoards, reglages: viewSettings, bilan: viewBilan, aide: viewHelp }[ui.tab] || viewRound)() + '</main>';
     ui.fresh = false;
     updateClock();
   }
@@ -1449,7 +1570,7 @@ html.flash .salle{animation:flashbg 1.2s ease-in-out 7}
         : '<button class="missing" data-a="pf" data-v="wait"><b>' + wait + '</b><span>Qui manque encore ?<small>' + (wait ? 'Les attendus pas encore arrivés en premier, puis les autres absents' : 'Tous les inscrits sont arrivés') + '</small></span></button>');
       chips = chip('all', 'tous', D.roster.filter(p => !p.archived).length, '') + chip('here', 'présents', c.present, 'yes') + chip('abs', 'absents', D.roster.filter(p => !p.archived && !isPresent(p.id)).length, 'no') + chip('wait', 'attendus', wait, 'none');
     } else {
-      top = '<p class="lead">La liste de diffusion, commune à toutes les séances. Pour chaque séance, chacun a deux statuts : sa réponse à l\'invitation, et sa présence le jour même (absent par défaut). L\'étoile désigne le professeur : il complète une table quand il manque un joueur.</p>';
+      top = '<p class="lead">La liste de diffusion, commune à toutes les séances. Pour chaque séance, chacun a deux statuts : sa réponse à l\'invitation, et sa présence le jour même (absent par défaut). L\'étoile désigne le professeur : il complète une table quand il manque un joueur. Les incompatibilités se règlent juste en dessous.</p>';
     }
     let tools = '';
     if (m === 'insc') tools = '<div class="row" style="margin-top:10px"><button class="btn sm pri" data-a="msg" data-v="invit">Rédiger l\'invitation</button><button class="btn sm" data-a="msg" data-v="relance">Relancer les sans-réponse</button><button class="btn sm" data-a="msg" data-v="veille">Rappel aux inscrits</button></div><div class="row" style="margin-top:6px"><button class="btn sm" data-a="copynone">Copier les noms sans réponse</button><button class="btn sm" data-a="allnone">Tout remettre à « ? »</button></div>';
@@ -1465,7 +1586,7 @@ html.flash .salle{animation:flashbg 1.2s ease-in-out 7}
     const act = D.roster.filter(p => !p.archived).sort((a, b) => a.name.localeCompare(b.name, 'fr'));
     const opts = '<option value="">Choisir…</option>' + act.map(p => '<option value="' + p.id + '">' + esc(p.name) + '</option>').join('');
     const list = (D.avoid || []).map((x, i) => '<div class="avr"><span>' + esc(nm(x[0])) + ' <span class="mute">et</span> ' + esc(nm(x[1])) + '</span><button class="x" data-a="avoiddel" data-i="' + i + '" aria-label="Retirer">✕</button></div>').join('');
-    return '<details class="avoid"' + (ui.avoidOpen ? ' open' : '') + '><summary>Ne jamais réunir à la même table' + (D.avoid && D.avoid.length ? ' (' + D.avoid.length + ')' : '') + '</summary>' +
+    return '<details class="avoid"' + (ui.avoidOpen ? ' open' : '') + '><summary><span class="avi">⛔</span> Incompatibilités <small>ne jamais réunir à la même table' + (D.avoid && D.avoid.length ? ' · ' + D.avoid.length : '') + '</small></summary>' +
       '<p class="mute">Ces deux personnes ne seront jamais placées à la même table, ni comme partenaires ni comme adversaires. Cette liste n\'apparaît que dans cet onglet.</p>' +
       '<div class="row"><select id="av1" class="grow">' + opts + '</select><select id="av2" class="grow">' + opts + '</select><button class="btn" data-a="avoidadd">Ajouter</button></div>' + list +
       '<p class="mute" style="margin-top:8px">Par ailleurs, l\'application évite de redonner les mêmes partenaires que lors des trois séances précédentes.</p></details>';
@@ -1812,6 +1933,8 @@ html.flash .salle{animation:flashbg 1.2s ease-in-out 7}
       '<div class="panel"><h3>Heures par défaut des nouvelles séances</h3><div class="row"><div class="grow"><label class="f">Début</label><input type="time" data-f="set" data-k="start" value="' + s.start + '"></div><div class="grow"><label class="f">Fin</label><input type="time" data-f="set" data-k="end" value="' + s.end + '"></div></div></div>' +
       '<div class="panel"><h3>Sauvegarde</h3><div class="row"><button class="btn" data-a="export">Exporter dans un fichier</button><label class="btn" style="margin:0">Importer un fichier<input type="file" id="imp" accept=".json,application/json" style="display:none"></label></div>' +
       '<p class="mute">Les données restent dans ce navigateur. Exportez pour les passer sur un autre appareil ou les garder en sécurité.</p></div>' +
+      '<div class="panel"><h3>Incompatibilités</h3><p class="mute">Deux personnes qui ne doivent jamais être à la même table. ' + plural((D.avoid || []).length, 'incompatibilité enregistrée', 'incompatibilités enregistrées') + '.</p><button class="btn sm" data-a="goavoid">Gérer les incompatibilités</button></div>' +
+      '<div class="panel"><h3>À propos</h3><p><b>Bridge Relax, version ' + VERSION + '</b> du ' + VERSION_DATE + '.</p><div class="row"><button class="btn sm" data-a="help">Mode d\'emploi</button><button class="btn sm" data-a="cover">Page de garde</button></div></div>' +
       '<div class="panel"><h3>Tout effacer</h3><button class="btn danger" data-a="reset">Effacer séances et liste</button></div></div>';
   }
 
@@ -1940,6 +2063,10 @@ html.flash .salle{animation:flashbg 1.2s ease-in-out 7}
     },
     dissolve(el) { if (confirm('Fermer cette table ?')) { BR.dissolveTable(C(), +el.dataset.t); commit(); } },
     print() { window.print(); },
+    enter() { ui.cover = false; render(); window.scrollTo(0, 0); },
+    goavoid() { ui.cover = false; ui.tab = 'joueurs'; ui.pmode = 'liste'; ui.avoidOpen = true; render(); const a = $('.avoid'); if (a && a.scrollIntoView) a.scrollIntoView({ block: 'center' }); },
+    help() { ui.cover = false; ui.tab = 'aide'; render(); window.scrollTo(0, 0); },
+    cover() { ui.cover = true; render(); window.scrollTo(0, 0); },
     msg(el) { ui.msg = el.dataset.v; render(); const p = $('.msgp'); if (p && p.scrollIntoView) p.scrollIntoView({ block: 'start' }); },
     msgclose() { ui.msg = null; render(); },
     copymsg() { copyText($('#msgt').value); },
