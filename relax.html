@@ -702,6 +702,16 @@ header .logo{cursor:pointer}
 .mute.small{font-size:13px}
 .sdelask .btn.danger{background:var(--red);border-color:var(--red);color:#fff}
 .slist .scwrap .sedit + .sdelz{padding-top:10px}
+/* Noms sur les tables : jamais coupés au milieu d'un mot */
+.plate .pn{display:block;min-width:0;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;overflow-wrap:normal;word-break:keep-all;hyphens:none}
+.plate .pn.wrap{white-space:normal;overflow:visible;text-overflow:clip;line-height:1.1}
+@media (max-width:520px){
+  .seats{grid-template-columns:minmax(0,1fr) 70px minmax(0,1fr);gap:6px}
+  .plate.p-E,.plate.p-O{padding-left:32px;padding-right:8px}
+  .plate.p-E .sl,.plate.p-O .sl{width:22px;height:22px;left:6px;font-size:12px;line-height:22px}
+  .hub b{font-size:36px}
+}
+.plate .pn{flex:1 1 0%;width:0;min-width:0}
 
 </style>
 </head>
@@ -1210,9 +1220,10 @@ header .logo{cursor:pointer}
 (function () {
   'use strict';
   const LS = 'bridge-relax-v1';
-  const VERSION = '5.5';
+  const VERSION = '5.6';
   const VERSION_DATE = '24 novembre 2026';
   const NEWS = [
+    'Noms jamais coupés au milieu sur les tables',
     'Bouton « Supprimer la séance » avec confirmation',
     'Niveau par joueur (N1 débutant/intermédiaire, N2 moyen+/confirmé) et association par niveau',
     'Le professeur apparaît toujours en tête des listes',
@@ -1482,6 +1493,26 @@ header .logo{cursor:pointer}
       '<p class="mute">Bridge Relax, version ' + VERSION + ' du ' + VERSION_DATE + '. Les données restent sur cet appareil : pensez à exporter une sauvegarde (Réglages).</p>';
   }
   const hh = t => String(t).replace(':00', 'h').replace(':', 'h');
+  // Un nom ne se coupe jamais au milieu : on réduit la police jusqu'à ce qu'il tienne sur une ligne
+  function fitNames() {
+    // largeur exacte du texte (au dixième de pixel) comparée à la place disponible
+    const over = el => {
+      const r = document.createRange(); r.selectNodeContents(el);
+      return r.getBoundingClientRect().width > el.getBoundingClientRect().width - 0.5;
+    };
+    document.querySelectorAll('.plate .pn').forEach(el => {
+      el.style.fontSize = ''; el.classList.remove('wrap');
+      if (!el.getBoundingClientRect().width) return;
+      let fs = parseFloat(getComputedStyle(el).fontSize) || 19;
+      let guard = 0;
+      while (over(el) && fs > 12 && guard++ < 30) { fs -= 0.5; el.style.fontSize = fs + 'px'; }
+      // Toujours trop long (nom composé) : retour à la ligne seulement entre deux mots
+      if (over(el) && /[\s-]/.test(el.textContent)) el.classList.add('wrap');
+    });
+  }
+  window.addEventListener('resize', () => { clearTimeout(ui.fitT); ui.fitT = setTimeout(fitNames, 120); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitNames);
+  window.addEventListener('orientationchange', () => setTimeout(fitNames, 300));
   function render() {
     if (ui.cover) { document.body.className = 'cover-on'; document.body.innerHTML = viewCover(); return; }
     document.body.className = ui.tab === 'salle' ? 'salle-on' : '';
@@ -1495,6 +1526,10 @@ header .logo{cursor:pointer}
       '<main>' + ({ seances: viewSessions, joueurs: viewPlayers, tour: viewRound, etuis: viewBoards, reglages: viewSettings, bilan: viewBilan, aide: viewHelp }[ui.tab] || viewRound)() + '</main>';
     ui.fresh = false;
     updateClock();
+    fitNames();
+    // second passage une fois la mise en page stabilisée
+    if (window.requestAnimationFrame) requestAnimationFrame(fitNames);
+    setTimeout(fitNames, 250);
   }
 
   /* ---------- Comptes ---------- */
@@ -1857,7 +1892,7 @@ header .logo{cursor:pointer}
     SEATS.forEach(k => {
       const p = getP(t.seats[k]);
       const gone = p && !isPresent(p.id);
-      h += '<div class="plate p-' + k + (gone ? ' gone' : '') + (p && p.teacher ? ' prof' : '') + '"><span class="sl">' + k + '</span>' + esc(p ? p.name : '?') + '</div>';
+      h += '<div class="plate p-' + k + (gone ? ' gone' : '') + (p && p.teacher ? ' prof' : '') + '"><span class="sl">' + k + '</span><span class="pn">' + esc(p ? p.name : '?') + '</span></div>';
     });
     h += '<div class="hub"><b>' + t.n + '</b><small>table</small></div></div></div>';
     let fix = '';
