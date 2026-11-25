@@ -786,6 +786,18 @@ body.big{zoom:1.15}
 .plc .chk{align-items:flex-start;font-weight:500;line-height:1.4}
 .plc input{margin-top:4px}
 #newplace{width:100%;box-sizing:border-box;font:15px/1.4 var(--sans)}
+/* Page d'impression : toujours claire et lisible, même en mode sombre */
+html.printdoc{color-scheme:light}
+html.printdoc body{--ink:#14233b;--ink-2:#3b4a63;--mute:#6a7890;--paper:#fff;--paper-2:#f3f5f9;--line:#d5dbe5;--green:#1f8a57;--green-soft:#e3f3ea;--red:#c8342f;--red-soft:#fbe7e5;--brass:#b8862b;--brass-soft:#f8efd9;background:#fff!important;color:#14233b}
+html.printdoc .plist,html.printdoc .acc td,html.printdoc .acc th{background:#fff!important;color:#14233b!important}
+html.printdoc .acc thead th{background:#14233b!important;color:#fff!important}
+html.printdoc .ghead-row.g-prof th{background:#f8efd9!important;color:#14233b!important}
+html.printdoc .ghead-row.g-yes th{background:#e3f3ea!important;color:#1f8a57!important}
+html.printdoc .ghead-row.g-none th{background:#f8efd9!important;color:#8a6416!important}
+html.printdoc .ghead-row.g-no th{background:#fbe7e5!important;color:#c8342f!important}
+html.printdoc .rsvp.sm3{border:0}
+html.printdoc .rsvp.sm3 button.on{background:none!important;color:#14233b!important;font-weight:800}
+.pbar .pback{background:transparent;border:2px solid rgba(255,255,255,.5);color:#fff;min-height:46px}
 
 </style>
 </head>
@@ -1294,9 +1306,10 @@ body.big{zoom:1.15}
 (function () {
   'use strict';
   const LS = 'bridge-relax-v1';
-  const VERSION = '6.2';
+  const VERSION = '6.3';
   const VERSION_DATE = '25 novembre 2026';
   const NEWS = [
+    'Bouton « Retour » sur les pages d\'impression, toujours lisibles en mode sombre',
     'Lieu de la séance (Royal Orée par défaut) dans l\'invitation et les rappels, avec itinéraire',
     'Feuilles d\'étui simplifiées : contrat, entame, résultat, points, avec un exemple',
     'Mode simple : 4 onglets (Aujourd\'hui, Joueurs, Tables, Plus)',
@@ -1378,8 +1391,17 @@ body.big{zoom:1.15}
       const job = JSON.parse(decodeURIComponent(escape(atob(location.hash.slice(7)))));
       document.title = job.title || 'Bridge Relax';
       document.body.className = 'printpage ' + (job.cls || '');
-      document.body.innerHTML = '<div class="pbar noprint"><b>' + job.title + '</b><button class="btn pri" onclick="window.print()">Imprimer</button><small>Sur iPhone : si la fenêtre d\'impression ne s\'ouvre pas, touchez « Imprimer », ou le bouton Partager puis « Imprimer ».</small></div><main>' + job.html + '</main>';
-      setTimeout(() => { try { window.print(); } catch (e) { /* bouton */ } }, 700);
+      document.documentElement.classList.add('printdoc');
+      document.body.innerHTML = '<div class="pbar noprint"><button class="btn pback" id="pback">‹ Retour</button><b>' + job.title + '</b><button class="btn pri" onclick="window.print()">Imprimer</button><small>Touchez « Imprimer ». Ensuite, « ‹ Retour » vous ramène à l\'application.</small></div><main>' + job.html + '</main>';
+      // Retour à l'application : fermer l'onglet s'il a été ouvert à part, sinon revenir à l'application
+      document.getElementById('pback').addEventListener('click', () => {
+        const base = location.href.split('#')[0];
+        try { if (window.opener && !window.opener.closed) { window.close(); return; } } catch (e) { /* ignore */ }
+        if (history.length > 1) { history.back(); setTimeout(() => { if (location.hash.indexOf('#print=') === 0) location.replace(base); }, 400); }
+        else location.replace(base);
+      });
+      // dans l'application installée, l'iPhone peut ouvrir cette page sur place : pas d'impression automatique, l'utilisateur choisit
+      if (!(navigator.standalone || (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches))) setTimeout(() => { try { window.print(); } catch (e) { /* bouton */ } }, 700);
     } catch (e) { document.body.innerHTML = '<p style="padding:20px">Impossible d\'ouvrir la page d\'impression.</p>'; }
     return;
   }
