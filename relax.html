@@ -1306,7 +1306,7 @@ html.printdoc .rsvp.sm3 button.on{background:none!important;color:#14233b!import
 (function () {
   'use strict';
   const LS = 'bridge-relax-v1';
-  const VERSION = '6.3';
+  const VERSION = '6.4';
   const VERSION_DATE = '25 novembre 2026';
   const NEWS = [
     'Bouton « Retour » sur les pages d\'impression, toujours lisibles en mode sombre',
@@ -1687,8 +1687,12 @@ html.printdoc .rsvp.sm3 button.on{background:none!important;color:#14233b!import
   function expected(s, raw) {
     const c = counts(s);
     const n = c.yes - (c.teacherYes ? 1 : 0);
-    const plan = BR.suggestPlan(n, c.teacherYes);
-    const e = { players: c.yes, tables: plan.tables };
+    let plan = BR.suggestPlan(n, c.teacherYes);
+    // si davantage de personnes sont déjà arrivées que de « oui », on compte les présents
+    const nHere = D.roster.filter(p => !p.archived && !p.teacher && (s.att[p.id] || {}).present).length;
+    const hp = BR.suggestPlan(nHere, c.teacherPresent);
+    if (hp.tables > plan.tables) plan = hp;
+    const e = { players: Math.max(c.yes, c.present), tables: plan.tables };
     if (raw) return e;
     const k = Math.max(1, D.settings.perTable || 2), f = fmt(s);
     e.k = k; e.circ = plan.tables * k;
@@ -2173,13 +2177,13 @@ html.printdoc .rsvp.sm3 button.on{background:none!important;color:#14233b!import
     const total = Math.max(e.etuis, r && r.relay ? r.relay.last : 0);
     const upto = Math.min(ui.printTo || total || k * 6, 200);
     let h = '<div class="sec"><h2>Étuis</h2>' +
-      '<div class="relay"><div class="rbig"><b>' + (circ || '–') + '</b><span>étuis en circulation' + (circ ? '<small>n° ' + (r && r.relay ? r.relay.base + ' à ' + r.relay.last : '1 à ' + circ) + (r && r.relay ? ', période ' + r.n : ', pour ' + plural(T, 'table', 'tables')) + '</small>' : '<small>marquez les inscriptions pour le calcul</small>') + '</span></div>' +
+      '<div class="relay"><div class="rbig"><b>' + (circ || '–') + '</b><span>étuis en circulation' + (circ ? '<small>n° ' + (r && r.relay ? r.relay.base + ' à ' + r.relay.last : '1 à ' + circ) + (r && r.relay ? ', période ' + r.n : ', pour ' + plural(T, 'table', 'tables')) + '</small>' : '<small>calculé dès qu\'il y aura des réponses « oui » ou des arrivées</small>') + '</span></div>' +
       '<p>Chaque table commence avec ' + plural(k, 'étui', 'étuis') + '. Les joueurs restent à leur table pendant toute la période ; <b>après chaque donne, l\'étui passe à la table suivante</b>. Ainsi, personne ne joue deux fois le même étui dans une période. Entre deux périodes, les joueurs changent de table et de partenaire.</p>' +
       (D.settings.prepared
-        ? '<p><b>Donnes préparées :</b> chaque période utilise de nouveaux étuis. Pour ' + plural(f.nRounds, 'période', 'périodes') + ' et environ ' + plural(T, 'table', 'tables') + ', préparez les étuis 1 à ' + e.etuis + '.</p>'
+        ? '<p><b>Donnes préparées :</b> chaque période utilise de nouveaux étuis. Pour ' + plural(f.nRounds, 'période', 'périodes') + ' et environ ' + plural(T, 'table', 'tables') + ', ' + (e.etuis ? 'préparez les étuis 1 à ' + e.etuis + '.' : 'le nombre d\'étuis à préparer sera calculé dès qu\'il y aura des réponses « oui ».') + '</p>'
         : (D.settings.reshuffle !== false
-          ? '<p><b>Donnes non préparées :</b> au début de chaque période, chaque table bat et distribue ses étuis de départ. À la fin de la période, on rebat toutes les cartes : personne ne rejouera jamais une donne. Les mêmes étuis 1 à ' + circ + ' servent à chaque période.</p>'
-          : '<p><b>Donnes non préparées, sans rebattre :</b> chaque période utilise de nouveaux étuis (1 à ' + e.etuis + ' au total).</p>')) +
+          ? '<p><b>Donnes non préparées :</b> au début de chaque période, chaque table bat et distribue ses étuis de départ. À la fin de la période, on rebat toutes les cartes : personne ne rejouera jamais une donne. ' + (circ ? 'Les mêmes étuis 1 à ' + circ + ' servent à chaque période.' : 'Les mêmes étuis servent à chaque période.') + '</p>'
+          : '<p><b>Donnes non préparées, sans rebattre :</b> chaque période utilise de nouveaux étuis' + (e.etuis ? ' (1 à ' + e.etuis + ' au total)' : '') + '.</p>')) +
       '<p class="mute">Prévoyez aussi un jeu de cartes de secours par table : une table qui attend un étui joue une donne libre en attendant.</p></div>';
     if (total > D.settings.stock) h += '<div class="note bad">Il faut ' + total + ' étuis, vous en avez ' + D.settings.stock + ' (Réglages). Mettez 1 étui par table au départ, ou rebattez les cartes à chaque période.</div>';
     // Plan de départ de la période en cours, ou plan prévu
