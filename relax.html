@@ -715,6 +715,63 @@ header .logo{cursor:pointer}
 button.cv-next{display:block;width:100%;font:inherit;color:#fff;cursor:pointer;text-align:center}
 .cv-next em{display:block;font-style:normal;color:#f0cf86;font-weight:700;font-size:14px;margin-top:6px}
 .cv-ended{display:block;width:100%;margin:-8px 0 20px;background:transparent;border:0;color:#c9d6ea;font:600 14px var(--sans);text-decoration:underline;cursor:pointer}
+/* Page d'impression autonome */
+body.printpage{background:#fff!important;color:#000;padding:0}
+body.printpage main{max-width:820px;margin:0 auto;padding:12px}
+body.printpage .sheets,body.printpage .prepsheet,body.printpage .ptitle{display:block}
+body.printpage .sheet-p{border-bottom:2px dashed #bbb;margin-bottom:16px;padding-bottom:8px}
+body.printpage .acc .c-a,body.printpage .acc .c-pm,body.printpage .rsvp.sm3 button:not(.on){display:none}
+body.printpage .acc .c-p,body.printpage .acc .c-r{display:table-cell!important}
+body.printpage .sp-t{width:100%;border-collapse:collapse}
+body.printpage .sp-t th,body.printpage .sp-t td{border:1px solid #000;height:26px;font-size:12px;padding:2px 4px;text-align:left}
+body.printpage .sp-bt{display:flex;gap:8px;align-items:center;font-weight:800;margin:10px 0 4px}
+body.printpage .sp-head{display:flex;justify-content:space-between}
+.pbar{position:sticky;top:0;z-index:5;display:flex;flex-wrap:wrap;gap:10px;align-items:center;background:#14233b;color:#fff;padding:12px 16px calc(12px) 16px;padding-top:calc(12px + env(safe-area-inset-top))}
+.pbar b{font-size:17px;flex:1}
+.pbar small{flex-basis:100%;color:#c9d6ea;font-size:13px}
+@media print{.pbar{display:none!important}body.printpage main{padding:0;max-width:none}body.printpage .sheet-p{border:0;margin:0;padding:0}}
+@media screen{
+  body.printpage .sheet-p{overflow-x:auto}
+  body.printpage .sp-t{min-width:560px}
+  body.printpage .sp-t th,body.printpage .sp-t td{font-size:11px}
+  body.printpage .sp-bt{flex-wrap:wrap}
+  body.printpage .sp-bt small{font-weight:500;font-size:12px}
+  body.printpage .sp-n{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border:4px solid #ccc;border-radius:6px}
+  body.printpage .sp-n.vns{border-top-color:#c8342f;border-bottom-color:#c8342f}
+  body.printpage .sp-n.veo{border-left-color:#c8342f;border-right-color:#c8342f}
+  body.printpage .sp-d{margin-left:auto;font-weight:500;font-size:12px}
+}
+
+/* ===== v6 : mode simple ===== */
+body.big{zoom:1.15}
+.step{display:flex;gap:14px;background:var(--paper);border-radius:20px;box-shadow:var(--shadow);padding:16px;margin:0 0 12px;border:3px solid transparent}
+.step .sn{flex:none;width:40px;height:40px;border-radius:50%;background:var(--paper-2);color:var(--ink-2);font:800 19px/40px var(--sans);text-align:center}
+.step h3{margin:6px 0 6px;font-size:19px}
+.step p{margin:4px 0;color:var(--ink-2);font-size:16px}
+.step .sb{flex:1;min-width:0}
+.step .sbtn{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.step .sbtn .btn{min-height:50px;font-size:16px}
+.step .sbtn .btn.pri{flex:1 1 100%;min-height:58px;font-size:18px}
+.step.now{border-color:var(--green);box-shadow:0 0 0 4px color-mix(in srgb,var(--green) 18%,transparent),var(--shadow)}
+.step.now .sn{background:var(--green);color:#fff}
+.step.done .sn{background:var(--green-soft);color:var(--green)}
+.step.done{opacity:.85}
+.big1{font:800 22px/1.25 var(--sans);color:var(--ink)!important}
+.big1 small{font:600 15px var(--sans);color:var(--ink-2)}
+.cnt3{display:flex;gap:6px;flex-wrap:wrap;margin:4px 0}
+.cnt3 .k{font-size:15px;padding:4px 12px}
+.lnk{background:none;border:0;color:var(--accent);font:700 15px var(--sans);text-decoration:underline;cursor:pointer;padding:0}
+.plistm{display:grid;gap:10px;margin-bottom:14px}
+.pitem{display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:var(--paper);color:var(--ink);border:0;border-radius:18px;box-shadow:var(--shadow);padding:14px 16px;font:inherit;cursor:pointer;min-height:68px}
+.pitem .pi{font-size:26px;width:36px;text-align:center}
+.pitem b{display:block;font-size:17px}
+.pitem small{display:block;color:var(--ink-2);font-size:14px;margin-top:2px}
+.pitem .pc{margin-left:auto;font-size:26px;color:var(--mute)}
+@media (min-width:1000px){.plistm{grid-template-columns:1fr 1fr}}
+.step .sbtn{flex-direction:column;align-items:stretch}
+.step .sbtn .btn{width:100%;flex:none;white-space:normal;font-family:var(--sans)}
+.step .sbtn .btn.go{font-size:19px;min-height:60px}
+.step .sn{align-self:flex-start;margin-top:2px}
 
 </style>
 </head>
@@ -1223,21 +1280,14 @@ button.cv-next{display:block;width:100%;font:inherit;color:#fff;cursor:pointer;t
 (function () {
   'use strict';
   const LS = 'bridge-relax-v1';
-  const VERSION = '5.7';
-  const VERSION_DATE = '24 novembre 2026';
+  const VERSION = '6.0';
+  const VERSION_DATE = '25 novembre 2026';
   const NEWS = [
-    'Page de garde : séance en cours ou vraie prochaine séance, à ouvrir d\'un geste',
-    'Noms jamais coupés au milieu sur les tables',
-    'Bouton « Supprimer la séance » avec confirmation',
-    'Niveau par joueur (N1 débutant/intermédiaire, N2 moyen+/confirmé) et association par niveau',
-    'Le professeur apparaît toujours en tête des listes',
-    'Réponse Oui, ? ou Non modifiable directement dans le tableau d\'accueil',
-    'Tableau d\'accueil : oui, puis pas répondu, puis non, avec la présence de chacun (imprimable)',
-    '4 périodes de 45 minutes par défaut (30 min ou 1 heure au choix)',
-    'Étuis numérotés qui passent de table en table après chaque donne',
-    'On rebat toutes les cartes à la fin de chaque période',
-    'Incompatibilités : deux personnes jamais à la même table',
-    'Mode sombre plus lisible'
+    'Mode simple : 4 onglets (Aujourd\'hui, Joueurs, Tables, Plus)',
+    'Page « Aujourd\'hui » : les étapes de l\'après-midi, une par une, avec un gros bouton',
+    'Lancer une période en un seul bouton',
+    'Mots plus simples : Réponses, Arrivées',
+    'Grands caractères et « Annuler » une arrivée par erreur'
   ];
   const LOGO = (document.querySelector('link[rel="apple-touch-icon"]') || {}).href || '';
   const SEATS = BR.SEATS, SN = BR.SEAT_NAME;
@@ -1252,7 +1302,7 @@ button.cv-next{display:block;width:100%;font:inherit;color:#fff;cursor:pointer;t
     return s;
   }
   function defaults() {
-    const D = { v: 2, nextId: 1, nextSess: 1, settings: { start: '15:00', end: '18:30', roundMin: 30, minPerBoard: 11, setSize: 4, bankSets: 9, changeMin: 2, prepared: false, format: '45', pauseMin: 15, stock: 36, sound: true, perTable: 2, reshuffle: true }, roster: [], sessions: [], cur: null, notes: {}, avoid: [] };
+    const D = { v: 2, nextId: 1, nextSess: 1, settings: { start: '15:00', end: '18:30', roundMin: 30, minPerBoard: 11, setSize: 4, bankSets: 9, changeMin: 2, prepared: false, format: '45', pauseMin: 15, stock: 36, sound: true, perTable: 2, reshuffle: true, simple: true }, roster: [], sessions: [], cur: null, notes: {}, avoid: [] };
     D.cur = newSession(D).id;
     return D;
   }
@@ -1268,6 +1318,7 @@ button.cv-next{display:block;width:100%;font:inherit;color:#fff;cursor:pointer;t
       }
       if (!D.avoid) D.avoid = [];
       if (D.settings.perTable == null) D.settings.perTable = 2;
+      if (D.settings.simple == null) D.settings.simple = true;
       if (D.settings.reshuffle == null) D.settings.reshuffle = true;
       D.settings.format = D.settings.format || '45';
       if (!D.sessions.length) D.cur = newSession(D).id;
@@ -1296,6 +1347,17 @@ button.cv-next{display:block;width:100%;font:inherit;color:#fff;cursor:pointer;t
     try { const m = migrate(JSON.parse(localStorage.getItem(LS))); if (m) return m; } catch (e) { /* ignore */ }
     return defaults();
   }
+  // Page d'impression : #print=... contient le contenu à imprimer (aucune donnée n'est lue sur l'appareil)
+  if (location.hash.indexOf('#print=') === 0) {
+    try {
+      const job = JSON.parse(decodeURIComponent(escape(atob(location.hash.slice(7)))));
+      document.title = job.title || 'Bridge Relax';
+      document.body.className = 'printpage ' + (job.cls || '');
+      document.body.innerHTML = '<div class="pbar noprint"><b>' + job.title + '</b><button class="btn pri" onclick="window.print()">Imprimer</button><small>Sur iPhone : si la fenêtre d\'impression ne s\'ouvre pas, touchez « Imprimer », ou le bouton Partager puis « Imprimer ».</small></div><main>' + job.html + '</main>';
+      setTimeout(() => { try { window.print(); } catch (e) { /* bouton */ } }, 700);
+    } catch (e) { document.body.innerHTML = '<p style="padding:20px">Impossible d\'ouvrir la page d\'impression.</p>'; }
+    return;
+  }
   let D = load();
   { const t = isoDay(new Date()); const s = D.sessions.find(x => x.date === t); if (s) D.cur = s.id; }
   const FORMATS = {
@@ -1306,7 +1368,7 @@ button.cv-next{display:block;width:100%;font:inherit;color:#fff;cursor:pointer;t
   const durLabel = k => (FORMATS[k] || FORMATS['45']).label;
   const LVL = { 1: 'Débutant ou intermédiaire', 2: 'Moyen+ ou confirmé' };
   const lvlChip = p => p.level ? '<span class="lv lv' + p.level + '" title="' + LVL[p.level] + '">N' + p.level + '</span>' : '';
-  const ui = { cover: true, tab: 'tour', filter: '', fresh: false, salleView: 'noms', auto: true, tick: 0, pmode: null, pf: 'all', delId: null, delS: null };
+  const ui = { cover: true, tab: 'today', filter: '', fresh: false, salleView: 'noms', auto: true, tick: 0, pmode: null, pf: 'all', delId: null, delS: null };
   function save() { try { localStorage.setItem(LS, JSON.stringify(D)); } catch (e) { /* ignore */ } }
   function commit() { save(); render(); }
 
@@ -1379,7 +1441,9 @@ button.cv-next{display:block;width:100%;font:inherit;color:#fff;cursor:pointer;t
     joueurs: '<circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.4"/><path d="M16 14.2c2.9.2 5 2.4 5 5.3"/>',
     tour: '<rect x="6" y="6" width="12" height="12" rx="2.5"/><circle cx="12" cy="2.9" r="1.5"/><circle cx="12" cy="21.1" r="1.5"/><circle cx="2.9" cy="12" r="1.5"/><circle cx="21.1" cy="12" r="1.5"/>',
     etuis: '<rect x="4.5" y="3.5" width="11" height="15" rx="2.2"/><path d="M8.5 21h8.3a2.2 2.2 0 0 0 2.2-2.2V7.5"/>',
-    reglages: '<path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/>'
+    reglages: '<path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/>',
+    today: '<path d="M4 11.5 12 5l8 6.5V20a1 1 0 0 1-1 1h-4.5v-6h-5v6H5a1 1 0 0 1-1-1z"/>',
+    plus: '<circle cx="5.5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="18.5" cy="12" r="1.8"/>'
   };
 
   /* ---------- Horloge ---------- */
@@ -1496,24 +1560,24 @@ button.cv-next{display:block;width:100%;font:inherit;color:#fff;cursor:pointer;t
   }
   function viewHelp() {
     const step = (n, t, d) => '<div class="hstep"><b>' + n + '</b><div><h3>' + t + '</h3><p>' + d + '</p></div></div>';
-    return '<div class="sec"><button class="btn sm" data-a="tab" data-v="tour">‹ Retour</button><h2 style="margin-top:12px">Mode d\'emploi</h2></div>' +
-      '<div class="panel"><h3 class="hh">Une fois pour toutes</h3>' +
-      step(1, 'La liste des joueurs', 'Joueurs, Liste : collez la liste de diffusion (un nom par ligne). L\'étoile désigne le professeur ; N1 ou N2 donne le niveau de chacun.') +
-      step(2, 'Les incompatibilités', 'Joueurs, Liste, « Incompatibilités » : choisissez deux personnes qui ne seront jamais à la même table.') +
-      step(3, 'Les réglages', 'Durée des périodes (45 min par défaut), étuis par table, donnes préparées ou non, nombre d\'étuis possédés.') + '</div>' +
-      '<div class="panel"><h3 class="hh">Avant chaque séance</h3>' +
-      step(4, 'Créer la séance', 'Séances : date, heures et durée des périodes.') +
-      step(5, 'Inviter et noter les réponses', 'Joueurs, Inscriptions : « Rédiger l\'invitation », puis Oui, ? ou Non pour chacun. « Relancer les sans-réponse » quelques jours avant.') +
-      step(6, 'Préparer les étuis', 'Étuis : nombre d\'étuis à apporter et feuilles à imprimer (une par étui).') + '</div>' +
+    return '<div class="sec"><button class="btn sm" data-a="tab" data-v="' + (D.settings.simple !== false ? 'today' : 'tour') + '">‹ Retour</button><h2 style="margin-top:12px">Mode d\'emploi</h2><p class="lead">Le plus simple : ouvrez l\'onglet <b>Aujourd\'hui</b> et suivez les étapes, une par une. L\'étape à faire est encadrée en vert.</p></div>' +
+      '<div class="panel"><h3 class="hh">Une seule fois, au début</h3>' +
+      step(1, 'Mettre la liste des joueurs', 'Joueurs, puis Liste. Tapez un nom et touchez « Ajouter ». Ou collez toute la liste d\'un coup (un nom par ligne). L\'étoile ☆ désigne le professeur.') + '</div>' +
+      '<div class="panel"><h3 class="hh">Quelques jours avant</h3>' +
+      step(2, 'Créer la séance', 'Plus, puis Séances : la date et les heures.') +
+      step(3, 'Inviter', 'Aujourd\'hui, étape « Qui vient ? », bouton « Écrire l\'invitation » : le texte est prêt, il suffit de l\'envoyer par WhatsApp ou e-mail.') +
+      step(4, 'Noter les réponses', 'Joueurs, puis Réponses : touchez Oui, ? ou Non à côté de chaque nom.') +
+      step(5, 'Imprimer les feuilles d\'étui', 'Aujourd\'hui, étape « Préparer les étuis ». Une feuille par étui, à glisser dedans.') + '</div>' +
       '<div class="panel"><h3 class="hh">Le jour même</h3>' +
-      step(7, 'Accueillir', 'Joueurs, Accueil : « Arrivé » pour chaque personne. « Qui manque encore ? » montre les inscrits absents.') +
-      step(8, 'Lancer la période', 'Période : « Lancer la période ». Chaque table voit ses joueurs, ses étuis de départ et la table à qui passer chaque étui.') +
-      step(9, 'Annoncer', '« Afficher sur grand écran » (sur une télé reliée à l\'appareil) ou lire « Qui va où ? ».') +
-      step(10, 'Départs', 'Joueurs, Accueil : « Départ ». La place est aussitôt reprise par quelqu\'un qui attend, ou par le professeur.') +
-      step(11, 'Fin de période', 'Un signal sonne 5 minutes avant la fin, puis à la fin. On note les scores, on rebat les cartes, on lance la période suivante.') + '</div>' +
-      '<div class="panel"><h3 class="hh">Après la séance</h3>' +
-      step(12, 'Le bilan', 'Séances, « Bilan » : présents, absents inscrits, qui a joué avec qui. À imprimer ou copier.') + '</div>' +
-      '<p class="mute">Bridge Relax, version ' + VERSION + ' du ' + VERSION_DATE + '. Les données restent sur cet appareil : pensez à exporter une sauvegarde (Réglages).</p>';
+      step(6, 'Accueillir', 'Joueurs, puis Arrivées : touchez « Arrivé » quand une personne arrive. Une erreur ? Touchez « Annuler ».') +
+      step(7, 'Lancer la période', 'Aujourd\'hui ou Tables : le gros bouton vert. L\'application forme les tables toute seule.') +
+      step(8, 'Annoncer les tables', 'Lisez la liste « Qui va où ? », ou touchez « Grand écran » si l\'appareil est relié à une télévision.') +
+      step(9, 'Quelqu\'un part', 'Joueurs, Arrivées : touchez « Départ ». Sa place est aussitôt donnée à quelqu\'un qui attend, ou au professeur.') +
+      step(10, 'Fin de la période', 'Un signal sonne 5 minutes avant la fin, puis à la fin. On note les scores sur la feuille de l\'étui, on rebat les cartes, puis on relance.') + '</div>' +
+      '<div class="panel"><h3 class="hh">Après</h3>' +
+      step(11, 'Le bilan', 'Aujourd\'hui, dernière étape : qui est venu, qui a joué avec qui.') +
+      step(12, 'Une sauvegarde', 'Plus, Réglages, « Exporter » : une copie de sécurité de la liste et des séances.') + '</div>' +
+      '<p class="mute">Bridge Relax, version ' + VERSION + ' du ' + VERSION_DATE + '.</p>';
   }
   const hh = t => String(t).replace(':00', 'h').replace(':', 'h');
   // Un nom ne se coupe jamais au milieu : on réduit la police jusqu'à ce qu'il tienne sur une ligne
@@ -1538,15 +1602,20 @@ button.cv-next{display:block;width:100%;font:inherit;color:#fff;cursor:pointer;t
   window.addEventListener('orientationchange', () => setTimeout(fitNames, 300));
   function render() {
     if (ui.cover) { document.body.className = 'cover-on'; document.body.innerHTML = viewCover(); return; }
-    document.body.className = ui.tab === 'salle' ? 'salle-on' : '';
+    document.body.className = (ui.tab === 'salle' ? 'salle-on' : '') + (D.settings.big ? ' big' : '');
     if (ui.tab === 'salle') { document.body.innerHTML = viewSalle(); ui.fresh = false; updateClock(); return; }
-    const tabs = [['seances', 'Séances'], ['joueurs', 'Joueurs'], ['tour', 'Période'], ['etuis', 'Étuis'], ['reglages', 'Réglages']];
+    const simple = D.settings.simple !== false;
+    if (!simple && (ui.tab === 'today' || ui.tab === 'plus')) ui.tab = ui.tab === 'today' ? 'tour' : 'reglages';
+    const tabs = simple
+      ? [['today', 'Aujourd\'hui'], ['joueurs', 'Joueurs'], ['tour', 'Tables'], ['plus', 'Plus']]
+      : [['seances', 'Séances'], ['joueurs', 'Joueurs'], ['tour', 'Période'], ['etuis', 'Étuis'], ['reglages', 'Réglages']];
+    const inPlus = ['seances', 'etuis', 'reglages', 'bilan', 'aide', 'plus'];
     const s = cur();
     document.body.innerHTML =
       '<header><img class="logo" src="' + LOGO + '" alt="Page de garde" data-a="cover"><div class="htitle"><h1>Bridge Relax</h1><button class="hdate" data-a="tab" data-v="seances">' + esc(cap(fmtDate(s.date, { weekday: 'short', day: 'numeric', month: 'short' }))) + ' · ' + hh(s.start) + '–' + hh(s.end) + '</button></div><div class="clock" id="hclock"></div></header>' +
-      '<nav>' + tabs.map(t => '<button data-a="tab" data-v="' + t[0] + '" class="' + (ui.tab === t[0] || (ui.tab === 'bilan' && t[0] === 'seances') ? 'on' : '') + '"><svg viewBox="0 0 24 24" aria-hidden="true">' + ICON[t[0]] + '</svg>' + t[1] + '</button>').join('') + '</nav>' +
+      '<nav>' + tabs.map(t => '<button data-a="tab" data-v="' + t[0] + '" class="' + (ui.tab === t[0] || (simple ? (t[0] === 'plus' && inPlus.indexOf(ui.tab) >= 0) : (ui.tab === 'bilan' && t[0] === 'seances')) ? 'on' : '') + '"><svg viewBox="0 0 24 24" aria-hidden="true">' + ICON[t[0]] + '</svg>' + t[1] + '</button>').join('') + '</nav>' +
       (ui.toast ? '<div id="toast" class="toast' + (ui.toast.warn ? ' warn' : '') + '" data-a="toastclose">' + esc(ui.toast.msg) + '</div>' : '') +
-      '<main>' + ({ seances: viewSessions, joueurs: viewPlayers, tour: viewRound, etuis: viewBoards, reglages: viewSettings, bilan: viewBilan, aide: viewHelp }[ui.tab] || viewRound)() + '</main>';
+      '<main>' + ({ seances: viewSessions, joueurs: viewPlayers, tour: viewRound, etuis: viewBoards, reglages: viewSettings, bilan: viewBilan, aide: viewHelp, today: viewToday, plus: viewPlus }[ui.tab] || viewRound)() + '</main>';
     ui.fresh = false;
     updateClock();
     fitNames();
@@ -1616,6 +1685,74 @@ button.cv-next{display:block;width:100%;font:inherit;color:#fff;cursor:pointer;t
     const d0 = new Date(a); d0.setMinutes(0, 0, 0);
     for (let t = d0.getTime(); t <= z; t += 3600000) if (t >= a) ticks += '<span style="left:' + pct(t) + '%">' + new Date(t).getHours() + ' h</span>';
     return '<div class="tl"><div class="bar">' + segs + (now >= a && now <= z ? '<i class="now" style="left:' + pct(now) + '%"></i>' : '') + '</div><div class="ticks">' + ticks + '</div></div>';
+  }
+
+  /* ---------- Aujourd'hui : le fil conducteur, étape par étape ---------- */
+  function viewToday() {
+    const s = cur(), now = Date.now(), dd = daysUntil(s.date), c = counts(s), e = expected(s), f = fmt(s);
+    const start = sessMs(s, s.start), end = sessMs(s, s.end);
+    const over = dd < 0 || (dd === 0 && now >= end);
+    const r = BR.currentRound(C());
+    const nPlay = D.roster.filter(p => !p.archived && !p.teacher && isPresent(p.id)).length;
+    const teacherHere = D.roster.some(p => p.teacher && isPresent(p.id));
+    const canPlay = nPlay >= 4 || (nPlay >= 3 && teacherHere);
+    const upcoming = D.sessions.filter(x => sessMs(x, x.end) > now).sort((a, b) => a.date.localeCompare(b.date));
+    // étape en cours
+    let step = 2;
+    if (over) step = s.rounds.length ? 6 : 1;
+    else if (dd === 0 && now >= start - 3 * 3600000) step = s.rounds.length ? 5 : (c.present >= 3 ? 5 : 4);
+    else if (c.none === 0 && c.yes) step = 3;
+    const card = (n, title, body, btns, done) => '<section class="step' + (n === step ? ' now' : '') + (done && n !== step ? ' done' : '') + '"><div class="sn">' + (done && n !== step ? '✓' : n) + '</div><div class="sb"><h3>' + title + '</h3>' + body + (btns ? '<div class="sbtn">' + btns + '</div>' : '') + '</div></section>';
+    const B = (a, label, extra, cls) => '<button class="btn ' + (cls || '') + '" data-a="' + a + '"' + (extra || '') + '>' + label + '</button>';
+    let h = '<div class="sec"><h2>' + (dd === 0 ? 'Aujourd\'hui' : over ? 'Séance terminée' : 'Prochaine séance') + '</h2><p class="lead">Suivez les étapes dans l\'ordre. L\'étape en cours est encadrée.</p></div>';
+    // 1. La séance
+    h += card(1, 'La séance', '<p class="big1">' + esc(cap(fmtDate(s.date))) + '<br><small>' + hh(s.start) + ' à ' + hh(s.end) + ' · ' + f.nRounds + ' périodes de ' + f.label + '</small></p>' +
+      (over && !upcoming.length ? '<p>Cette séance est passée. Créez la suivante.</p>' : ''),
+      over && upcoming.length ? B('sopen', 'Ouvrir la séance du ' + esc(fmtDate(upcoming[0].date, { day: 'numeric', month: 'long' })), ' data-id="' + upcoming[0].id + '"', 'pri') : (over ? B('tab', 'Créer la prochaine séance', ' data-v="seances"', 'pri') : B('tab', 'Changer la date ou l\'heure', ' data-v="seances"')), true);
+    // 2. Les réponses
+    h += card(2, 'Qui vient ?', '<div class="cnt3"><span class="k yes">' + c.yes + ' oui</span><span class="k none">' + c.none + ' pas répondu</span><span class="k no">' + c.no + ' non</span></div>' +
+      '<p>' + (c.yes + c.none + c.no ? 'Notez la réponse de chacun : Oui, ? ou Non.' : 'Ajoutez d\'abord la liste des joueurs.') + '</p>',
+      (c.yes + c.none + c.no ? B('gotoresp', 'Noter les réponses', '', step === 2 ? 'pri' : '') + B('gotoinvite', 'Écrire l\'invitation') : B('gotolist', 'Ajouter les joueurs', '', 'pri')), c.none === 0 && c.yes > 0);
+    // 3. Les étuis
+    h += card(3, 'Préparer les étuis', e.tables ? '<p>Apportez <b>' + plural(e.etuis, 'étui', 'étuis') + '</b> (numéros 1 à ' + e.etuis + '), avec une feuille dans chaque étui, et <b>un jeu de cartes de secours</b> par table.</p>' : '<p>Le nombre d\'étuis sera calculé dès qu\'il y aura des réponses « oui ».</p>',
+      e.tables ? B('gosheets', 'Imprimer les feuilles d\'étui', '', step === 3 ? 'pri' : '') : '', false);
+    // 4. Les arrivées
+    h += card(4, 'Accueillir les joueurs', '<p class="big1">' + c.present + ' <small>arrivé' + (c.present > 1 ? 's' : '') + (c.yes ? ' sur ' + c.yes + ' attendu' + (c.yes > 1 ? 's' : '') : '') + '</small></p><p>Touchez « Arrivé » à côté du nom de chaque personne qui arrive.</p>',
+      B('gotoarr', 'Accueillir les joueurs', '', step === 4 ? 'pri' : ''), c.present > 0 && s.rounds.length > 0);
+    // 5. Jouer
+    let body5, btn5;
+    if (r) {
+      const left = (roundEnd(r) - now) / 60000;
+      body5 = '<p class="big1">Période ' + r.n + ' sur ' + f.nRounds + '<br><small>' + (left > 0 ? 'fin vers ' + fmtT(roundEnd(r)) + ', dans ' + fmtDur(left) : 'temps écoulé : quand les tables ont fini, lancez la suivante') + '</small></p>';
+      btn5 = B('tab', 'Voir les tables', ' data-v="tour"', left > 0 ? 'pri' : '') + (s.rounds.length < f.nRounds || left <= 0 ? B('next', 'Lancer la période ' + (s.rounds.length + 1), '', left <= 0 ? 'pri go' : '') : '') + B('salle', 'Grand écran');
+    } else if (canPlay && !over) {
+      body5 = '<p>' + esc(planInfo().txt) + '</p>';
+      btn5 = B('next', s.rounds.length ? 'Lancer la période ' + (s.rounds.length + 1) : 'Lancer la première période', '', 'pri go');
+    } else {
+      body5 = '<p>' + (over ? 'La séance est terminée.' : 'Il faut au moins 4 joueurs arrivés (ou 3 avec le professeur) pour former une table.') + '</p>';
+      btn5 = '';
+    }
+    h += card(5, 'Jouer', body5, btn5, s.rounds.length >= f.nRounds);
+    // 6. Le bilan
+    h += card(6, 'Après la séance', '<p>Le bilan : présents, absents inscrits, qui a joué avec qui.</p>', s.rounds.length ? B('bilan', 'Voir le bilan', ' data-id="' + s.id + '"', step === 6 ? 'pri' : '') : '', false);
+    h += '<p class="mute" style="text-align:center;margin-top:16px">Besoin d\'aide ? <button class="lnk" data-a="help">Mode d\'emploi</button></p>';
+    return h;
+  }
+  /* ---------- Plus : tout le reste ---------- */
+  function viewPlus() {
+    const it = (a, extra, icon, t, d) => '<button class="pitem" data-a="' + a + '"' + extra + '><span class="pi">' + icon + '</span><span><b>' + t + '</b><small>' + d + '</small></span><span class="pc">›</span></button>';
+    return '<div class="sec"><h2>Plus</h2></div><div class="plistm">' +
+      it('tab', ' data-v="seances"', '📅', 'Séances', 'Créer, changer ou supprimer une séance') +
+      it('tab', ' data-v="etuis"', '🂠', 'Étuis et feuilles', 'Nombre d\'étuis, feuilles à imprimer') +
+      it('bilan', ' data-id="' + cur().id + '"', '📋', 'Bilan de la séance', 'Présents, absents, qui a joué avec qui') +
+      it('goavoid', '', '⛔', 'Incompatibilités', 'Deux personnes jamais à la même table') +
+      it('tab', ' data-v="reglages"', '⚙️', 'Réglages', 'Durée des périodes, étuis, son, sauvegarde') +
+      it('help', '', '❓', 'Mode d\'emploi', 'Les étapes d\'un après-midi, une par une') +
+      it('cover', '', '♠', 'Page de garde', 'Version ' + VERSION + ' du ' + VERSION_DATE) +
+      '</div><div class="panel"><h3>Affichage</h3>' +
+      '<label class="chk"><input type="checkbox" data-f="big"' + (D.settings.big ? ' checked' : '') + '> Grands caractères</label>' +
+      '<label class="chk"><input type="checkbox" data-f="simple"' + (D.settings.simple !== false ? ' checked' : '') + '> Mode simple (4 onglets)</label>' +
+      '<p class="mute">Le mode complet montre tous les onglets et réglages, pour l\'organisateur qui veut tout régler.</p></div>';
   }
 
   /* ---------- Séances ---------- */
@@ -1729,7 +1866,7 @@ button.cv-next{display:block;width:100%;font:inherit;color:#fff;cursor:pointer;t
         const g = rsvpOf(s, p.id);
         const a = s.att[p.id] || {};
         const pres = a.present ? '<span class="bd here">Présent</span><small>depuis ' + fmtT(a.arr) + '</small>' : '<span class="bd abs">Absent</span>' + (a.left ? '<small>parti à ' + fmtT(a.left) + '</small>' : '');
-        const btn = a.present ? '<button class="btn dep" data-a="depart" data-id="' + p.id + '">Départ</button>' : '<button class="btn arr" data-a="arrive" data-id="' + p.id + '">' + (a.left ? 'Revenu' : 'Arrivé') + '</button>';
+        const btn = a.present ? (cur().rounds.length ? '<button class="btn dep" data-a="depart" data-id="' + p.id + '">Départ</button>' : '<button class="btn dep" data-a="unarrive" data-id="' + p.id + '">Annuler</button>') : '<button class="btn arr" data-a="arrive" data-id="' + p.id + '">' + (a.left ? 'Revenu' : 'Arrivé') + '</button>';
         const seg = '<div class="rsvp sm3">' + [['yes', 'Oui'], ['none', '?'], ['no', 'Non']].map(x => '<button class="' + x[0] + (g === x[0] ? ' on' : '') + '" data-a="rsvp" data-id="' + p.id + '" data-v="' + x[0] + '" aria-label="Réponse ' + (x[0] === 'none' ? 'pas répondu' : x[1].toLowerCase()) + '">' + x[1] + '</button>').join('') + '</div>';
         h += '<tr class="' + (a.present ? 'is-here' : '') + (ui.moved === p.id ? ' moved' : '') + '"><td class="c-n"><b>' + esc(p.name) + '</b> ' + lvlChip(p) + (p.teacher ? ' <span class="pill">professeur</span>' : '') + '<span class="c-pm">' + pres + '</span></td><td class="c-r">' + seg + '</td><td class="c-p">' + pres + '</td><td class="c-a">' + btn + '</td></tr>';
       });
@@ -1739,7 +1876,7 @@ button.cv-next{display:block;width:100%;font:inherit;color:#fff;cursor:pointer;t
   }
   function viewPlayers() {
     const s = cur(), m = pmode(), c = counts(s), e = expected(s);
-    const seg = '<div class="seg3">' + [['insc', 'Inscriptions'], ['accueil', 'Accueil'], ['liste', 'Liste']].map(x => '<button class="' + (m === x[0] ? 'on' : '') + '" data-a="pmode" data-v="' + x[0] + '">' + x[1] + '</button>').join('') + '</div>';
+    const seg = '<div class="seg3">' + [['insc', 'Réponses'], ['accueil', 'Arrivées'], ['liste', 'Liste']].map(x => '<button class="' + (m === x[0] ? 'on' : '') + '" data-a="pmode" data-v="' + x[0] + '">' + x[1] + '</button>').join('') + '</div>';
     let top = '';
     let chips = '';
     const SING = { attendus: 'attendu', 'présents': 'présent', absents: 'absent' };
@@ -1762,7 +1899,7 @@ button.cv-next{display:block;width:100%;font:inherit;color:#fff;cursor:pointer;t
     if (m === 'liste') tools = avoidPanel() + '<details style="margin:10px 0 0"><summary>Coller une liste de noms</summary><textarea id="bulk" rows="6" placeholder="Un nom par ligne. Pour le niveau, ajoutez 1 ou 2 après le nom (ex. Marie Dupont ; 2)"></textarea><button class="btn" data-a="bulk" style="margin-top:8px">Ajouter ces noms</button></details>';
     if (m === 'accueil') tools = '<div class="row" style="margin-top:10px"><button class="btn sm" data-a="printacc">Imprimer le tableau d\'accueil</button></div>';
     const ph = m === 'accueil' ? 'Chercher un nom, ou ajouter quelqu\'un qui arrive' : 'Taper un nom pour chercher ou ajouter';
-    return '<div class="sec"><h2>' + (m === 'accueil' ? 'Accueil' : m === 'insc' ? 'Inscriptions' : 'Liste des joueurs') + '</h2>' + seg + top + '</div>' +
+    return '<div class="sec"><h2>' + (m === 'accueil' ? 'Arrivées' : m === 'insc' ? 'Réponses' : 'Liste des joueurs') + '</h2>' + seg + top + '</div>' +
       (chips ? '<div class="fchips">' + chips + '</div>' : '') +
       '<div class="panel"><div class="row"><input type="text" id="pname" class="grow" placeholder="' + ph + '" autocomplete="off" value="' + esc(ui.filter) + '"><button class="btn pri" data-a="add">Ajouter</button></div>' + tools + '</div>' +
       (m === 'insc' ? msgPanel() : '') +
@@ -1837,7 +1974,7 @@ button.cv-next{display:block;width:100%;font:inherit;color:#fff;cursor:pointer;t
     let h = '<div class="sec">' + planBlock() + timeline();
     const nextN = s.rounds.length + 1;
     const opts = []; for (let i = 1; i <= 8; i++) opts.push('<option value="' + i + '"' + (i === auto ? ' selected' : '') + '>' + i + ' donne' + (i > 1 ? 's' : '') + ' par table' + (i === auto ? ' (conseillé)' : '') + '</option>');
-    h += '<div class="go-row"><select id="bsel" aria-label="Donnes par table">' + opts.join('') + '</select><button class="btn go" data-a="next">Lancer la période ' + nextN + ' sur ' + f.nRounds + '</button></div>';
+    h += '<div class="go-row">' + (D.settings.simple !== false ? '' : '<select id="bsel" aria-label="Donnes par table">' + opts.join('') + '</select>') + '<button class="btn go" data-a="next">Lancer la période ' + nextN + ' sur ' + f.nRounds + '</button></div>';
     h += '<div class="mute">' + (r ? 'La période suivante tient compte des arrivées et des départs notés à l\'accueil.' : 'Marquez les arrivées dans Joueurs, Accueil, puis lancez la première période.') + '</div>' +
       (daysUntil(s.date) !== 0 ? '<div class="note warn" style="margin-top:10px">Cette séance n\'est pas celle d\'aujourd\'hui. Ouvrez la bonne séance dans l\'onglet Séances.</div>' : '') +
       '<div class="row" style="margin-top:12px"><button class="btn sm noprint" data-a="salle">Afficher sur grand écran</button>' + (s.rounds.length ? '<button class="btn sm noprint" data-a="bilan" data-id="' + s.id + '">Bilan de la séance</button>' : '') + '</div></div>';
@@ -1845,7 +1982,7 @@ button.cv-next{display:block;width:100%;font:inherit;color:#fff;cursor:pointer;t
       return h + '<div class="empty"><svg viewBox="0 0 150 150" aria-hidden="true"><rect x="45" y="45" width="60" height="60" rx="10" fill="none" stroke="currentColor" stroke-width="3"/><rect x="58" y="12" width="34" height="22" rx="7" fill="none" stroke="currentColor" stroke-width="3"/><rect x="58" y="116" width="34" height="22" rx="7" fill="none" stroke="currentColor" stroke-width="3"/><rect x="12" y="58" width="22" height="34" rx="7" fill="none" stroke="currentColor" stroke-width="3"/><rect x="116" y="58" width="22" height="34" rx="7" fill="none" stroke="currentColor" stroke-width="3"/><path d="M75 62c5 8 12 9 12 16 0 5-4 7-8 6 1 4 2 6 4 9H67c2-3 3-5 4-9-4 1-8-1-8-6 0-7 7-8 12-16z" fill="currentColor"/></svg><div>Les tables apparaîtront ici dès la première période.</div></div>';
     }
     const relay = isRelay(r);
-    h += '<div class="sec"><h2>Période ' + r.n + '</h2><p class="lead">' + plural(r.b, 'donne', 'donnes') + ' par table, à votre rythme. Début à ' + fmtT(r.startedAt) + ', <span id="rcount"></span>.</p>';
+    h += '<div class="sec"><h2>Période ' + r.n + (D.settings.simple !== false ? ' : les tables' : '') + '</h2><p class="lead">' + plural(r.b, 'donne', 'donnes') + ' par table, à votre rythme. Début à ' + fmtT(r.startedAt) + ', <span id="rcount"></span>.</p>';
     if (relay) {
       const act = r.tables.filter(t => !t.closed && !t.solo);
       h += '<div class="relay"><div class="rbig"><b>' + r.relay.count + '</b><span>étuis en circulation<small>n° ' + r.relay.base + ' à ' + r.relay.last + '</small></span></div>' +
@@ -1853,7 +1990,7 @@ button.cv-next{display:block;width:100%;font:inherit;color:#fff;cursor:pointer;t
         (D.settings.prepared ? '' : (D.settings.reshuffle !== false ? '<p class="mute">À la fin de chaque période, on rebat toutes les cartes de tous les étuis : personne ne rejoue jamais une donne.</p>' : '')) + '</div>';
     }
     h += '<div class="note ok">Après chaque donne, notez sur la feuille rangée dans l\'étui : contrat, entame et score.</div>' +
-      (r.stats ? '<div class="mute">Partenaires déjà rencontrés : ' + r.stats.repeatPartners + '. Adversaires déjà rencontrés : ' + r.stats.repeatOpp + '.' + (r.stats.replays ? ' <b class="red">Lots déjà joués : ' + r.stats.replays + '.</b>' : '') + '</div>' : '') + '</div>';
+      (r.stats && D.settings.simple === false ? '<div class="mute">Partenaires déjà rencontrés : ' + r.stats.repeatPartners + '. Adversaires déjà rencontrés : ' + r.stats.repeatOpp + '.' + (r.stats.replays ? ' <b class="red">Lots déjà joués : ' + r.stats.replays + '.</b>' : '') + '</div>' : '') + '</div>';
     (r.warnings || []).forEach(w => { h += '<div class="note bad">' + esc(w) + '</div>'; });
 
     const w = BR.waiting(c);
@@ -2126,6 +2263,7 @@ button.cv-next{display:block;width:100%;font:inherit;color:#fff;cursor:pointer;t
       '<div class="panel"><h3>Heures par défaut des nouvelles séances</h3><div class="row"><div class="grow"><label class="f">Début</label><input type="time" data-f="set" data-k="start" value="' + s.start + '"></div><div class="grow"><label class="f">Fin</label><input type="time" data-f="set" data-k="end" value="' + s.end + '"></div></div></div>' +
       '<div class="panel"><h3>Sauvegarde</h3><div class="row"><button class="btn" data-a="export">Exporter dans un fichier</button><label class="btn" style="margin:0">Importer un fichier<input type="file" id="imp" accept=".json,application/json" style="display:none"></label></div>' +
       '<p class="mute">Les données restent dans ce navigateur. Exportez pour les passer sur un autre appareil ou les garder en sécurité.</p></div>' +
+      '<div class="panel"><h3>Affichage</h3><label class="chk"><input type="checkbox" data-f="big"' + (s.big ? ' checked' : '') + '> Grands caractères</label><label class="chk"><input type="checkbox" data-f="simple"' + (s.simple !== false ? ' checked' : '') + '> Mode simple (4 onglets : Aujourd\'hui, Joueurs, Tables, Plus)</label></div>' +
       '<div class="panel"><h3>Niveaux</h3><label class="chk"><input type="checkbox" data-f="levelMatch"' + (s.levelMatch !== false ? ' checked' : '') + '> Associer les joueurs de même niveau quand c\'est possible</label><p class="mute">Niveau 1 : débutant ou intermédiaire. Niveau 2 : moyen+ ou confirmé. Priorité aux partenaires de même niveau, puis aux tables d\'un même niveau, sans jamais redonner un même partenaire. Le niveau se choisit dans Joueurs, Liste (N1 ou N2).</p></div>' +
       '<div class="panel"><h3>Incompatibilités</h3><p class="mute">Deux personnes qui ne doivent jamais être à la même table. ' + plural((D.avoid || []).length, 'incompatibilité enregistrée', 'incompatibilités enregistrées') + '.</p><button class="btn sm" data-a="goavoid">Gérer les incompatibilités</button></div>' +
       '<div class="panel"><h3>À propos</h3><p><b>Bridge Relax, version ' + VERSION + '</b> du ' + VERSION_DATE + '.</p><div class="row"><button class="btn sm" data-a="help">Mode d\'emploi</button><button class="btn sm" data-a="cover">Page de garde</button></div></div>' +
@@ -2167,6 +2305,24 @@ button.cv-next{display:block;width:100%;font:inherit;color:#fff;cursor:pointer;t
     }
     const ctl = '<div class="sctl noprint"><button class="' + (ui.salleView === 'noms' ? 'on' : '') + '" data-a="salleview" data-v="noms">Par nom</button><button class="' + (ui.salleView === 'tables' ? 'on' : '') + '" data-a="salleview" data-v="tables">Par table</button><button class="' + (ui.auto ? 'on' : '') + '" data-a="salleauto">Alterner</button><button data-a="fullscreen">Plein écran</button><button data-a="salleclose">Fermer</button></div>';
     return '<div class="salle">' + top + body + ctl + '</div>';
+  }
+
+  /* ---------- Impression ---------- */
+  // Application lancée depuis l'écran d'accueil de l'iPhone/iPad : l'impression y est bloquée par Apple
+  function isStandalone() {
+    try { return !!(navigator.standalone || (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches)); } catch (e) { return false; }
+  }
+  function printJob(cls, html, title) {
+    if (isStandalone()) {
+      const data = btoa(unescape(encodeURIComponent(JSON.stringify({ cls, html, title }))));
+      const url = location.href.split('#')[0] + '#print=' + data;
+      const w = window.open(url, '_blank');
+      if (!w) { const a = document.createElement('a'); a.href = url; a.target = '_blank'; a.rel = 'noopener'; document.body.appendChild(a); a.click(); a.remove(); }
+      toast('La page d\'impression s\'ouvre dans le navigateur. Touchez « Imprimer ».');
+      return;
+    }
+    if (cls) document.body.classList.add(cls);
+    setTimeout(() => { window.print(); setTimeout(() => { if (cls) document.body.classList.remove(cls); }, 800); }, 50);
   }
 
   /* ---------- Actions ---------- */
@@ -2256,7 +2412,7 @@ button.cv-next{display:block;width:100%;font:inherit;color:#fff;cursor:pointer;t
     next() {
       unlockAudio();
       const s = cur();
-      const b = +$('#bsel').value;
+      const b = $('#bsel') ? +$('#bsel').value : BR.autoBoards(C(), Date.now());
       const c = C(), now = Date.now();
       const slot = BR.roundSlot(c, now);
       // Numéros des étuis : les mêmes à chaque période si l'on rebat tout, sinon de nouveaux
@@ -2268,7 +2424,7 @@ button.cv-next{display:block;width:100%;font:inherit;color:#fff;cursor:pointer;t
       if (r.error) { alert(r.error); return; }
       r.endAt = now + Math.round(slot) * 60000;
       if (r.relay && r.relay.last > (D.settings.stock || 36)) r.warnings.push('Cette période utilise les étuis ' + r.relay.base + ' à ' + r.relay.last + ' : c\'est plus que les ' + D.settings.stock + ' étuis indiqués dans les réglages.');
-      s.rounds.push(r); ui.fresh = true; commit(); window.scrollTo(0, 0);
+      s.rounds.push(r); ui.fresh = true; ui.tab = 'tour'; commit(); window.scrollTo(0, 0);
     },
     opentable() { if (!BR.openExtraTable(C())) alert('Impossible d\'ouvrir une table.'); ui.fresh = false; commit(); },
     replace(el) {
@@ -2276,10 +2432,16 @@ button.cv-next{display:block;width:100%;font:inherit;color:#fff;cursor:pointer;t
       if (sel) { BR.replaceSeat(C(), +el.dataset.t, el.dataset.s, +sel.value); commit(); }
     },
     dissolve(el) { if (confirm('Fermer cette table ?')) { BR.dissolveTable(C(), +el.dataset.t); commit(); } },
-    print() { window.print(); },
-    openfromcover(el) { D.cur = +el.dataset.id; save(); ui.cover = false; ui.pmode = null; ui.tab = daysUntil(cur().date) === 0 ? 'joueurs' : 'seances'; render(); window.scrollTo(0, 0); },
+    print() { printJob('', $('main').innerHTML, 'Bridge Relax'); },
+    openfromcover(el) { D.cur = +el.dataset.id; save(); ui.cover = false; ui.pmode = null; ui.tab = D.settings.simple !== false ? 'today' : (daysUntil(cur().date) === 0 ? 'joueurs' : 'seances'); render(); window.scrollTo(0, 0); },
     newfromcover() { ui.cover = false; ui.tab = 'seances'; render(); window.scrollTo(0, 0); },
-    enter() { ui.cover = false; render(); window.scrollTo(0, 0); },
+    enter() { ui.cover = false; if (D.settings.simple !== false) ui.tab = 'today'; render(); window.scrollTo(0, 0); },
+    gotoresp() { ui.tab = 'joueurs'; ui.pmode = 'insc'; ui.pf = 'all'; render(); window.scrollTo(0, 0); },
+    gotoinvite() { ui.tab = 'joueurs'; ui.pmode = 'insc'; ui.msg = 'invit'; render(); const p = $('.msgp'); if (p && p.scrollIntoView) p.scrollIntoView({ block: 'start' }); },
+    gotolist() { ui.tab = 'joueurs'; ui.pmode = 'liste'; render(); window.scrollTo(0, 0); },
+    gotoarr() { ui.tab = 'joueurs'; ui.pmode = 'accueil'; ui.pf = 'all'; render(); window.scrollTo(0, 0); },
+    gosheets() { ui.tab = 'etuis'; render(); actions.printsheets(); },
+    unarrive(el) { const s = cur(), id = +el.dataset.id; delete s.att[id]; toast('Arrivée de ' + nm(id) + ' annulée.'); commit(); },
     goavoid() { ui.cover = false; ui.tab = 'joueurs'; ui.pmode = 'liste'; ui.avoidOpen = true; render(); const a = $('.avoid'); if (a && a.scrollIntoView) a.scrollIntoView({ block: 'center' }); },
     help() { ui.cover = false; ui.tab = 'aide'; render(); window.scrollTo(0, 0); },
     cover() { ui.cover = true; render(); window.scrollTo(0, 0); },
@@ -2299,17 +2461,12 @@ button.cv-next{display:block;width:100%;font:inherit;color:#fff;cursor:pointer;t
     testsound() { const was = D.settings.sound; D.settings.sound = true; chime(1); D.settings.sound = was; },
     printacc() {
       const keep = ui.pf; ui.pf = 'all'; ui.filter = ''; render();
-      document.body.classList.add('pacc');
-      setTimeout(() => { window.print(); setTimeout(() => { document.body.classList.remove('pacc'); ui.pf = keep; render(); }, 800); }, 50);
+      const html = ($('.ptitle') ? $('.ptitle').outerHTML : '') + $('#plist').outerHTML;
+      printJob('pacc', html, 'Tableau d\'accueil');
+      if (!isStandalone()) setTimeout(() => { ui.pf = keep; render(); }, 900); else { ui.pf = keep; render(); }
     },
-    printprep() {
-      document.body.classList.add('pprep');
-      setTimeout(() => { window.print(); setTimeout(() => document.body.classList.remove('pprep'), 800); }, 50);
-    },
-    printsheets() {
-      document.body.classList.add('psheets');
-      setTimeout(() => { window.print(); setTimeout(() => document.body.classList.remove('psheets'), 800); }, 50);
-    },
+    printprep() { printJob('pprep', $('.prepsheet').outerHTML, 'Fiche de préparation des étuis'); },
+    printsheets() { printJob('psheets', $('.sheets').outerHTML, 'Feuilles d\'étui'); },
     salle() { ui.tab = 'salle'; ui.tick = 0; render(); },
     salleclose() { if (document.fullscreenElement && document.exitFullscreen) document.exitFullscreen(); ui.tab = 'tour'; render(); },
     salleview(el) { ui.salleView = el.dataset.v; ui.auto = false; render(); },
@@ -2354,6 +2511,8 @@ button.cv-next{display:block;width:100%;font:inherit;color:#fff;cursor:pointer;t
   document.addEventListener('change', e => {
     const el = e.target;
     if (el.dataset.f === 'format') { D.settings.format = el.value; commit(); }
+    else if (el.dataset.f === 'big') { D.settings.big = el.checked; commit(); }
+    else if (el.dataset.f === 'simple') { D.settings.simple = el.checked; ui.tab = el.checked ? 'plus' : 'reglages'; commit(); }
     else if (el.dataset.f === 'levelMatch') { D.settings.levelMatch = el.checked; commit(); }
     else if (el.dataset.f === 'reshuffle') { D.settings.reshuffle = el.checked; commit(); }
     else if (el.dataset.f === 'perTable') { D.settings.perTable = +el.value; commit(); }
