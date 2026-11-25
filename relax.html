@@ -772,6 +772,13 @@ body.big{zoom:1.15}
 .step .sbtn .btn{width:100%;flex:none;white-space:normal;font-family:var(--sans)}
 .step .sbtn .btn.go{font-size:19px;min-height:60px}
 .step .sn{align-self:flex-start;margin-top:2px}
+/* Feuille d'étui simplifiée */
+.sp-ex{font-size:12px;color:#333;margin:2px 0 4px}
+.sp-t th small{font-weight:500;font-size:.8em}
+@media print{.sp-ex{font-size:8.5pt;margin:0 0 1.5mm}.sp-t th{font-size:8.5pt;line-height:1.15}.sp-t .w1{width:15mm}.sp-t .w2{width:24mm}}
+@media screen{body.printpage .sp-t{min-width:0}body.printpage .sp-t th{font-size:11px;vertical-align:bottom}body.printpage .sp-ex{font-size:12px}}
+@media print{body.psheets .sp-t td,body.printpage .sp-t td{height:5.9mm}body.psheets .sp-board,body.printpage .sp-board{height:88mm}}
+@media print{body.psheets .sp-board,body.printpage .sp-board{height:auto;min-height:0;overflow:visible;margin-bottom:3mm;padding-bottom:3mm}}
 
 </style>
 </head>
@@ -1280,9 +1287,10 @@ body.big{zoom:1.15}
 (function () {
   'use strict';
   const LS = 'bridge-relax-v1';
-  const VERSION = '6.0';
+  const VERSION = '6.1';
   const VERSION_DATE = '25 novembre 2026';
   const NEWS = [
+    'Feuilles d\'étui simplifiées : contrat, entame, résultat, points, avec un exemple',
     'Mode simple : 4 onglets (Aujourd\'hui, Joueurs, Tables, Plus)',
     'Page « Aujourd\'hui » : les étapes de l\'après-midi, une par une, avec un gros bouton',
     'Lancer une période en un seul bouton',
@@ -2107,14 +2115,15 @@ body.big{zoom:1.15}
     const f = fmt(), k = Math.max(1, D.settings.perTable || 2);
     const perPeriod = Math.ceil(4 / k) + 1;
     const fresh = D.settings.prepared || D.settings.reshuffle === false;
-    return Math.min(9, fresh ? perPeriod + 1 : perPeriod * f.nRounds);
+    return Math.min(8, fresh ? perPeriod + 1 : Math.ceil(4 / k) * f.nRounds);
   }
   function sheetHtml(bn) {
     const s = cur(), n = sheetRows(), b = BR.boardInfo(bn);
     const fresh = D.settings.prepared || D.settings.reshuffle === false;
     return '<div class="sp-board"><div class="sp-bt"><span class="sp-n' + (b.vulNS ? ' vns' : '') + (b.vulEW ? ' veo' : '') + '">' + bn + '</span>Étui ' + bn + ' <small>Donneur : ' + SN[b.dealer] + '. Vulnérable : ' + vulName(b.vul) + '.' + (D.settings.prepared ? ' Déclarant prévu : ' + SN[roleSeats(bn).D] + ', entame : ' + SN[roleSeats(bn).L] + '.' : '') + '</small><span class="sp-d">Bridge Relax, ' + esc(fmtDate(s.date, { day: 'numeric', month: 'long' })) + '</span></div>' +
-      '<table class="sp-t"><thead><tr>' + (fresh ? '' : '<th class="w0">Pér.</th>') + '<th class="w1">Table</th><th>Nord-Sud</th><th>Est-Ouest</th><th class="w2">Contrat</th><th class="w1">Décl.</th><th class="w2">Entame</th><th class="w1">Levées</th><th class="w2">Score NS</th><th class="w2">Score EO</th></tr></thead><tbody>' +
-      ('<tr>' + (fresh ? '' : '<td></td>') + '<td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>').repeat(n) + '</tbody></table></div>';
+      '<div class="sp-ex">Exemple : contrat <b>4♠ par Sud</b> · entame <b>Roi de ♥</b> · résultat <b>=</b> (contrat juste fait), <b>+1</b> (une levée de plus) ou <b>−2</b> (chute de deux) · points dans la colonne du camp qui marque.</div>' +
+      '<table class="sp-t"><thead><tr>' + (fresh ? '' : '<th class="w1">Période</th>') + '<th class="w1">Table</th><th>Contrat<br><small>et qui le joue</small></th><th>Entame</th><th class="w2">Résultat<br><small>=, +1, −1…</small></th><th class="w2">Points<br>Nord-Sud</th><th class="w2">Points<br>Est-Ouest</th></tr></thead><tbody>' +
+      ('<tr>' + (fresh ? '' : '<td></td>') + '<td></td><td></td><td></td><td></td><td></td><td></td></tr>').repeat(n) + '</tbody></table></div>';
   }
   function viewBoards() {
     const s = cur(), e = expected(s), f = fmt(s);
@@ -2138,7 +2147,7 @@ body.big{zoom:1.15}
     const plan = r && r.relay ? r.tables.filter(t => !t.closed) : Array.from({ length: T }, (_, i) => ({ n: i + 1, own: Array.from({ length: k }, (_, j) => i * k + j + 1) }));
     if (plan.length) h += '<div class="panel"><h3>' + (r && r.relay ? 'Étuis de départ, période ' + r.n : 'Étuis de départ prévus') + '</h3><div class="dgrid">' + plan.map(t => '<div class="dcell" style="--tc:' + tcol(t.n) + '"><b>Table ' + t.n + '</b><span>' + (t.own || []).map(n => '<i>' + n + '</i>').join('') + '</span><small>' + (t.solo ? 'hors relais' : 'passe à la table ' + (r && r.relay ? nextActive(r, t) : (t.n % plan.length) + 1)) + '</small></div>').join('') + '</div></div>';
     h += '<div class="panel"><h3>Feuilles d\'étui</h3><div class="row"><label class="f" style="margin:0">Imprimer les feuilles des étuis 1 à</label><input type="number" min="1" max="200" value="' + upto + '" data-f="printto" style="width:90px"><button class="btn pri" data-a="printsheets">Imprimer (' + Math.ceil(upto / 3) + ' pages)</button></div>' +
-      '<p class="mute">Trois feuilles par page A4, à découper et à glisser chacune dans son étui. Chaque table y note le contrat, l\'entame et le score. Les scores ne sont pas saisis dans l\'application.</p>' +
+      '<p class="mute">Trois feuilles par page A4, à découper et à glisser chacune dans son étui. Chaque table y note le contrat, l\'entame, le résultat et les points. Les scores ne sont pas saisis dans l\'application.</p>' +
       '<div class="legend"><span class="mb vns" style="display:flex">9</span>Bords rouges : camp vulnérable. Point doré : donneur.</div></div>';
     if (D.settings.prepared) {
       h += '<div class="panel prepbox"><h3>Préparer les donnes</h3><p class="mute">Pour chaque étui : le déclarant prévu, qui entame et qui fait le mort. L\'application place les joueurs pour que chacun soit tour à tour déclarant, mort, à l\'entame et en défense. Composez chaque donne pour que la paire du déclarant joue le contrat (environ 24 à 27 points, une belle couleur, une petite difficulté de jeu ou d\'entame).</p><div class="row"><button class="btn pri" data-a="printprep">Imprimer la fiche de préparation</button>' + (D.settings.prepLink ? '<a class="btn" target="_blank" rel="noopener" href="' + esc(D.settings.prepLink) + '">Ouvrir l\'application de préparation</a>' : '') + '</div></div>';
