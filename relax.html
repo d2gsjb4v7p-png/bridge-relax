@@ -779,6 +779,13 @@ body.big{zoom:1.15}
 @media screen{body.printpage .sp-t{min-width:0}body.printpage .sp-t th{font-size:11px;vertical-align:bottom}body.printpage .sp-ex{font-size:12px}}
 @media print{body.psheets .sp-t td,body.printpage .sp-t td{height:5.9mm}body.psheets .sp-board,body.printpage .sp-board{height:88mm}}
 @media print{body.psheets .sp-board,body.printpage .sp-board{height:auto;min-height:0;overflow:visible;margin-bottom:3mm;padding-bottom:3mm}}
+/* Lieux */
+.place{font-weight:600;color:var(--ink)!important}
+.cv-next small.cvp{display:block;margin-top:4px}
+.plc{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid var(--line)}
+.plc .chk{align-items:flex-start;font-weight:500;line-height:1.4}
+.plc input{margin-top:4px}
+#newplace{width:100%;box-sizing:border-box;font:15px/1.4 var(--sans)}
 
 </style>
 </head>
@@ -1287,9 +1294,10 @@ body.big{zoom:1.15}
 (function () {
   'use strict';
   const LS = 'bridge-relax-v1';
-  const VERSION = '6.1';
+  const VERSION = '6.2';
   const VERSION_DATE = '25 novembre 2026';
   const NEWS = [
+    'Lieu de la séance (Royal Orée par défaut) dans l\'invitation et les rappels, avec itinéraire',
     'Feuilles d\'étui simplifiées : contrat, entame, résultat, points, avec un exemple',
     'Mode simple : 4 onglets (Aujourd\'hui, Joueurs, Tables, Plus)',
     'Page « Aujourd\'hui » : les étapes de l\'après-midi, une par une, avec un gros bouton',
@@ -1304,13 +1312,20 @@ body.big{zoom:1.15}
   const todayIso = () => isoDay(new Date());
 
   /* ---------- Données ---------- */
+  const DEF_PLACE = 'Royal Orée\nDrève des Brûlés 59\n1150 Woluwe-Saint-Pierre';
+  function ensurePlaces(D) {
+    if (!D.places || !D.places.length) D.places = [{ id: 1, text: DEF_PLACE }];
+    if (!D.places.some(p => p.id === D.settings.defPlace)) D.settings.defPlace = D.places[0].id;
+    D.sessions.forEach(s => { if (!D.places.some(p => p.id === s.place)) s.place = D.settings.defPlace; });
+  }
   function newSession(D, date, start, end) {
-    const s = { id: D.nextSess++, date: date || todayIso(), start: start || D.settings.start, end: end || D.settings.end, rsvp: {}, att: {}, rounds: [] };
+    const s = { id: D.nextSess++, date: date || todayIso(), start: start || D.settings.start, end: end || D.settings.end, rsvp: {}, att: {}, rounds: [], place: D.settings.defPlace || 1 };
     D.sessions.push(s);
     return s;
   }
   function defaults() {
     const D = { v: 2, nextId: 1, nextSess: 1, settings: { start: '15:00', end: '18:30', roundMin: 30, minPerBoard: 11, setSize: 4, bankSets: 9, changeMin: 2, prepared: false, format: '45', pauseMin: 15, stock: 36, sound: true, perTable: 2, reshuffle: true, simple: true }, roster: [], sessions: [], cur: null, notes: {}, avoid: [] };
+    D.places = [{ id: 1, text: DEF_PLACE }]; D.settings.defPlace = 1;
     D.cur = newSession(D).id;
     return D;
   }
@@ -1327,6 +1342,7 @@ body.big{zoom:1.15}
       if (!D.avoid) D.avoid = [];
       if (D.settings.perTable == null) D.settings.perTable = 2;
       if (D.settings.simple == null) D.settings.simple = true;
+      ensurePlaces(D);
       if (D.settings.reshuffle == null) D.settings.reshuffle = true;
       D.settings.format = D.settings.format || '45';
       if (!D.sessions.length) D.cur = newSession(D).id;
@@ -1345,6 +1361,7 @@ body.big{zoom:1.15}
       (j.players || []).forEach(p => { if (p.present) { s.rsvp[p.id] = 'yes'; s.att[p.id] = { present: true, arr: p.arrivedAt || Date.now() }; } });
       s.rounds = j.rounds || [];
       if (s.rounds.length) s.K = oldK;
+      ensurePlaces(D);
       D.cur = s.id;
       D.nextId = Math.max(D.nextId, 1 + Math.max(0, ...D.roster.map(p => p.id)));
       return D;
@@ -1552,7 +1569,7 @@ body.big{zoom:1.15}
     let block;
     if (cs) {
       const s = cs.s, c = counts(s);
-      block = '<button class="cv-next" data-a="openfromcover" data-id="' + s.id + '"><span>' + cs.label + '</span><b>' + esc(cap(fmtDate(s.date))) + '</b><small>' + hh(s.start) + ' à ' + hh(s.end) + ', ' + fmt(s).nRounds + ' périodes de ' + fmt(s).label + ' · ' + plural(c.yes, 'inscrit', 'inscrits') + '</small><em>Ouvrir cette séance ›</em></button>';
+      block = '<button class="cv-next" data-a="openfromcover" data-id="' + s.id + '"><span>' + cs.label + '</span><b>' + esc(cap(fmtDate(s.date))) + '</b><small>' + hh(s.start) + ' à ' + hh(s.end) + ', ' + fmt(s).nRounds + ' périodes de ' + fmt(s).label + ' · ' + plural(c.yes, 'inscrit', 'inscrits') + '</small><small class="cvp">📍 ' + esc(placeName(s)) + '</small><em>Ouvrir cette séance ›</em></button>';
     } else {
       block = '<button class="cv-next" data-a="newfromcover"><span>Aucune séance prévue</span><b>Créer la prochaine séance</b><em>Ouvrir l\'onglet Séances ›</em></button>';
     }
@@ -1714,7 +1731,7 @@ body.big{zoom:1.15}
     const B = (a, label, extra, cls) => '<button class="btn ' + (cls || '') + '" data-a="' + a + '"' + (extra || '') + '>' + label + '</button>';
     let h = '<div class="sec"><h2>' + (dd === 0 ? 'Aujourd\'hui' : over ? 'Séance terminée' : 'Prochaine séance') + '</h2><p class="lead">Suivez les étapes dans l\'ordre. L\'étape en cours est encadrée.</p></div>';
     // 1. La séance
-    h += card(1, 'La séance', '<p class="big1">' + esc(cap(fmtDate(s.date))) + '<br><small>' + hh(s.start) + ' à ' + hh(s.end) + ' · ' + f.nRounds + ' périodes de ' + f.label + '</small></p>' +
+    h += card(1, 'La séance', '<p class="big1">' + esc(cap(fmtDate(s.date))) + '<br><small>' + hh(s.start) + ' à ' + hh(s.end) + ' · ' + f.nRounds + ' périodes de ' + f.label + '</small></p><p class="place">📍 ' + placeLines(s).map(esc).join(', ') + '</p>' +
       (over && !upcoming.length ? '<p>Cette séance est passée. Créez la suivante.</p>' : ''),
       over && upcoming.length ? B('sopen', 'Ouvrir la séance du ' + esc(fmtDate(upcoming[0].date, { day: 'numeric', month: 'long' })), ' data-id="' + upcoming[0].id + '"', 'pri') : (over ? B('tab', 'Créer la prochaine séance', ' data-v="seances"', 'pri') : B('tab', 'Changer la date ou l\'heure', ' data-v="seances"')), true);
     // 2. Les réponses
@@ -1771,7 +1788,7 @@ body.big{zoom:1.15}
     let h = '<div class="scwrap"><div class="scard' + (isCur ? ' cur' : '') + (dd < 0 ? ' past' : '') + '">' +
       '<div class="sdate"><b>' + d.getDate() + '</b><span>' + esc(fmtDate(s.date, { month: 'short' })) + '</span></div>' +
       '<div class="sinfo"><div class="st">' + esc(cap(fmtDate(s.date, { weekday: 'long' }))) + ' <small>' + when + '</small></div>' +
-      '<div class="sh">' + s.start.replace(':', 'h') + ' à ' + s.end.replace(':', 'h') + ', ' + fmt(s).nRounds + ' périodes de ' + fmt(s).label + (s.rounds.length ? ', ' + plural(s.rounds.length, 'période jouée', 'périodes jouées') : '') + '</div>' +
+      '<div class="sh">' + esc(placeName(s)) + ' · ' + s.start.replace(':', 'h') + ' à ' + s.end.replace(':', 'h') + ', ' + fmt(s).nRounds + ' périodes de ' + fmt(s).label + (s.rounds.length ? ', ' + plural(s.rounds.length, 'période jouée', 'périodes jouées') : '') + '</div>' +
       '<div class="cnt"><span class="k yes">' + c.yes + ' inscrits</span><span class="k none">' + c.none + ' sans réponse</span><span class="k no">' + c.no + ' refus</span></div>' +
       (e.tables ? '<div class="mute">Prévu : ' + plural(e.tables, 'table', 'tables') + ', ' + plural(e.etuis, 'étui', 'étuis') + ' à apporter.</div>' : '') + '</div>' +
       '<div class="sact">' + (isCur ? '<span class="pill">ouverte</span>' : '<button class="btn sm pri" data-a="sopen" data-id="' + s.id + '">Ouvrir</button>') +
@@ -1783,7 +1800,7 @@ body.big{zoom:1.15}
       ? '<div class="sdelask"><b>Supprimer la séance du ' + esc(fmtDate(s.date)) + ' ?</b><p>Les réponses (' + plural(c0.yes, 'oui', 'oui') + ', ' + c0.no + ' non), les présences' + (s.rounds.length ? ' et les ' + plural(s.rounds.length, 'période jouée', 'périodes jouées') : '') + ' de cette séance seront effacées. La liste des joueurs est conservée.</p><div class="row"><button class="btn danger" data-a="sdelok" data-id="' + s.id + '">Oui, supprimer</button><button class="btn" data-a="sdelno">Non, garder</button></div></div>'
       : (D.sessions.length > 1 ? '<button class="btn sm sdelb" data-a="sdel" data-id="' + s.id + '"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4.5h6V7M6.5 7l1 13h9l1-13M10 11v6M14 11v6"/></svg>Supprimer la séance</button>' : '<span class="mute small">Seule séance : modifiez sa date plutôt que de la supprimer.</span>')) + '</div>';
     if (isCur) {
-      h += '<div class="sedit"><div class="grow"><label class="f">Date</label><input type="date" data-f="sess" data-k="date" value="' + s.date + '"></div><div><label class="f">Début</label><input type="time" data-f="sess" data-k="start" value="' + s.start + '"></div><div><label class="f">Fin</label><input type="time" data-f="sess" data-k="end" value="' + s.end + '"></div><div><label class="f">Durée des périodes</label><select data-f="sess" data-k="dur">' + Object.keys(FORMATS).map(k => '<option value="' + k + '"' + (fmt(s).key === k ? ' selected' : '') + '>' + FORMATS[k].label + '</option>').join('') + '</select></div></div>';
+      h += '<div class="sedit"><div class="grow"><label class="f">Date</label><input type="date" data-f="sess" data-k="date" value="' + s.date + '"></div><div><label class="f">Début</label><input type="time" data-f="sess" data-k="start" value="' + s.start + '"></div><div><label class="f">Fin</label><input type="time" data-f="sess" data-k="end" value="' + s.end + '"></div><div class="grow"><label class="f">Lieu</label>' + placeSelect('data-f="splace"', s.place) + '</div><div><label class="f">Durée des périodes</label><select data-f="sess" data-k="dur">' + Object.keys(FORMATS).map(k => '<option value="' + k + '"' + (fmt(s).key === k ? ' selected' : '') + '>' + FORMATS[k].label + '</option>').join('') + '</select></div></div>';
     }
     return h + delz + '</div>';
   }
@@ -1800,7 +1817,7 @@ body.big{zoom:1.15}
     const up = D.sessions.filter(s => s.date >= t).sort((a, b) => a.date.localeCompare(b.date));
     const past = D.sessions.filter(s => s.date < t).sort((a, b) => b.date.localeCompare(a.date));
     let h = '<div class="sec"><h2>Séances</h2><p class="lead">Chaque après-midi a sa date, ses heures et ses inscriptions. La liste des joueurs est commune à toutes les séances.</p></div>';
-    h += '<div class="panel newsess"><h3>Nouvelle séance</h3><div class="sedit"><div class="grow"><label class="f">Date</label><input type="date" id="ns-date" value="' + suggestNextDate() + '"></div><div><label class="f">Début</label><input type="time" id="ns-start" value="' + D.settings.start + '"></div><div><label class="f">Fin</label><input type="time" id="ns-end" value="' + D.settings.end + '"></div><div><label class="f">Durée des périodes</label><select id="ns-dur">' + Object.keys(FORMATS).map(k => '<option value="' + k + '"' + ((D.settings.format || '45') === k ? ' selected' : '') + '>' + FORMATS[k].label + '</option>').join('') + '</select></div></div><button class="btn pri" style="margin-top:10px" data-a="snew">Créer et ouvrir</button></div>';
+    h += '<div class="panel newsess"><h3>Nouvelle séance</h3><div class="sedit"><div class="grow"><label class="f">Date</label><input type="date" id="ns-date" value="' + suggestNextDate() + '"></div><div><label class="f">Début</label><input type="time" id="ns-start" value="' + D.settings.start + '"></div><div><label class="f">Fin</label><input type="time" id="ns-end" value="' + D.settings.end + '"></div><div class="grow"><label class="f">Lieu</label>' + placeSelect('id="ns-place" data-f="nsplace"', D.settings.defPlace) + '</div><div><label class="f">Durée des périodes</label><select id="ns-dur">' + Object.keys(FORMATS).map(k => '<option value="' + k + '"' + ((D.settings.format || '45') === k ? ' selected' : '') + '>' + FORMATS[k].label + '</option>').join('') + '</select></div></div><button class="btn pri" style="margin-top:10px" data-a="snew">Créer et ouvrir</button></div>';
     h += '<h3 class="lbl">À venir</h3>' + (up.length ? '<div class="slist">' + up.map(sessionCard).join('') + '</div>' : '<p class="mute">Aucune séance à venir.</p>');
     if (past.length) h += '<h3 class="lbl">Passées</h3><div class="slist">' + past.map(sessionCard).join('') + '</div>';
     return h;
@@ -2222,21 +2239,31 @@ body.big{zoom:1.15}
     return 'Bridge Relax du ' + fmtDate(s.date) + ' : ' + people.length + ' présents, ' + s.rounds.length + ' périodes jouées.' + (ouiAbs.length ? ' Inscrits absents : ' + ouiAbs.join(', ') + '.' : '');
   }
 
+  /* ---------- Lieux ---------- */
+  const placeOf = s => (D.places.find(p => p.id === s.place) || D.places[0] || { text: '' });
+  const placeLines = s => placeOf(s).text.split('\n').map(x => x.trim()).filter(Boolean);
+  const placeName = s => placeLines(s)[0] || '';
+  const mapsUrl = s => 'https://maps.google.com/?q=' + placeLines(s).join(', ').replace(/[#&?]/g, ' ').replace(/\s+/g, '+');
+  function placeSelect(id, cur0) {
+    return '<select ' + id + '>' + D.places.map(p => '<option value="' + p.id + '"' + (p.id === cur0 ? ' selected' : '') + '>' + esc(p.text.split('\n').map(x => x.trim()).filter(Boolean).join(', ')) + '</option>').join('') + '<option value="new">Autre lieu…</option></select>';
+  }
+
   /* ---------- Messages ---------- */
   function msgText(type) {
     const s = cur(), d = fmtDate(s.date), h1 = s.start.replace(':', 'h').replace('h00', 'h'), h2 = s.end.replace(':', 'h').replace('h00', 'h');
     const f = fmt(), prof = D.roster.find(p => p.teacher && !p.archived);
     const sign = D.settings.sign ? '\n' + D.settings.sign : '';
     const c = counts(s);
+    const lieu = '\n\nLieu :\n' + placeLines(s).join('\n') + '\nItinéraire : ' + mapsUrl(s);
     if (type === 'relance') {
       const l = D.roster.filter(p => !p.archived && !p.teacher && rsvpOf(s, p.id) === 'none').map(p => p.name.split(' ')[0]).sort((a, b) => a.localeCompare(b, 'fr'));
-      return 'Bonjour ' + (l.length ? l.join(', ') : 'à tous') + ',\n\nPetit rappel : Bridge Relax le ' + d + ', de ' + h1 + ' à ' + h2 + '.\nJe n\'ai pas encore ta réponse : viens-tu ? Un simple oui ou non me suffit, pour que je prépare les tables.\n\nMerci !' + sign;
+      return 'Bonjour ' + (l.length ? l.join(', ') : 'à tous') + ',\n\nPetit rappel : Bridge Relax le ' + d + ', de ' + h1 + ' à ' + h2 + ', ' + placeName(s) + '.\nJe n\'ai pas encore ta réponse : viens-tu ? Un simple oui ou non me suffit, pour que je prépare les tables.\n\nMerci !' + sign;
     }
     if (type === 'veille') {
       const dd = daysUntil(s.date);
-      return 'Bonjour à tous,\n\nRappel : Bridge Relax ' + (dd === 1 ? 'demain, ' : 'le ') + d + ', de ' + h1 + ' à ' + h2 + '.\nNous sommes déjà ' + c.yes + ' inscrits. Merci d\'arriver quelques minutes avant ' + h1 + ' pour que les tables soient prêtes à l\'heure.\nUn empêchement ? Prévenez-moi, cela m\'aide à préparer les tables.\n\nÀ ' + (dd === 1 ? 'demain' : 'bientôt') + ' !' + sign;
+      return 'Bonjour à tous,\n\nRappel : Bridge Relax ' + (dd === 1 ? 'demain, ' : 'le ') + d + ', de ' + h1 + ' à ' + h2 + ', ' + placeName(s) + '.' + lieu + '\n\nNous sommes déjà ' + c.yes + ' inscrits. Merci d\'arriver quelques minutes avant ' + h1 + ' pour que les tables soient prêtes à l\'heure.\nUn empêchement ? Prévenez-moi, cela m\'aide à préparer les tables.\n\nÀ ' + (dd === 1 ? 'demain' : 'bientôt') + ' !' + sign;
     }
-    return 'Bonjour à tous,\n\nProchain Bridge Relax le ' + d + ', de ' + h1 + ' à ' + h2 + '.\n' + f.nRounds + ' périodes d\'environ ' + (f.dur === 60 ? 'une heure' : f.dur + ' minutes') + ', avec un nouveau partenaire à chaque période.' + (D.settings.prepared ? ' Donnes préparées : chacun jouera des contrats, entamera, fera le mort et défendra.' : '') + (prof ? ' ' + prof.name + ' sera là pour répondre à vos questions.' : '') + ' Tous niveaux bienvenus.\n\nMerci de me répondre dès que possible, oui ou non, pour que je prépare les tables.\n\nÀ bientôt !' + sign;
+    return 'Bonjour à tous,\n\nProchain Bridge Relax le ' + d + ', de ' + h1 + ' à ' + h2 + '.' + lieu + '\n\n' + f.nRounds + ' périodes d\'environ ' + (f.dur === 60 ? 'une heure' : f.dur + ' minutes') + ', avec un nouveau partenaire à chaque période.' + (D.settings.prepared ? ' Donnes préparées : chacun jouera des contrats, entamera, fera le mort et défendra.' : '') + (prof ? ' ' + prof.name + ' sera là pour répondre à vos questions.' : '') + ' Tous niveaux bienvenus.\n\nMerci de me répondre dès que possible, oui ou non, pour que je prépare les tables.\n\nÀ bientôt !' + sign;
   }
   function msgPanel() {
     if (!ui.msg) return '';
@@ -2269,6 +2296,9 @@ body.big{zoom:1.15}
       num('stock', 'Nombre d\'étuis que vous possédez', 8, 200) +
       '<p class="mute">Étuis en circulation = nombre de tables × étuis par table. Exemple : 7 tables × 2 = 14 étuis.' + (s.prepared ? ' En donnes préparées, chaque période utilise de nouveaux étuis : 4 périodes × 14 = 56 étuis à préparer (28 avec 1 étui par table).' : '') + '</p></div>' +
       '<div class="panel"><h3>Alerte de fin de période</h3><label class="chk"><input type="checkbox" data-f="sound"' + (s.sound ? ' checked' : '') + '> Signal sonore 5 minutes avant la fin, puis à la fin</label><p class="mute">Un message apparaît aussi à l\'écran, et l\'écran de salle clignote. Gardez l\'appareil allumé, application ouverte.</p><button class="btn sm" data-a="testsound">Essayer le son</button></div>' +
+      '<div class="panel"><h3>Lieux</h3><p class="mute">Le lieu par défaut est proposé pour chaque nouvelle séance et figure dans l\'invitation.</p>' +
+      D.places.map(p => '<div class="plc"><label class="chk" style="margin:0"><input type="radio" name="defplace" data-f="defplace" value="' + p.id + '"' + (p.id === s.defPlace ? ' checked' : '') + '> <span>' + p.text.split('\n').map(x => esc(x.trim())).filter(Boolean).join('<br>') + (p.id === s.defPlace ? ' <span class="pill">par défaut</span>' : '') + '</span></label>' + (D.places.length > 1 && !D.sessions.some(x => x.place === p.id && x.date >= todayIso()) ? '<button class="x" data-a="placedel" data-id="' + p.id + '" aria-label="Retirer ce lieu">✕</button>' : '') + '</div>').join('') +
+      '<label class="f">Ajouter un lieu (nom, puis adresse, une information par ligne)</label><textarea id="newplace" rows="3" placeholder="Nom du lieu&#10;Rue et numéro&#10;Code postal et commune"></textarea><button class="btn sm" data-a="placeadd" style="margin-top:8px">Ajouter ce lieu</button></div>' +
       '<div class="panel"><h3>Heures par défaut des nouvelles séances</h3><div class="row"><div class="grow"><label class="f">Début</label><input type="time" data-f="set" data-k="start" value="' + s.start + '"></div><div class="grow"><label class="f">Fin</label><input type="time" data-f="set" data-k="end" value="' + s.end + '"></div></div></div>' +
       '<div class="panel"><h3>Sauvegarde</h3><div class="row"><button class="btn" data-a="export">Exporter dans un fichier</button><label class="btn" style="margin:0">Importer un fichier<input type="file" id="imp" accept=".json,application/json" style="display:none"></label></div>' +
       '<p class="mute">Les données restent dans ce navigateur. Exportez pour les passer sur un autre appareil ou les garder en sécurité.</p></div>' +
@@ -2403,6 +2433,7 @@ body.big{zoom:1.15}
       const d = $('#ns-date').value || todayIso();
       const s = newSession(D, d, $('#ns-start').value || D.settings.start, $('#ns-end').value || D.settings.end);
       s.dur = $('#ns-dur').value;
+      const pv = $('#ns-place') && $('#ns-place').value; if (pv && pv !== 'new') s.place = +pv;
       D.cur = s.id; ui.pmode = null; commit();
     },
     sopen(el) { D.cur = +el.dataset.id; ui.pmode = null; commit(); },
@@ -2467,6 +2498,21 @@ body.big{zoom:1.15}
     avoiddel(el) { D.avoid.splice(+el.dataset.i, 1); ui.avoidOpen = true; commit(); },
     bilan(el) { ui.cover = false; ui.bilanId = +el.dataset.id; ui.tab = 'bilan'; render(); window.scrollTo(0, 0); },
     copybilan() { copyText(bilanText()); },
+    placeadd() {
+      const t = ($('#newplace').value || '').split('\n').map(x => x.trim()).filter(Boolean).join('\n');
+      if (!t) { alert('Écrivez le nom et l\'adresse du lieu.'); return; }
+      const id = 1 + Math.max(0, ...D.places.map(p => p.id));
+      D.places.push({ id, text: t });
+      if (ui.placeFor) { const s = D.sessions.find(x => x.id === ui.placeFor); if (s) s.place = id; ui.placeFor = null; ui.tab = 'seances'; }
+      toast('Lieu ajouté : ' + t.split('\n')[0] + '.');
+      commit();
+    },
+    placedel(el) {
+      const id = +el.dataset.id;
+      if (!confirm('Retirer ce lieu de la liste ?')) return;
+      D.places = D.places.filter(p => p.id !== id);
+      ensurePlaces(D); commit();
+    },
     testsound() { const was = D.settings.sound; D.settings.sound = true; chime(1); D.settings.sound = was; },
     printacc() {
       const keep = ui.pf; ui.pf = 'all'; ui.filter = ''; render();
@@ -2520,6 +2566,11 @@ body.big{zoom:1.15}
   document.addEventListener('change', e => {
     const el = e.target;
     if (el.dataset.f === 'format') { D.settings.format = el.value; commit(); }
+    else if (el.dataset.f === 'splace' || el.dataset.f === 'nsplace') {
+      if (el.value === 'new') { ui.placeFor = el.dataset.f === 'splace' ? cur().id : null; ui.tab = 'reglages'; render(); const t = $('#newplace'); if (t) { if (t.scrollIntoView) t.scrollIntoView({ block: 'center' }); t.focus(); } toast('Écrivez le nouveau lieu, puis touchez « Ajouter ce lieu ».'); return; }
+      if (el.dataset.f === 'splace') { cur().place = +el.value; commit(); }
+    }
+    else if (el.dataset.f === 'defplace') { D.settings.defPlace = +el.value; commit(); }
     else if (el.dataset.f === 'big') { D.settings.big = el.checked; commit(); }
     else if (el.dataset.f === 'simple') { D.settings.simple = el.checked; ui.tab = el.checked ? 'plus' : 'reglages'; commit(); }
     else if (el.dataset.f === 'levelMatch') { D.settings.levelMatch = el.checked; commit(); }
