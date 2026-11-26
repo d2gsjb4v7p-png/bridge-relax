@@ -1384,8 +1384,7 @@ body.printpage .chev{height:270mm;display:flex;flex-direction:column;background:
   const VERSION = '6.8';
   const VERSION_DATE = '25 novembre 2026';
   const NEWS = [
-    'Plan de la salle en cercles : chaque étui passe à la table voisine, flèches sur le grand écran',
-    'Impression du plan et de chevalets numérotés pour les tables',
+    'Plan de la salle en cercles au projecteur : il suit les arrivées et départs, chaque étui passe à la table voisine',
     'Projecteur : 2e fenêtre synchronisée, avec les tables, les étuis et la table suivante',
     'Niveaux confidentiels : masqués par défaut, jamais sur le grand écran ni à l\'impression',
     'Mode hors ligne : l\'application s\'ouvre même sans wifi',
@@ -2141,7 +2140,7 @@ body.printpage .chev{height:270mm;display:flex;flex-direction:column;background:
       (daysUntil(s.date) !== 0 ? '<div class="note warn" style="margin-top:10px">Cette séance n\'est pas celle d\'aujourd\'hui. Ouvrez la bonne séance dans l\'onglet Séances.</div>' : '') +
       '<div class="row" style="margin-top:12px"><button class="btn sm noprint" data-a="salle">Afficher sur grand écran</button><button class="btn sm noprint" data-a="salle2">Projecteur (2e fenêtre)</button>' + (s.rounds.length ? '<button class="btn sm noprint" data-a="bilan" data-id="' + s.id + '">Bilan de la séance</button>' : '') + '</div></div>';
     const planPanel = (r ? isRelay(r) : !D.settings.prepared) && roomN(s, r) > 1 ? '<div class="panel noprint pplanel"><h3>Plan de la salle</h3>' + planSvg(s, r, !!r) + soloNote(r) +
-      '<p class="mute">' + ringText(roomN(s, r)) + '</p><button class="btn sm" data-a="printplan">Imprimer le plan et les numéros de table</button></div>' : '';
+      '<p class="mute">' + ringText(s, r) + '</p></div>' : '';
     if (!r) {
       return h + planPanel + '<div class="empty"><svg viewBox="0 0 150 150" aria-hidden="true"><rect x="45" y="45" width="60" height="60" rx="10" fill="none" stroke="currentColor" stroke-width="3"/><rect x="58" y="12" width="34" height="22" rx="7" fill="none" stroke="currentColor" stroke-width="3"/><rect x="58" y="116" width="34" height="22" rx="7" fill="none" stroke="currentColor" stroke-width="3"/><rect x="12" y="58" width="22" height="34" rx="7" fill="none" stroke="currentColor" stroke-width="3"/><rect x="116" y="58" width="22" height="34" rx="7" fill="none" stroke="currentColor" stroke-width="3"/><path d="M75 62c5 8 12 9 12 16 0 5-4 7-8 6 1 4 2 6 4 9H67c2-3 3-5 4-9-4 1-8-1-8-6 0-7 7-8 12-16z" fill="currentColor"/></svg><div>Les tables apparaîtront ici dès la première période.</div></div>';
     }
@@ -2472,28 +2471,36 @@ body.printpage .chev{height:270mm;display:flex;flex-direction:column;background:
     if (r) r.tables.forEach(t => { if (!t.solo) m = Math.max(m, t.n); });
     return m;
   }
-  function ringPos(m) {
-    const P = {};
-    const inner = m <= 6 ? m : (m <= 12 ? 3 : 4);
-    const r1 = m <= 6 ? 0.85 : 0.42, r2 = 0.9, sI = 2 * Math.PI / Math.max(1, inner);
-    for (let i = 0; i < inner; i++) { const a = -Math.PI / 2 + i * sI; P[i + 1] = { x: r1 * Math.cos(a), y: r1 * Math.sin(a), ring: 0 }; }
-    if (m > inner) {
-      const out = m - inner, sO = 2 * Math.PI / out, a0 = -Math.PI / 2 + (inner - 1) * sI;
-      for (let j = 0; j < out; j++) { const a = a0 - j * sO; P[inner + 1 + j] = { x: r2 * Math.cos(a), y: r2 * Math.sin(a), ring: 1 }; }
-    }
-    return { P, inner, m };
+  // Cercle intérieur fixé dès la 1re période (0 = un seul cercle) : les tables ne « bougent » pas en cours de séance
+  function ringInner(s, r) {
+    const r0 = (s.rounds || []).find(x => x.tables && x.tables.length) || r;
+    let m0 = 0;
+    if (r0) r0.tables.forEach(t => { if (!t.solo) m0 = Math.max(m0, t.n); });
+    else { try { m0 = expected(s).tables || 0; } catch (e) { m0 = 0; } }
+    return m0 <= 6 ? 0 : (m0 <= 12 ? 3 : 4);
   }
-  function ringText(m) {
-    const L = ringPos(m);
+  function ringPos(m, inner) {
+    const P = {};
+    const n1 = inner ? Math.min(inner, m) : m, r1 = inner ? 0.42 : 0.85, r2 = 0.9, sI = 2 * Math.PI / Math.max(1, n1);
+    for (let i = 0; i < n1; i++) { const a = -Math.PI / 2 + i * sI; P[i + 1] = { x: r1 * Math.cos(a), y: r1 * Math.sin(a), ring: 0 }; }
+    if (m > n1) {
+      const out = m - n1, sO = 2 * Math.PI / out, a0 = -Math.PI / 2 + (n1 - 1) * sI;
+      for (let j = 0; j < out; j++) { const a = a0 - j * sO; P[n1 + 1 + j] = { x: r2 * Math.cos(a), y: r2 * Math.sin(a), ring: 1 }; }
+    }
+    return { P, inner: n1, m };
+  }
+  function ringText(s, r) {
+    const m = roomN(s, r), inner = ringInner(s, r);
     if (m < 2) return '';
-    if (L.inner >= m) return 'Placez les tables en un cercle, de 1 à ' + m + ' dans le sens des aiguilles d\'une montre.';
-    return 'Cercle intérieur : tables 1 à ' + L.inner + ', dans le sens des aiguilles d\'une montre. Cercle extérieur : tables ' + (L.inner + 1) + ' à ' + m + ', dans l\'autre sens, en commençant derrière la table ' + L.inner + '. Ainsi chaque étui passe à une table voisine.';
+    const base = !inner || inner >= m ? 'Tables en un cercle, de 1 à ' + m + ' dans le sens des aiguilles d\'une montre.'
+      : 'Cercle intérieur : tables 1 à ' + inner + ' (sens des aiguilles d\'une montre). Cercle extérieur : tables ' + (inner + 1) + ' à ' + m + ', dans l\'autre sens, en commençant derrière la table ' + inner + '.';
+    return base + ' Besoin d\'une table en plus ? Placez-la entre la table ' + m + ' et la table 1 : elle prendra le numéro ' + (m + 1) + '. Une table qui se vide reste en place, les étuis la sautent.';
   }
   let svgSeq = 0;
   function planSvg(s, r, withBoards, wide) {
     const m = roomN(s, r);
     if (!m) return '';
-    const L = ringPos(m), SX = wide ? 175 : 130, SY = 100, sz = (m <= 6 ? 30 : 25) * (wide ? 1.2 : 1), id = 'ah' + (++svgSeq);
+    const L = ringPos(m, ringInner(s, r)), SX = wide ? 175 : 130, SY = 100, sz = (m <= 6 ? 30 : 25) * (wide ? 1.2 : 1), id = 'ah' + (++svgSeq);
     const pos = n => ({ x: L.P[n].x * SX, y: L.P[n].y * SY });
     const byN = {}; if (r) r.tables.forEach(t => { if (!t.solo) byN[t.n] = t; });
     const on = n => r ? !!(byN[n] && !byN[n].closed) : true;
@@ -2732,15 +2739,6 @@ body.printpage .chev{height:270mm;display:flex;flex-direction:column;background:
       const html = ($('.ptitle') ? $('.ptitle').outerHTML : '') + $('#plist').outerHTML;
       printJob('pacc', html, 'Tableau d\'accueil');
       if (!isStandalone()) setTimeout(() => { ui.pf = keep; render(); }, 900); else { ui.pf = keep; render(); }
-    },
-    printplan() {
-      const s = cur(), r = BR.currentRound(C()), m = roomN(s, r);
-      let html = '<div class="pplanbox"><div class="pp-plan"><h1>Plan de la salle</h1><p>' + ringText(m) + '</p>' + planSvg(s, null, false) + '<p class="pp-foot">Après chaque donne, l\'étui part tout de suite vers la table suivante (flèche). Si une table est vide, on la saute : le grand écran l\'indique.</p></div>';
-      for (let n = 1; n <= m; n++) html += '<div class="chev" style="--tc:' + tcol(n) + '"><div class="cv-up"><b>' + n + '</b><span>table</span></div><div class="cv-dn"><b>' + n + '</b><span>table</span></div></div>';
-      html += '</div>';
-      if (isStandalone()) { printJob('pplan', html, 'Plan de la salle et numéros de table'); return; }
-      const box = document.createElement('div'); box.innerHTML = html; const el = box.firstChild; document.body.appendChild(el);
-      printJob('pplan', '', ''); setTimeout(() => el.remove(), 1500);
     },
     printprep() { printJob('pprep', $('.prepsheet').outerHTML, 'Fiche de préparation des étuis'); },
     printsheets() { printJob('psheets', $('.sheets').outerHTML, 'Feuilles d\'étui'); },
