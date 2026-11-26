@@ -921,6 +921,39 @@ body.pv-on{overflow:hidden}
 .pvchat{min-height:0}
 .pvbox .pvhead,.pvbox .pvnote,.pvbox .pvbtns{flex:none}
 @media (max-width:480px){.pvbtns{padding:10px 12px 12px}.pvbtns .btn{padding:10px 8px}.pvnote{margin:8px 12px 0;font-size:13px}}
+/* v7.4 — formulaires de séance : grille propre (date / 3 heures / lieu / périodes) */
+.sedit{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px 10px;align-items:end;flex-wrap:nowrap}
+.sedit>div{min-width:0}
+.sedit>div:nth-child(1),.sedit>div:nth-child(5),.sedit>div:nth-child(6){grid-column:1/-1}
+.sedit label.f{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:6px}
+.sedit input,.sedit select{display:block;width:100%;max-width:100%;min-width:0;box-sizing:border-box;margin:0}
+.sedit input[type=date],.sedit input[type=time]{-webkit-appearance:none;appearance:none;min-height:50px;text-align:center;padding-left:6px;padding-right:6px}
+.sedit input::-webkit-date-and-time-value{text-align:center}
+@media (min-width:760px){
+  .sedit{grid-template-columns:repeat(6,minmax(0,1fr))}
+  .sedit>div:nth-child(1){grid-column:span 3}
+  .sedit>div:nth-child(5),.sedit>div:nth-child(6){grid-column:span 3}
+}
+.newsess>.btn.pri[data-a="snew"]{width:100%;margin-top:16px!important;min-height:52px;font-size:17px}
+@media (min-width:760px){.newsess>.btn.pri[data-a="snew"]{width:auto;min-width:240px}}
+/* v7.4 — cartes de séance et nouvelle séance repliable */
+.scard{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:14px;row-gap:10px}
+.scard .sact{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:flex-end;margin:0}
+.scard .sact .pill{margin-right:auto}
+.scard .sh{line-height:1.45}
+details.newsess>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;padding:2px 0}
+details.newsess>summary::-webkit-details-marker{display:none}
+details.newsess>summary .plus{display:inline-grid;place-items:center;width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;font-size:22px;line-height:1;transition:transform .2s}
+details.newsess[open]>summary{margin-bottom:14px}
+details.newsess[open]>summary .plus{transform:rotate(45deg)}
+@media (prefers-reduced-motion:reduce){details.newsess>summary .plus{transition:none}}
+.slist+details.newsess,.mute+details.newsess{margin-top:18px}
+.scard .sact:empty{display:none}
+.scard .st{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px}
+.scard .st .pill{margin-left:auto}
+.row.times3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.row.times3>div{min-width:0}
+.row.times3 input{width:100%;min-width:0;box-sizing:border-box;-webkit-appearance:none;appearance:none;min-height:50px;text-align:center;padding-left:6px;padding-right:6px}
 
 </style>
 </head>
@@ -1433,9 +1466,10 @@ window.BR_FLYER="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYF
 (function () {
   'use strict';
   const LS = 'bridge-relax-v1';
-  const VERSION = '7.3';
+  const VERSION = '7.4';
   const VERSION_DATE = '26 novembre 2026';
   const NEWS = [
+    'Page Séances plus claire : séances à venir d\'abord, formulaire propre (date, 3 heures, lieu, périodes)',
     'Accueil 15h30, jeu de 15h45 à 18h45 : 3 périodes de 55 min, la dernière jusqu\'à 18h45 (ou 2 ou 4 périodes)',
     'Aperçu du message WhatsApp avant l\'envoi',
     'Invitation WhatsApp avec l\'affiche de Nathalie en pièce jointe',
@@ -2047,11 +2081,11 @@ window.BR_FLYER="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYF
     const when = dd === 0 ? 'aujourd\'hui' : dd === 1 ? 'demain' : dd > 1 ? 'dans ' + dd + ' jours' : 'passée';
     let h = '<div class="scwrap"><div class="scard' + (isCur ? ' cur' : '') + (dd < 0 ? ' past' : '') + '">' +
       '<div class="sdate"><b>' + d.getDate() + '</b><span>' + esc(fmtDate(s.date, { month: 'short' })) + '</span></div>' +
-      '<div class="sinfo"><div class="st">' + esc(cap(fmtDate(s.date, { weekday: 'long' }))) + ' <small>' + when + '</small></div>' +
-      '<div class="sh">' + esc(placeName(s)) + ' · ' + s.start.replace(':', 'h') + ' à ' + s.end.replace(':', 'h') + ', ' + fmt(s).nRounds + ' périodes de ' + fmt(s).label + (s.rounds.length ? ', ' + plural(s.rounds.length, 'période jouée', 'périodes jouées') : '') + '</div>' +
+      '<div class="sinfo"><div class="st">' + esc(cap(fmtDate(s.date, { weekday: 'long' }))) + ' <small>' + when + '</small>' + (isCur ? '<span class="pill">ouverte</span>' : '') + '</div>' +
+      '<div class="sh">' + esc(placeName(s)) + '<br>' + (welcomeOf(s) && welcomeOf(s) < s.start ? 'Accueil ' + hh(welcomeOf(s)) + ' · ' : '') + 'jeu ' + hh(s.start) + '–' + hh(s.end) + '<br>' + fmt(s).nRounds + ' périodes de ' + fmt(s).label + (s.rounds.length ? ', ' + plural(s.rounds.length, 'période jouée', 'périodes jouées') : '') + '</div>' +
       '<div class="cnt">' + (c.present ? '<span class="k pr">' + plural(c.present, 'présent', 'présents') + '</span>' : '') + '<span class="k yes">' + plural(c.yes, 'inscrit', 'inscrits') + '</span><span class="k none">' + c.none + ' sans réponse</span><span class="k no">' + c.no + ' refus</span></div>' +
       (e.tables ? '<div class="mute">Prévu : ' + plural(e.tables, 'table', 'tables') + ', ' + plural(e.etuis, 'étui', 'étuis') + ' à apporter.</div>' : '') + '</div>' +
-      '<div class="sact">' + (isCur ? '<span class="pill">ouverte</span>' : '<button class="btn sm pri" data-a="sopen" data-id="' + s.id + '">Ouvrir</button>') +
+      '<div class="sact">' + (isCur ? '' : '<button class="btn sm pri" data-a="sopen" data-id="' + s.id + '">Ouvrir</button>') +
       (s.rounds.length || dd < 0 ? '<button class="btn sm" data-a="bilan" data-id="' + s.id + '">Bilan</button>' : '') +
       '' + '</div></div>';
     // Suppression : bouton clair, puis confirmation explicite
@@ -2088,8 +2122,8 @@ window.BR_FLYER="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYF
     const up = D.sessions.filter(s => s.date >= t).sort((a, b) => a.date.localeCompare(b.date));
     const past = D.sessions.filter(s => s.date < t).sort((a, b) => b.date.localeCompare(a.date));
     let h = '<div class="sec"><h2>Séances</h2><p class="lead">Chaque après-midi a sa date, ses heures et ses inscriptions. La liste des joueurs est commune à toutes les séances.</p></div>';
-    h += '<div class="panel newsess"><h3>Nouvelle séance</h3><div class="sedit"><div class="grow"><label class="f">Date</label><input type="date" id="ns-date" value="' + suggestNextDate() + '"></div><div><label class="f">Accueil</label><input type="time" id="ns-welcome" value="' + (D.settings.welcome || '') + '"></div><div><label class="f">Début du jeu</label><input type="time" id="ns-start" value="' + D.settings.start + '"></div><div><label class="f">Fin</label><input type="time" id="ns-end" value="' + D.settings.end + '"></div><div class="grow"><label class="f">Lieu</label>' + placeSelect('id="ns-place" data-f="nsplace"', D.settings.defPlace) + '</div><div><label class="f">Périodes</label><select id="ns-dur">' + fmtOptions({ date: todayIso(), start: D.settings.start, end: D.settings.end }, FORMATS[D.settings.format] && !FORMATS[D.settings.format].old ? D.settings.format : '3p') + '</select></div></div><button class="btn pri" style="margin-top:10px" data-a="snew">Créer et ouvrir</button>' + multiPanel() + '</div>';
-    h += '<h3 class="lbl">À venir</h3>' + (up.length ? '<div class="slist">' + up.map(sessionCard).join('') + '</div>' : '<p class="mute">Aucune séance à venir.</p>');
+    const newForm = '<details class="panel newsess"' + (up.length && !ui.newOpen ? '' : ' open') + '><summary data-a="newtoggle"><span class="plus">+</span>Nouvelle séance</summary><div class="sedit"><div class="grow"><label class="f">Date</label><input type="date" id="ns-date" value="' + suggestNextDate() + '"></div><div><label class="f">Accueil</label><input type="time" id="ns-welcome" value="' + (D.settings.welcome || '') + '"></div><div><label class="f">Début du jeu</label><input type="time" id="ns-start" value="' + D.settings.start + '"></div><div><label class="f">Fin</label><input type="time" id="ns-end" value="' + D.settings.end + '"></div><div class="grow"><label class="f">Lieu</label>' + placeSelect('id="ns-place" data-f="nsplace"', D.settings.defPlace) + '</div><div><label class="f">Périodes</label><select id="ns-dur">' + fmtOptions({ date: todayIso(), start: D.settings.start, end: D.settings.end }, FORMATS[D.settings.format] && !FORMATS[D.settings.format].old ? D.settings.format : '3p') + '</select></div></div><button class="btn pri" style="margin-top:10px" data-a="snew">Créer et ouvrir</button>' + multiPanel() + '</details>';
+    h += '<h3 class="lbl">À venir</h3>' + (up.length ? '<div class="slist">' + up.map(sessionCard).join('') + '</div>' : '<p class="mute">Aucune séance à venir : créez-en une ci-dessous.</p>') + newForm;
     if (past.length) h += '<h3 class="lbl">Passées</h3><div class="slist">' + past.map(sessionCard).join('') + '</div>';
     return h;
   }
@@ -2202,7 +2236,7 @@ window.BR_FLYER="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYF
     if (m === 'insc') tools = waRow(s, counts(s)) + '<div class="row" style="margin-top:10px"><button class="btn sm pri" data-a="msg" data-v="invit">Rédiger l\'invitation</button><button class="btn sm" data-a="msg" data-v="relance">Relancer les sans-réponse</button><button class="btn sm" data-a="msg" data-v="veille">Rappel aux inscrits</button></div><div class="row" style="margin-top:6px"><button class="btn sm" data-a="copynone">Copier les noms sans réponse</button><button class="btn sm" data-a="allnone">Tout remettre à « ? »</button></div>';
     if (m === 'liste') tools = avoidPanel() + '<details style="margin:10px 0 0"><summary>Coller une liste de noms</summary><textarea id="bulk" rows="6" placeholder="Un nom par ligne. Pour le niveau, ajoutez 1 ou 2 après le nom (ex. Marie Dupont ; 2)"></textarea><button class="btn" data-a="bulk" style="margin-top:8px">Ajouter ces noms</button></details>';
     if (m === 'accueil') tools = '<div class="row" style="margin-top:10px"><button class="btn sm" data-a="printacc">Imprimer le tableau d\'accueil</button></div>';
-    const ph = m === 'accueil' ? 'Chercher un nom, ou ajouter quelqu\'un qui arrive' : 'Taper un nom pour chercher ou ajouter';
+    const ph = m === 'accueil' ? 'Nom (chercher ou ajouter)' : 'Nom (chercher ou ajouter)';
     return '<div class="sec"><h2>' + (m === 'accueil' ? 'Arrivées' : m === 'insc' ? 'Réponses' : 'Liste des joueurs') + '</h2>' + seg + top + '</div>' +
       (chips ? '<div class="fchips">' + chips + '</div>' : '') +
       '<div class="panel"><div class="row"><input type="text" id="pname" class="grow" placeholder="' + ph + '" autocomplete="off" value="' + esc(ui.filter) + '"><button class="btn pri" data-a="add">Ajouter</button></div>' + tools + '</div>' +
@@ -2644,7 +2678,7 @@ window.BR_FLYER="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYF
       '<div class="panel"><h3>Lieux</h3><p class="mute">Le lieu par défaut est proposé pour chaque nouvelle séance et figure dans l\'invitation.</p>' +
       D.places.map(p => '<div class="plc"><label class="chk" style="margin:0"><input type="radio" name="defplace" data-f="defplace" value="' + p.id + '"' + (p.id === s.defPlace ? ' checked' : '') + '> <span>' + p.text.split('\n').map(x => esc(x.trim())).filter(Boolean).join('<br>') + (p.id === s.defPlace ? ' <span class="pill">par défaut</span>' : '') + '</span></label>' + (D.places.length > 1 && !D.sessions.some(x => x.place === p.id && x.date >= todayIso()) ? '<button class="x" data-a="placedel" data-id="' + p.id + '" aria-label="Retirer ce lieu">✕</button>' : '') + '</div>').join('') +
       '<label class="f">Ajouter un lieu (nom, puis adresse, une information par ligne)</label><textarea id="newplace" rows="3" placeholder="Nom du lieu&#10;Rue et numéro&#10;Code postal et commune"></textarea><button class="btn sm" data-a="placeadd" style="margin-top:8px">Ajouter ce lieu</button></div>' +
-      '<div class="panel"><h3>Heures par défaut des nouvelles séances</h3><div class="row"><div class="grow"><label class="f">Accueil</label><input type="time" data-f="set" data-k="welcome" value="' + (s.welcome || '') + '"></div><div class="grow"><label class="f">Début du jeu</label><input type="time" data-f="set" data-k="start" value="' + s.start + '"></div><div class="grow"><label class="f">Fin</label><input type="time" data-f="set" data-k="end" value="' + s.end + '"></div></div></div>' +
+      '<div class="panel"><h3>Heures par défaut des nouvelles séances</h3><div class="row times3"><div class="grow"><label class="f">Accueil</label><input type="time" data-f="set" data-k="welcome" value="' + (s.welcome || '') + '"></div><div class="grow"><label class="f">Début du jeu</label><input type="time" data-f="set" data-k="start" value="' + s.start + '"></div><div class="grow"><label class="f">Fin</label><input type="time" data-f="set" data-k="end" value="' + s.end + '"></div></div></div>' +
       '<div class="panel"><h3>Sauvegarde</h3><div class="row"><button class="btn" data-a="export">Exporter dans un fichier</button><label class="btn" style="margin:0">Importer un fichier<input type="file" id="imp" accept=".json,application/json" style="display:none"></label></div>' +
       '<p class="mute">Les données restent dans ce navigateur. Exportez pour les passer sur un autre appareil ou les garder en sécurité.</p></div>' +
       '<div class="panel"><h3>Affichage</h3><label class="chk"><input type="checkbox" data-f="big"' + (s.big ? ' checked' : '') + '> Grands caractères</label><label class="chk"><input type="checkbox" data-f="simple"' + (s.simple !== false ? ' checked' : '') + '> Mode simple (4 onglets : Aujourd\'hui, Joueurs, Tables, Plus)</label></div>' +
@@ -2862,6 +2896,7 @@ window.BR_FLYER="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYF
     pvsend() { const t = $('#pvt'); if (t) ui.preview.text = t.value; shareAffiche(ui.preview.text); ui.preview = null; setTimeout(render, 300); },
     pvdone() { setTimeout(() => { ui.preview = null; render(); }, 400); },
     flyreset() { try { localStorage.removeItem(FLY); } catch (e) { /* ignore */ } render(); },
+    newtoggle() { setTimeout(() => { const d = $('details.newsess'); ui.newOpen = !!(d && d.open); }, 0); },
     msadd() {
       const d = $('#ms-date') && $('#ms-date').value; if (!d) { toast('Choisissez d\'abord une date.', true); return; }
       ui.multi = Array.from(new Set([...(ui.multi || []), d])).sort(); render();
