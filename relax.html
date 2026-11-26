@@ -954,6 +954,30 @@ details.newsess[open]>summary .plus{transform:rotate(45deg)}
 .row.times3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
 .row.times3>div{min-width:0}
 .row.times3 input{width:100%;min-width:0;box-sizing:border-box;-webkit-appearance:none;appearance:none;min-height:50px;text-align:center;padding-left:6px;padding-right:6px}
+.scard .sact{flex-direction:row}
+.scard .sact .btn{min-width:110px}
+/* v7.6 — historique */
+.htab{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+.htab th{text-align:right;font-size:13px;color:var(--muted,#667);font-weight:700;padding:6px 4px;border-bottom:1px solid var(--line)}
+.htab th:first-child,.htab td:first-child{text-align:left}
+.htab td{text-align:right;padding:8px 4px;border-bottom:1px solid var(--line);vertical-align:top;font-size:16px}
+.htab tfoot td{border-bottom:0;font-weight:700;font-size:14px;color:var(--muted,#667)}
+.htab .lnk{font-size:15px;text-align:left}
+.hbar{position:relative;height:8px;margin-top:6px;border-radius:4px;background:var(--paper-2);max-width:220px}
+.hbar i{position:absolute;left:0;top:0;bottom:0;border-radius:4px}
+.hbar .b-inv{background:#cbd5e1}.hbar .b-yes{background:#86c7a0}.hbar .b-came{background:#1f7a45}
+.hleg{font-size:13px;color:var(--muted,#667);display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin:10px 0 0}
+.hleg span{display:inline-block;width:12px;height:8px;border-radius:3px;margin-left:6px}
+.hleg .l-inv{background:#cbd5e1}.hleg .l-yes{background:#86c7a0}.hleg .l-came{background:#1f7a45}
+.hlist{list-style:none;margin:0;padding:0}
+.hlist li{display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:8px 0;border-bottom:1px solid var(--line)}
+.hlist li:last-child{border-bottom:0}
+.hlist .hn{font-weight:700}
+.hlist .hc{font-variant-numeric:tabular-nums}
+.hlist .hd{grid-column:1/-1;font-size:13px;color:var(--muted,#667)}
+@media (prefers-color-scheme:dark){.hbar .b-inv,.hleg .l-inv{background:#3b4a63}.hbar .b-came,.hleg .l-came{background:#3fbf78}}
+.hlist li{padding:6px 0}
+@media (min-width:560px){.hlist{columns:2;column-gap:24px}.hlist li{break-inside:avoid}}
 
 </style>
 </head>
@@ -1466,9 +1490,11 @@ window.BR_FLYER="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYF
 (function () {
   'use strict';
   const LS = 'bridge-relax-v1';
-  const VERSION = '7.4';
+  const VERSION = '7.6';
   const VERSION_DATE = '26 novembre 2026';
   const NEWS = [
+    'Historique : invités, oui et venus à chaque séance ; qui vient et qui ne vient jamais',
+    'Séances passées : horaire 15h45–18h45 corrigé ; boutons Ouvrir et Bilan côte à côte',
     'Page Séances plus claire : séances à venir d\'abord, formulaire propre (date, 3 heures, lieu, périodes)',
     'Accueil 15h30, jeu de 15h45 à 18h45 : 3 périodes de 55 min, la dernière jusqu\'à 18h45 (ou 2 ou 4 périodes)',
     'Aperçu du message WhatsApp avant l\'envoi',
@@ -1509,7 +1535,7 @@ window.BR_FLYER="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYF
     return s;
   }
   function defaults() {
-    const D = { v: 2, nextId: 1, nextSess: 1, settings: { welcome: '15:30', start: '15:45', end: '18:45', sched3: true, sched4: true, roundMin: 30, minPerBoard: 11, setSize: 4, bankSets: 9, changeMin: 5, prepared: false, format: '3p', pauseMin: 0, stock: 36, sound: true, perTable: 2, reshuffle: true, simple: true }, roster: [], sessions: [], cur: null, notes: {}, avoid: [] };
+    const D = { v: 2, nextId: 1, nextSess: 1, settings: { welcome: '15:30', start: '15:45', end: '18:45', sched3: true, sched4: true, sched5: true, roundMin: 30, minPerBoard: 11, setSize: 4, bankSets: 9, changeMin: 5, prepared: false, format: '3p', pauseMin: 0, stock: 36, sound: true, perTable: 2, reshuffle: true, simple: true }, roster: [], sessions: [], cur: null, notes: {}, avoid: [] };
     D.places = [{ id: 1, text: DEF_PLACE }]; D.settings.defPlace = 1;
     D.cur = newSession(D).id;
     return D;
@@ -1548,6 +1574,13 @@ window.BR_FLYER="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYF
           if (['15:00', '15:30'].includes(s.start) && ['18:30', '18:45'].includes(s.end)) { s.start = '15:45'; s.end = '18:45'; if (!s.welcome) s.welcome = '15:30'; }
         });
         st.sched4 = true;
+      }
+      // v7.5 : même horaire pour les séances passées (affichage et bilan)
+      if (!(j.settings && j.settings.sched5)) {
+        D.sessions.forEach(s => {
+          if (['15:00', '15:30'].includes(s.start) && ['18:30', '18:45'].includes(s.end)) { s.start = '15:45'; s.end = '18:45'; if (!s.welcome) s.welcome = '15:30'; }
+        });
+        D.settings.sched5 = true;
       }
       if (!D.avoid) D.avoid = [];
       if (D.settings.perTable == null) D.settings.perTable = 2;
@@ -1614,6 +1647,7 @@ window.BR_FLYER="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYF
     }
   } catch (e) { /* ignore */ }
   let D = load();
+  setTimeout(() => { try { freezeHist(); } catch (e) { /* ignore */ } }, 0);
   // Fenêtre du projecteur : elle suit les changements faits dans la fenêtre principale
   window.addEventListener('storage', e => {
     if (e.key !== LS) return;
@@ -1913,14 +1947,14 @@ window.BR_FLYER="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYF
     const tabs = simple
       ? [['today', 'Aujourd\'hui'], ['joueurs', 'Joueurs'], ['tour', 'Tables'], ['plus', 'Plus']]
       : [['seances', 'Séances'], ['joueurs', 'Joueurs'], ['tour', 'Période'], ['etuis', 'Étuis'], ['reglages', 'Réglages']];
-    const inPlus = ['seances', 'etuis', 'reglages', 'bilan', 'aide', 'plus'];
+    const inPlus = ['seances', 'etuis', 'reglages', 'bilan', 'aide', 'plus', 'histo'];
     const s = cur();
     document.body.innerHTML =
       '<header><img class="logo" src="' + LOGO + '" alt="Page de garde" data-a="cover"><div class="htitle"><h1>Bridge Relax</h1><button class="hdate" data-a="tab" data-v="seances">' + esc(cap(fmtDate(s.date, { weekday: 'short', day: 'numeric', month: 'short' }))) + ' · ' + hh(s.start) + '–' + hh(s.end) + '</button></div><div class="clock" id="hclock"></div></header>' +
       '<nav>' + tabs.map(t => '<button data-a="tab" data-v="' + t[0] + '" class="' + (ui.tab === t[0] || (simple ? (t[0] === 'plus' && inPlus.indexOf(ui.tab) >= 0) : (ui.tab === 'bilan' && t[0] === 'seances')) ? 'on' : '') + '"><svg viewBox="0 0 24 24" aria-hidden="true">' + ICON[t[0]] + '</svg>' + t[1] + '</button>').join('') + '</nav>' +
       (navigator.onLine === false ? '<div class="offbar">Pas de réseau : l\'application fonctionne normalement, tout est enregistré sur cet appareil.</div>' : '') +
       (ui.toast ? '<div id="toast" class="toast' + (ui.toast.warn ? ' warn' : '') + '" data-a="toastclose">' + esc(ui.toast.msg) + '</div>' : '') +
-      '<main>' + ({ seances: viewSessions, joueurs: viewPlayers, tour: viewRound, etuis: viewBoards, reglages: viewSettings, bilan: viewBilan, aide: viewHelp, today: viewToday, plus: viewPlus }[ui.tab] || viewRound)() + '</main>';
+      '<main>' + ({ seances: viewSessions, joueurs: viewPlayers, tour: viewRound, etuis: viewBoards, reglages: viewSettings, bilan: viewBilan, histo: viewHisto, aide: viewHelp, today: viewToday, plus: viewPlus }[ui.tab] || viewRound)() + '</main>';
     if (ui.preview) { document.body.insertAdjacentHTML('beforeend', previewHtml()); document.body.classList.add('pv-on'); }
     ui.fresh = false;
     updateClock();
@@ -2064,6 +2098,7 @@ window.BR_FLYER="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYF
       it('tab', ' data-v="seances"', '📅', 'Séances', 'Créer, changer ou supprimer une séance') +
       it('tab', ' data-v="etuis"', '🂠', 'Étuis et feuilles', 'Nombre d\'étuis, feuilles à imprimer') +
       it('bilan', ' data-id="' + cur().id + '"', '📋', 'Bilan de la séance', 'Présents, absents, qui a joué avec qui') +
+      it('tab', ' data-v="histo"', '📈', 'Historique', 'Invités, inscrits et venus à chaque séance ; qui vient, qui ne vient jamais') +
       it('goavoid', '', '⛔', 'Incompatibilités', 'Deux personnes jamais à la même table') +
       it('tab', ' data-v="reglages"', '⚙️', 'Réglages', 'Durée des périodes, étuis, son, sauvegarde') +
       it('help', '', '❓', 'Mode d\'emploi', 'Les étapes d\'un après-midi, une par une') +
@@ -2072,6 +2107,52 @@ window.BR_FLYER="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYF
       '<label class="chk"><input type="checkbox" data-f="big"' + (D.settings.big ? ' checked' : '') + '> Grands caractères</label>' +
       '<label class="chk"><input type="checkbox" data-f="simple"' + (D.settings.simple !== false ? ' checked' : '') + '> Mode simple (4 onglets)</label>' +
       '<p class="mute">Le mode complet montre tous les onglets et réglages, pour l\'organisateur qui veut tout régler.</p></div>';
+  }
+
+  /* ---------- Historique ----------
+     Chaque séance passée garde ses chiffres (figés le lendemain) : invités, « oui », venus. */
+  function histOf(s) {
+    const inv = D.roster.filter(p => !p.archived && !p.teacher).map(p => p.id);
+    const isT = id => { const p = D.roster.find(x => x.id === id); return p && p.teacher; };
+    const came = Object.keys(s.att || {}).map(Number).filter(id => !isT(id) && s.att[id] && (s.att[id].arr || s.att[id].present || s.att[id].left));
+    const yes = Object.keys(s.rsvp || {}).map(Number).filter(id => !isT(id) && s.rsvp[id] === 'yes');
+    return { inv: inv.length, yes: yes.length, came: came.length, invIds: inv, yesIds: yes, cameIds: came };
+  }
+  const isDone = s => s.date < todayIso() || (s.date === todayIso() && s.rounds.length > 0);
+  function freezeHist() {
+    let ch = false;
+    D.sessions.forEach(s => { if (s.date < todayIso() && !s.hist) { s.hist = histOf(s); ch = true; } });
+    if (ch) save();
+  }
+  function viewHisto() {
+    const done = D.sessions.filter(isDone).sort((a, b) => b.date.localeCompare(a.date));
+    const H = s => s.hist || histOf(s);
+    let h = '<div class="sec"><h2>Historique</h2><p class="lead">Pour chaque Bridge Relax : combien de personnes invitées, combien ont dit oui, combien sont venues. Le professeur n\'est pas compté.</p></div>';
+    if (!done.length) return h + '<div class="empty"><p>Aucune séance passée pour l\'instant. L\'historique se remplit tout seul après chaque Bridge Relax.</p></div>';
+    const tot = done.reduce((a, s) => { const x = H(s); a.inv += x.inv; a.yes += x.yes; a.came += x.came; return a; }, { inv: 0, yes: 0, came: 0 });
+    const n = done.length, mx = Math.max(1, ...done.map(s => H(s).inv));
+    h += '<div class="panel"><h3>Séance par séance</h3><table class="htab"><thead><tr><th>Date</th><th>Invités</th><th>Oui</th><th>Venus</th></tr></thead><tbody>' +
+      done.map(s => { const x = H(s); return '<tr><td><button class="lnk" data-a="bilan" data-id="' + s.id + '">' + esc(cap(fmtDate(s.date, { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }))) + '</button>' +
+        '<div class="hbar" title="venus sur invités"><i class="b-came" style="width:' + Math.min(100, x.came / Math.max(1, x.inv) * 100) + '%"></i></div></td>' +
+        '<td>' + x.inv + '</td><td>' + x.yes + '</td><td><b>' + x.came + '</b></td></tr>'; }).join('') +
+      '</tbody>' + (n > 1 ? '<tfoot><tr><td>Moyenne (' + n + ' séances)</td><td>' + Math.round(tot.inv / n) + '</td><td>' + Math.round(tot.yes / n) + '</td><td><b>' + Math.round(tot.came / n) + '</b></td></tr></tfoot>' : '') + '</table>' +
+      '<p class="hleg"><span class="l-came"></span>part des invités qui sont venus</p></div>';
+    // par joueur
+    const act = D.roster.filter(p => !p.archived && !p.teacher);
+    const st = act.map(p => {
+      let inv = 0, came = 0, yesNo = 0, last = '';
+      done.forEach(s => { const x = H(s); const i = x.invIds ? x.invIds.indexOf(p.id) >= 0 : true; if (!i && !(x.cameIds || []).includes(p.id)) return; inv++;
+        if ((x.cameIds || []).includes(p.id)) { came++; if (s.date > last) last = s.date; } else if ((x.yesIds || []).includes(p.id)) yesNo++; });
+      return { p, inv, came, yesNo, last };
+    }).filter(x => x.inv > 0);
+    const regs = st.filter(x => x.came > 0).sort((a, b) => b.came - a.came || a.p.name.localeCompare(b.p.name, 'fr'));
+    const never = st.filter(x => x.came === 0).sort((a, b) => a.p.name.localeCompare(b.p.name, 'fr'));
+    h += '<div class="cols2"><div class="panel"><h3>Qui vient <span class="cnt1">' + regs.length + '</span></h3>' + (regs.length ? '<ul class="hlist">' + regs.map(x =>
+      '<li><span class="hn">' + esc(x.p.name) + '</span><span class="hc"><b>' + x.came + '</b> / ' + x.inv + '</span>' + (x.yesNo || x.last < done[0].date ? '<span class="hd">' + [x.yesNo ? x.yesNo + '× oui sans venir' : '', x.last < done[0].date ? 'pas venu depuis le ' + esc(fmtDate(x.last, { day: 'numeric', month: 'short' })) : ''].filter(Boolean).join(' · ') + '</span>' : '') + '</li>').join('') + '</ul>' : '<p class="mute">Personne pour l\'instant.</p>') + '</div>' +
+      '<div class="panel"><h3>Jamais venus <span class="cnt1">' + never.length + '</span></h3>' + (never.length ? '<ul class="hlist">' + never.map(x =>
+      '<li><span class="hn">' + esc(x.p.name) + '</span><span class="hd">invité' + (x.inv > 1 ? ' ' + x.inv + ' fois' : ' 1 fois') + (x.yesNo ? ', ' + x.yesNo + '× oui sans venir' : '') + '</span></li>').join('') + '</ul>' : '<p class="mute">Tout le monde est venu au moins une fois.</p>') + '</div></div>' +
+      '<p class="mute">« 3 / 4 » : venu 3 fois sur 4 séances où la personne était invitée. Les chiffres d\'une séance sont figés le lendemain.</p>';
+    return h;
   }
 
   /* ---------- Séances ---------- */
@@ -2084,7 +2165,7 @@ window.BR_FLYER="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYF
       '<div class="sinfo"><div class="st">' + esc(cap(fmtDate(s.date, { weekday: 'long' }))) + ' <small>' + when + '</small>' + (isCur ? '<span class="pill">ouverte</span>' : '') + '</div>' +
       '<div class="sh">' + esc(placeName(s)) + '<br>' + (welcomeOf(s) && welcomeOf(s) < s.start ? 'Accueil ' + hh(welcomeOf(s)) + ' · ' : '') + 'jeu ' + hh(s.start) + '–' + hh(s.end) + '<br>' + fmt(s).nRounds + ' périodes de ' + fmt(s).label + (s.rounds.length ? ', ' + plural(s.rounds.length, 'période jouée', 'périodes jouées') : '') + '</div>' +
       '<div class="cnt">' + (c.present ? '<span class="k pr">' + plural(c.present, 'présent', 'présents') + '</span>' : '') + '<span class="k yes">' + plural(c.yes, 'inscrit', 'inscrits') + '</span><span class="k none">' + c.none + ' sans réponse</span><span class="k no">' + c.no + ' refus</span></div>' +
-      (e.tables ? '<div class="mute">Prévu : ' + plural(e.tables, 'table', 'tables') + ', ' + plural(e.etuis, 'étui', 'étuis') + ' à apporter.</div>' : '') + '</div>' +
+      (e.tables && dd >= 0 ? '<div class="mute">Prévu : ' + plural(e.tables, 'table', 'tables') + ', ' + plural(e.etuis, 'étui', 'étuis') + ' à apporter.</div>' : '') + '</div>' +
       '<div class="sact">' + (isCur ? '' : '<button class="btn sm pri" data-a="sopen" data-id="' + s.id + '">Ouvrir</button>') +
       (s.rounds.length || dd < 0 ? '<button class="btn sm" data-a="bilan" data-id="' + s.id + '">Bilan</button>' : '') +
       '' + '</div></div>';
