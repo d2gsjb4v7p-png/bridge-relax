@@ -873,6 +873,27 @@ body.printpage .chev{height:270mm;display:flex;flex-direction:column;background:
 @media print{.plan .pet{stroke:#fff}}
 .salle .splan{position:relative}
 .salle .splan .plan{position:absolute;inset:0}
+/* v6.9 */
+.k.pr{background:#dbeafe;color:#1e3a8a}
+@media (prefers-color-scheme:dark){.k.pr{background:#1e3a8a;color:#dbeafe}}
+/* v7.0 — WhatsApp et séances en série */
+.btn.wa{background:#1f7a45;border-color:#1f7a45;color:#fff;display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none}
+.btn.wa:hover{background:#18643a}
+.waico{width:20px;height:20px;flex:none}
+.warow{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.warow .btn.wa{flex:1 1 220px}
+.step .lnk{display:block;margin:6px 0 2px;font-size:14px}
+details.multi{margin-top:14px;border-top:1px solid var(--line);padding-top:10px}
+details.multi summary{font-weight:700;cursor:pointer;padding:6px 0;color:var(--accent)}
+.mrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:8px 0}
+.mrow input[type=date]{flex:1 1 160px;min-width:0}
+.mchips{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.mchip{display:inline-flex;align-items:center;gap:6px;background:var(--paper-2);border:1px solid var(--line);border-radius:999px;padding:5px 6px 5px 12px;font-weight:600;font-size:14px}
+.mchip.dup{opacity:.55}
+.mchip button{border:0;background:none;font-size:18px;line-height:1;cursor:pointer;color:inherit;padding:0 4px}
+.btn.wa{background:var(--paper);color:#17683a;border:2px solid #2a9d5c}
+.btn.wa:hover{background:#eaf7ef}
+@media (prefers-color-scheme:dark){.btn.wa{color:#7fe0a6;border-color:#3fbf78}.btn.wa:hover{background:#12301f}}
 
 </style>
 </head>
@@ -1381,9 +1402,13 @@ body.printpage .chev{height:270mm;display:flex;flex-direction:column;background:
 (function () {
   'use strict';
   const LS = 'bridge-relax-v1';
-  const VERSION = '6.8';
-  const VERSION_DATE = '25 novembre 2026';
+  const VERSION = '7.0';
+  const VERSION_DATE = '26 novembre 2026';
   const NEWS = [
+    'WhatsApp en un geste : inviter, relancer, rappeler',
+    'Créer plusieurs séances d\'un coup (dates connues ou chaque semaine)',
+    'Pause affichée au projecteur et en haut de l\'écran, avec l\'heure de reprise',
+    'Protection contre le lancement d\'une période trop tôt',
     'Plan de la salle en cercles au projecteur : il suit les arrivées et départs, chaque étui passe à la table voisine',
     'Projecteur : 2e fenêtre synchronisée, avec les tables, les étuis et la table suivante',
     'Niveaux confidentiels : masqués par défaut, jamais sur le grand écran ni à l\'impression',
@@ -1596,9 +1621,20 @@ body.printpage .chev{height:270mm;display:flex;flex-direction:column;background:
     if (dd > 0) return dd === 1 ? 'séance demain' : 'séance dans ' + dd + ' jours';
     if (dd < 0) return 'séance passée';
     const a = sessMs(s, s.start), z = sessMs(s, s.end);
+    const cr = s.id === D.cur ? BR.currentRound(C()) : null;
+    if (cr && now < roundEnd(cr)) return 'fin période ' + fmtT(roundEnd(cr));
+    const pz = pauseInfo(s, now);
+    if (pz) return 'pause → ' + fmtT(pz.until);
     if (now < a) return 'début dans ' + fmtDur((a - now) / 60000);
     if (now < z) return 'fin dans ' + fmtDur((z - now) / 60000);
     return 'séance terminée';
+  }
+  // La pause unique (au milieu de l'après-midi) : juste après la période du milieu
+  function pauseInfo(s, now) {
+    const f = fmt(s), pm = D.settings.pauseMin || 0, n = s.rounds.length, r = s.rounds[n - 1];
+    if (!pm || !r || f.nRounds < 2 || n !== Math.ceil(f.nRounds / 2)) return null;
+    const end = roundEnd(r), until = end + pm * 60000;
+    return now >= end && now < until + 10 * 60000 ? { until, over: now >= until } : null;
   }
   function roundEnd(r) { return r.endAt || (r.startedAt + r.b * D.settings.minPerBoard * 60000); }
   function updateClock() {
@@ -1613,7 +1649,8 @@ body.printpage .chev{height:270mm;display:flex;flex-direction:column;background:
     if (sn) {
       if (r) {
         const m0 = (roundEnd(r) - now) / 60000;
-        sn.innerHTML = m0 > 0 ? 'Fin de la période dans <b>' + fmtDur(m0) + '</b>' : '<b>Période terminée</b> : changez de table';
+        const pz = pauseInfo(cur(), now);
+        sn.innerHTML = m0 > 0 ? 'Fin de la période dans <b>' + fmtDur(m0) + '</b>' : pz ? (pz.over ? '<b>Fin de la pause</b> : reprenez vos places' : '<b>Pause</b> : reprise à <b>' + fmtT(pz.until) + '</b>') : '<b>Période terminée</b> : changez de table';
       } else sn.innerHTML = 'La première période va commencer';
     }
     const rc = $('#rcount');
@@ -1687,7 +1724,7 @@ body.printpage .chev{height:270mm;display:flex;flex-direction:column;background:
     let block;
     if (cs) {
       const s = cs.s, c = counts(s);
-      block = '<button class="cv-next" data-a="openfromcover" data-id="' + s.id + '"><span>' + cs.label + '</span><b>' + esc(cap(fmtDate(s.date))) + '</b><small>' + hh(s.start) + ' à ' + hh(s.end) + ', ' + fmt(s).nRounds + ' périodes de ' + fmt(s).label + ' · ' + plural(c.yes, 'inscrit', 'inscrits') + '</small><small class="cvp">📍 ' + esc(placeName(s)) + '</small><em>Ouvrir cette séance ›</em></button>';
+      block = '<button class="cv-next" data-a="openfromcover" data-id="' + s.id + '"><span>' + cs.label + '</span><b>' + esc(cap(fmtDate(s.date))) + '</b><small>' + hh(s.start) + ' à ' + hh(s.end) + ', ' + fmt(s).nRounds + ' périodes de ' + fmt(s).label + ' · ' + (c.present ? plural(c.present, 'présent', 'présents') : plural(c.yes, 'inscrit', 'inscrits')) + '</small><small class="cvp">📍 ' + esc(placeName(s)) + '</small><em>Ouvrir cette séance ›</em></button>';
     } else {
       block = '<button class="cv-next" data-a="newfromcover"><span>Aucune séance prévue</span><b>Créer la prochaine séance</b><em>Ouvrir l\'onglet Séances ›</em></button>';
     }
@@ -1863,7 +1900,7 @@ body.printpage .chev{height:270mm;display:flex;flex-direction:column;background:
     // 2. Les réponses
     h += card(2, 'Qui vient ?', '<div class="cnt3"><span class="k yes">' + c.yes + ' oui</span><span class="k none">' + c.none + ' pas répondu</span><span class="k no">' + c.no + ' non</span></div>' +
       '<p>' + (c.yes + c.none + c.no ? 'Notez la réponse de chacun : Oui, ? ou Non.' : 'Ajoutez d\'abord la liste des joueurs.') + '</p>',
-      (c.yes + c.none + c.no ? B('gotoresp', 'Noter les réponses', '', step === 2 ? 'pri' : '') + B('gotoinvite', 'Écrire l\'invitation') : B('gotolist', 'Ajouter les joueurs', '', 'pri')), c.none === 0 && c.yes > 0);
+      (c.yes + c.none + c.no ? B('gotoresp', 'Noter les réponses', '', step === 2 ? 'pri' : '') + waRow(s, c) + '<button class="lnk" data-a="gotoinvite">Relire ou modifier le texte avant l\'envoi</button>' : B('gotolist', 'Ajouter les joueurs', '', 'pri') + waRow(s, c)), c.none === 0 && c.yes > 0);
     // 3. Les étuis
     h += card(3, 'Préparer les étuis', e.tables ? '<p>Apportez <b>' + plural(e.etuis, 'étui', 'étuis') + '</b> (numéros 1 à ' + e.etuis + '), avec une feuille dans chaque étui, et <b>un jeu de cartes de secours</b> par table.</p>' : '<p>Le nombre d\'étuis sera calculé dès qu\'il y aura des réponses « oui ».</p>',
       e.tables ? B('gosheets', 'Imprimer les feuilles d\'étui', '', step === 3 ? 'pri' : '') : '', false);
@@ -1916,7 +1953,7 @@ body.printpage .chev{height:270mm;display:flex;flex-direction:column;background:
       '<div class="sdate"><b>' + d.getDate() + '</b><span>' + esc(fmtDate(s.date, { month: 'short' })) + '</span></div>' +
       '<div class="sinfo"><div class="st">' + esc(cap(fmtDate(s.date, { weekday: 'long' }))) + ' <small>' + when + '</small></div>' +
       '<div class="sh">' + esc(placeName(s)) + ' · ' + s.start.replace(':', 'h') + ' à ' + s.end.replace(':', 'h') + ', ' + fmt(s).nRounds + ' périodes de ' + fmt(s).label + (s.rounds.length ? ', ' + plural(s.rounds.length, 'période jouée', 'périodes jouées') : '') + '</div>' +
-      '<div class="cnt"><span class="k yes">' + c.yes + ' inscrits</span><span class="k none">' + c.none + ' sans réponse</span><span class="k no">' + c.no + ' refus</span></div>' +
+      '<div class="cnt">' + (c.present ? '<span class="k pr">' + plural(c.present, 'présent', 'présents') + '</span>' : '') + '<span class="k yes">' + plural(c.yes, 'inscrit', 'inscrits') + '</span><span class="k none">' + c.none + ' sans réponse</span><span class="k no">' + c.no + ' refus</span></div>' +
       (e.tables ? '<div class="mute">Prévu : ' + plural(e.tables, 'table', 'tables') + ', ' + plural(e.etuis, 'étui', 'étuis') + ' à apporter.</div>' : '') + '</div>' +
       '<div class="sact">' + (isCur ? '<span class="pill">ouverte</span>' : '<button class="btn sm pri" data-a="sopen" data-id="' + s.id + '">Ouvrir</button>') +
       (s.rounds.length || dd < 0 ? '<button class="btn sm" data-a="bilan" data-id="' + s.id + '">Bilan</button>' : '') +
@@ -1939,12 +1976,23 @@ body.printpage .chev{height:270mm;display:flex;flex-direction:column;background:
     while (d < t) d.setDate(d.getDate() + 7);
     return isoDay(d);
   }
+  // Créer d'un coup toutes les dates déjà connues (mêmes heures, lieu et durée que la nouvelle séance)
+  function multiPanel() {
+    const L = ui.multi || [], have = new Set(D.sessions.map(s => s.date));
+    return '<details class="multi"' + (L.length || ui.multiOpen ? ' open' : '') + '><summary>Créer plusieurs séances d\'un coup</summary>' +
+      '<p class="mute">Pour les dates déjà connues. Elles auront les heures, le lieu et la durée choisis ci-dessus.</p>' +
+      '<div class="mrow"><input type="date" id="ms-date" aria-label="Date à ajouter"><button class="btn sm" data-a="msadd">Ajouter cette date</button></div>' +
+      '<div class="mrow"><span>ou chaque semaine, à partir de la date ci-dessus, jusqu\'au</span><input type="date" id="ms-until" aria-label="Jusqu\'au"><button class="btn sm" data-a="msweek">Ajouter</button></div>' +
+      (L.length ? '<div class="mchips">' + L.map(d => '<span class="mchip' + (have.has(d) ? ' dup' : '') + '">' + esc(cap(fmtDate(d, { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }))) + (have.has(d) ? ' (existe déjà)' : '') + '<button data-a="msrm" data-d="' + d + '" aria-label="Retirer">×</button></span>').join('') + '</div>' +
+        '<div class="row"><button class="btn pri" data-a="mscreate">Créer ' + plural(L.filter(d => !have.has(d)).length, 'séance', 'séances') + '</button><button class="btn" data-a="msclear">Tout effacer</button></div>' : '') +
+      '</details>';
+  }
   function viewSessions() {
     const t = todayIso();
     const up = D.sessions.filter(s => s.date >= t).sort((a, b) => a.date.localeCompare(b.date));
     const past = D.sessions.filter(s => s.date < t).sort((a, b) => b.date.localeCompare(a.date));
     let h = '<div class="sec"><h2>Séances</h2><p class="lead">Chaque après-midi a sa date, ses heures et ses inscriptions. La liste des joueurs est commune à toutes les séances.</p></div>';
-    h += '<div class="panel newsess"><h3>Nouvelle séance</h3><div class="sedit"><div class="grow"><label class="f">Date</label><input type="date" id="ns-date" value="' + suggestNextDate() + '"></div><div><label class="f">Début</label><input type="time" id="ns-start" value="' + D.settings.start + '"></div><div><label class="f">Fin</label><input type="time" id="ns-end" value="' + D.settings.end + '"></div><div class="grow"><label class="f">Lieu</label>' + placeSelect('id="ns-place" data-f="nsplace"', D.settings.defPlace) + '</div><div><label class="f">Durée des périodes</label><select id="ns-dur">' + Object.keys(FORMATS).map(k => '<option value="' + k + '"' + ((D.settings.format || '45') === k ? ' selected' : '') + '>' + FORMATS[k].label + '</option>').join('') + '</select></div></div><button class="btn pri" style="margin-top:10px" data-a="snew">Créer et ouvrir</button></div>';
+    h += '<div class="panel newsess"><h3>Nouvelle séance</h3><div class="sedit"><div class="grow"><label class="f">Date</label><input type="date" id="ns-date" value="' + suggestNextDate() + '"></div><div><label class="f">Début</label><input type="time" id="ns-start" value="' + D.settings.start + '"></div><div><label class="f">Fin</label><input type="time" id="ns-end" value="' + D.settings.end + '"></div><div class="grow"><label class="f">Lieu</label>' + placeSelect('id="ns-place" data-f="nsplace"', D.settings.defPlace) + '</div><div><label class="f">Durée des périodes</label><select id="ns-dur">' + Object.keys(FORMATS).map(k => '<option value="' + k + '"' + ((D.settings.format || '45') === k ? ' selected' : '') + '>' + FORMATS[k].label + '</option>').join('') + '</select></div></div><button class="btn pri" style="margin-top:10px" data-a="snew">Créer et ouvrir</button>' + multiPanel() + '</div>';
     h += '<h3 class="lbl">À venir</h3>' + (up.length ? '<div class="slist">' + up.map(sessionCard).join('') + '</div>' : '<p class="mute">Aucune séance à venir.</p>');
     if (past.length) h += '<h3 class="lbl">Passées</h3><div class="slist">' + past.map(sessionCard).join('') + '</div>';
     return h;
@@ -2017,7 +2065,7 @@ body.printpage .chev{height:270mm;display:flex;flex-direction:column;background:
       l.forEach(p => {
         const g = rsvpOf(s, p.id);
         const a = s.att[p.id] || {};
-        const pres = a.present ? '<span class="bd here">Présent</span><small>depuis ' + fmtT(a.arr) + '</small>' : '<span class="bd abs">Absent</span>' + (a.left ? '<small>parti à ' + fmtT(a.left) + '</small>' : '');
+        const pres = a.present ? '<span class="bd here">Présent</span><small> ' + fmtT(a.arr) + '</small>' : '<span class="bd abs">Absent</span>' + (a.left ? '<small>parti à ' + fmtT(a.left) + '</small>' : '');
         const btn = a.present ? (cur().rounds.length ? '<button class="btn dep" data-a="depart" data-id="' + p.id + '">Départ</button>' : '<button class="btn dep" data-a="unarrive" data-id="' + p.id + '">Annuler</button>') : '<button class="btn arr" data-a="arrive" data-id="' + p.id + '">' + (a.left ? 'Revenu' : 'Arrivé') + '</button>';
         const seg = '<div class="rsvp sm3">' + [['yes', 'Oui'], ['none', '?'], ['no', 'Non']].map(x => '<button class="' + x[0] + (g === x[0] ? ' on' : '') + '" data-a="rsvp" data-id="' + p.id + '" data-v="' + x[0] + '" aria-label="Réponse ' + (x[0] === 'none' ? 'pas répondu' : x[1].toLowerCase()) + '">' + x[1] + '</button>').join('') + '</div>';
         h += '<tr class="' + (a.present ? 'is-here' : '') + (ui.moved === p.id ? ' moved' : '') + '"><td class="c-n"><b>' + esc(p.name) + '</b>' + (p.teacher ? ' <span class="pill">professeur</span>' : '') + '<span class="c-pm">' + pres + '</span></td><td class="c-r">' + seg + '</td><td class="c-p">' + pres + '</td><td class="c-a">' + btn + '</td></tr>';
@@ -2055,7 +2103,7 @@ body.printpage .chev{height:270mm;display:flex;flex-direction:column;background:
           : '<div class="lvhead"><span>🔒 Les niveaux sont masqués.</span><button class="btn sm" data-a="lvtoggle">Afficher les niveaux</button></div>') + '</div>';
     }
     let tools = '';
-    if (m === 'insc') tools = '<div class="row" style="margin-top:10px"><button class="btn sm pri" data-a="msg" data-v="invit">Rédiger l\'invitation</button><button class="btn sm" data-a="msg" data-v="relance">Relancer les sans-réponse</button><button class="btn sm" data-a="msg" data-v="veille">Rappel aux inscrits</button></div><div class="row" style="margin-top:6px"><button class="btn sm" data-a="copynone">Copier les noms sans réponse</button><button class="btn sm" data-a="allnone">Tout remettre à « ? »</button></div>';
+    if (m === 'insc') tools = waRow(s, counts(s)) + '<div class="row" style="margin-top:10px"><button class="btn sm pri" data-a="msg" data-v="invit">Rédiger l\'invitation</button><button class="btn sm" data-a="msg" data-v="relance">Relancer les sans-réponse</button><button class="btn sm" data-a="msg" data-v="veille">Rappel aux inscrits</button></div><div class="row" style="margin-top:6px"><button class="btn sm" data-a="copynone">Copier les noms sans réponse</button><button class="btn sm" data-a="allnone">Tout remettre à « ? »</button></div>';
     if (m === 'liste') tools = avoidPanel() + '<details style="margin:10px 0 0"><summary>Coller une liste de noms</summary><textarea id="bulk" rows="6" placeholder="Un nom par ligne. Pour le niveau, ajoutez 1 ou 2 après le nom (ex. Marie Dupont ; 2)"></textarea><button class="btn" data-a="bulk" style="margin-top:8px">Ajouter ces noms</button></details>';
     if (m === 'accueil') tools = '<div class="row" style="margin-top:10px"><button class="btn sm" data-a="printacc">Imprimer le tableau d\'accueil</button></div>';
     const ph = m === 'accueil' ? 'Chercher un nom, ou ajouter quelqu\'un qui arrive' : 'Taper un nom pour chercher ou ajouter';
@@ -2135,7 +2183,7 @@ body.printpage .chev{height:270mm;display:flex;flex-direction:column;background:
     let h = '<div class="sec">' + planBlock() + timeline();
     const nextN = s.rounds.length + 1;
     const opts = []; for (let i = 1; i <= 8; i++) opts.push('<option value="' + i + '"' + (i === auto ? ' selected' : '') + '>' + i + ' donne' + (i > 1 ? 's' : '') + ' par table' + (i === auto ? ' (conseillé)' : '') + '</option>');
-    h += '<div class="go-row">' + (D.settings.simple !== false ? '' : '<select id="bsel" aria-label="Donnes par table">' + opts.join('') + '</select>') + '<button class="btn go" data-a="next">Lancer la période ' + nextN + ' sur ' + f.nRounds + '</button></div>';
+    h += '<div class="go-row">' + (D.settings.simple !== false ? '' : '<select id="bsel" aria-label="Donnes par table">' + opts.join('') + '</select>') + '<button class="btn' + (r && roundEnd(r) - Date.now() > 5 * 60000 ? '' : ' go') + '" data-a="next">' + (nextN > f.nRounds ? 'Lancer une période en plus' : 'Lancer la période ' + nextN + ' sur ' + f.nRounds) + '</button></div>';
     h += '<div class="mute">' + (r ? 'La période suivante tient compte des arrivées et des départs notés à l\'accueil.' : 'Marquez les arrivées dans Joueurs, Accueil, puis lancez la première période.') + '</div>' +
       (daysUntil(s.date) !== 0 ? '<div class="note warn" style="margin-top:10px">Cette séance n\'est pas celle d\'aujourd\'hui. Ouvrez la bonne séance dans l\'onglet Séances.</div>' : '') +
       '<div class="row" style="margin-top:12px"><button class="btn sm noprint" data-a="salle">Afficher sur grand écran</button><button class="btn sm noprint" data-a="salle2">Projecteur (2e fenêtre)</button>' + (s.rounds.length ? '<button class="btn sm noprint" data-a="bilan" data-id="' + s.id + '">Bilan de la séance</button>' : '') + '</div></div>';
@@ -2345,7 +2393,7 @@ body.printpage .chev{height:270mm;display:flex;flex-direction:column;background:
     let h = '<div class="sec"><button class="btn sm" data-a="tab" data-v="seances">‹ Séances</button><h2 style="margin-top:12px">Bilan du ' + esc(fmtDate(s.date)) + '</h2></div>' +
       '<div class="kpis"><div><b>' + people.length + '</b>présents</div><div><b>' + s.rounds.length + '</b>' + (s.rounds.length > 1 ? 'périodes jouées' : 'période jouée') + '</div><div><b>' + boards.size + '</b>étuis utilisés</div><div><b>' + (Math.max(0, ...s.rounds.map(r => r.relay ? r.relay.count : 0)) || lots.size) + '</b>étuis en circulation (au plus)</div></div>' +
       '<div class="cols2"><div class="panel"><h3>Ont dit oui mais ne sont pas venus <span class="cnt1">' + ouiAbs.length + '</span></h3><p>' + names(ouiAbs) + '</p></div>' +
-      '<div class="panel"><h3>Venus sans avoir dit oui <span class="cnt1">' + sansOui.length + '</span></h3><p>' + (sansOui.length ? sansOui.map(p => esc(p.name) + ' <small class="mute">(' + (rsvpOf(s, p.id) === 'no' ? 'avait dit non' : 'pas répondu') + ')</small>').join(', ') : '<span class="mute">personne</span>') + '</p></div>' +
+      '<div class="panel"><h3>Venus sans avoir dit oui <span class="cnt1">' + sansOui.length + '</span></h3>' + (sansOui.length ? [['none', 'Sans réponse'], ['no', 'Avaient dit non']].map(k => { const l = sansOui.filter(p => (rsvpOf(s, p.id) === 'no') === (k[0] === 'no')); return l.length ? '<p><b>' + k[1] + ' (' + l.length + ') :</b> ' + l.map(p => esc(p.name)).join(', ') + '</p>' : ''; }).join('') : '<p class="mute">personne</p>') + '</div>' +
       '<div class="panel"><h3>Partis avant la fin <span class="cnt1">' + partis.length + '</span></h3><p>' + (partis.length ? partis.map(p => esc(p.name) + ' <small class="mute">(' + fmtT(A(p.id).left) + ')</small>').join(', ') : '<span class="mute">personne</span>') + '</p></div>' +
       '<div class="panel"><h3>Présents</h3><p>' + names(people) + '</p></div></div>';
     if (s.rounds.length) {
@@ -2395,14 +2443,27 @@ body.printpage .chev{height:270mm;display:flex;flex-direction:column;background:
     const c = counts(s);
     const lieu = '\n\nLieu :\n' + placeLines(s).join('\n') + '\nItinéraire : ' + mapsUrl(s);
     if (type === 'relance') {
-      const l = D.roster.filter(p => !p.archived && !p.teacher && rsvpOf(s, p.id) === 'none').map(p => p.name.split(' ')[0]).sort((a, b) => a.localeCompare(b, 'fr'));
-      return 'Bonjour ' + (l.length ? l.join(', ') : 'à tous') + ',\n\nPetit rappel : Bridge Relax le ' + d + ', de ' + h1 + ' à ' + h2 + ', ' + placeName(s) + '.\nJe n\'ai pas encore ta réponse : viens-tu ? Un simple oui ou non me suffit, pour que je prépare les tables.\n\nMerci !' + sign;
+      // Message de groupe : on ne cite personne
+      return 'Bonjour à tous,\n\nPetit rappel : Bridge Relax le ' + d + ', de ' + h1 + ' à ' + h2 + ', ' + placeName(s) + '.\nSi vous ne m\'avez pas encore répondu, un simple oui ou non me suffit, pour que je prépare les tables.\n\nMerci !' + sign;
     }
     if (type === 'veille') {
       const dd = daysUntil(s.date);
       return 'Bonjour à tous,\n\nRappel : Bridge Relax ' + (dd === 1 ? 'demain, ' : 'le ') + d + ', de ' + h1 + ' à ' + h2 + ', ' + placeName(s) + '.' + lieu + '\n\nNous sommes déjà ' + c.yes + ' inscrits. Merci d\'arriver quelques minutes avant ' + h1 + ' pour que les tables soient prêtes à l\'heure.\nUn empêchement ? Prévenez-moi, cela m\'aide à préparer les tables.\n\nÀ ' + (dd === 1 ? 'demain' : 'bientôt') + ' !' + sign;
     }
     return 'Bonjour à tous,\n\nProchain Bridge Relax le ' + d + ', de ' + h1 + ' à ' + h2 + '.' + lieu + '\n\n' + f.nRounds + ' périodes d\'environ ' + (f.dur === 60 ? 'une heure' : f.dur + ' minutes') + ', avec un nouveau partenaire à chaque période.' + (D.settings.prepared ? ' Donnes préparées : chacun jouera des contrats, entamera, fera le mort et défendra.' : '') + (prof ? ' ' + prof.name + ' sera là pour répondre à vos questions.' : '') + ' Tous niveaux bienvenus.\n\nMerci de me répondre dès que possible, oui ou non, pour que je prépare les tables.\n\nÀ bientôt !' + sign;
+  }
+  // Bouton WhatsApp : ouvre WhatsApp avec le message déjà écrit ; on choisit le groupe ou la personne, puis Envoyer
+  const WA_ICO = '<svg class="waico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 0 0-7.8 13.5L3 21l4.6-1.2A9 9 0 1 0 12 3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M8.5 9.5c.3 2.6 2.4 4.8 5 5.2l1.2-1.3 2 .9c-.3 1.2-1.3 1.9-2.6 1.7-3.2-.5-6-3.3-6.5-6.5-.2-1.3.5-2.3 1.7-2.6l.9 2z" fill="currentColor"/></svg>';
+  function waBtn(type, label, extraCls) {
+    return '<a class="btn wa' + (extraCls ? ' ' + extraCls : '') + '" target="_blank" rel="noopener" data-wa="' + type + '" href="https://wa.me/?text=' + encodeURIComponent(msgText(type)) + '">' + WA_ICO + label + '</a>';
+  }
+  function waRow(s, c) {
+    const dd = daysUntil(s.date);
+    if (dd < 0) return '';
+    let h = waBtn('invit', 'Inviter par WhatsApp');
+    if (c.none > 0 && c.yes + c.no > 0) h += waBtn('relance', 'Relancer par WhatsApp');
+    if (dd <= 2 && c.yes > 0) h += waBtn('veille', 'Rappel par WhatsApp');
+    return '<div class="warow">' + h + '</div>';
   }
   function msgPanel() {
     if (!ui.msg) return '';
@@ -2411,7 +2472,7 @@ body.printpage .chev{height:270mm;display:flex;flex-direction:column;background:
     return '<div class="panel msgp"><h3>' + { invit: 'Invitation', relance: 'Relance des personnes sans réponse', veille: 'Rappel aux inscrits' }[ui.msg] + '</h3>' +
       '<textarea id="msgt" rows="10">' + esc(t) + '</textarea>' +
       '<label class="f">Signature (facultatif)</label><input type="text" data-f="sign" value="' + esc(D.settings.sign || '') + '" placeholder="Par exemple : Nathalie">' +
-      '<div class="row" style="margin-top:10px"><a class="btn pri" id="wa" target="_blank" rel="noopener" href="https://wa.me/?text=' + encodeURIComponent(t) + '">WhatsApp</a>' +
+      '<div class="row" style="margin-top:10px"><a class="btn wa" id="wa" target="_blank" rel="noopener" href="https://wa.me/?text=' + encodeURIComponent(t) + '">' + WA_ICO + 'Envoyer par WhatsApp</a>' +
       '<a class="btn" id="ml" href="mailto:?subject=' + encodeURIComponent(subj) + '&body=' + encodeURIComponent(t) + '">E-mail</a>' +
       '<button class="btn" data-a="copymsg">Copier</button><button class="btn" data-a="msgclose">Fermer</button></div>' +
       '<p class="mute">Vous pouvez modifier le texte avant de l\'envoyer.</p></div>';
@@ -2649,6 +2710,27 @@ body.printpage .chev{height:270mm;display:flex;flex-direction:column;background:
       else { D.roster = D.roster.filter(x => x.id !== id); D.sessions.forEach(s => { delete s.rsvp[id]; delete s.att[id]; }); }
       commit();
     },
+    msadd() {
+      const d = $('#ms-date') && $('#ms-date').value; if (!d) { toast('Choisissez d\'abord une date.', true); return; }
+      ui.multi = Array.from(new Set([...(ui.multi || []), d])).sort(); render();
+    },
+    msweek() {
+      const from = $('#ns-date').value || todayIso(), to = $('#ms-until') && $('#ms-until').value;
+      if (!to || to < from) { toast('Choisissez une date de fin après le ' + fmtDate(from) + '.', true); return; }
+      const L = new Set(ui.multi || []); const d = dateObj(from);
+      for (let i = 0; i < 60 && isoDay(d) <= to; i++) { L.add(isoDay(d)); d.setDate(d.getDate() + 7); }
+      ui.multi = Array.from(L).sort(); render();
+    },
+    msrm(el) { ui.multi = (ui.multi || []).filter(d => d !== el.dataset.d); ui.multiOpen = true; render(); },
+    msclear() { ui.multi = []; ui.multiOpen = true; render(); },
+    mscreate() {
+      const have = new Set(D.sessions.map(s => s.date)), L = (ui.multi || []).filter(d => !have.has(d));
+      if (!L.length) return;
+      const st = $('#ns-start').value || D.settings.start, en = $('#ns-end').value || D.settings.end, du = $('#ns-dur').value;
+      const pv = $('#ns-place') && $('#ns-place').value;
+      L.forEach(d => { const s = newSession(D, d, st, en); s.dur = du; if (pv && pv !== 'new') s.place = +pv; });
+      ui.multi = []; ui.multiOpen = false; commit(); toast(plural(L.length, 'séance créée', 'séances créées') + '.');
+    },
     snew() {
       const d = $('#ns-date').value || todayIso();
       const s = newSession(D, d, $('#ns-start').value || D.settings.start, $('#ns-end').value || D.settings.end);
@@ -2674,6 +2756,8 @@ body.printpage .chev{height:270mm;display:flex;flex-direction:column;background:
       const s = cur();
       const b = $('#bsel') ? +$('#bsel').value : BR.autoBoards(C(), Date.now());
       const c = C(), now = Date.now();
+      const cr = BR.currentRound(c);
+      if (cr && roundEnd(cr) - now > 5 * 60000 && !confirm('La période ' + cr.n + ' n\'est pas finie (encore ' + fmtDur((roundEnd(cr) - now) / 60000) + ').\n\nLancer quand même la période ' + (s.rounds.length + 1) + ' ? Les tables seront refaites.')) return;
       const slot = BR.roundSlot(c, now);
       // Numéros des étuis : les mêmes à chaque période si l'on rebat tout, sinon de nouveaux
       let base = 1;
