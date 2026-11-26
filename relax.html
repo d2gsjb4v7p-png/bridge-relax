@@ -798,6 +798,9 @@ html.printdoc .ghead-row.g-no th{background:#fbe7e5!important;color:#c8342f!impo
 html.printdoc .rsvp.sm3{border:0}
 html.printdoc .rsvp.sm3 button.on{background:none!important;color:#14233b!important;font-weight:800}
 .pbar .pback{background:transparent;border:2px solid rgba(255,255,255,.5);color:#fff;min-height:46px}
+/* Hors ligne */
+.offbar{background:#3a2f17;color:#f0cf86;font-weight:700;font-size:14px;text-align:center;padding:8px 14px}
+.okc{color:var(--green)}
 
 </style>
 </head>
@@ -1306,9 +1309,10 @@ html.printdoc .rsvp.sm3 button.on{background:none!important;color:#14233b!import
 (function () {
   'use strict';
   const LS = 'bridge-relax-v1';
-  const VERSION = '6.4';
+  const VERSION = '6.5';
   const VERSION_DATE = '25 novembre 2026';
   const NEWS = [
+    'Mode hors ligne : l\'application s\'ouvre même sans wifi',
     'Bouton « Retour » sur les pages d\'impression, toujours lisibles en mode sombre',
     'Lieu de la séance (Royal Orée par défaut) dans l\'invitation et les rappels, avec itinéraire',
     'Feuilles d\'étui simplifiées : contrat, entame, résultat, points, avec un exemple',
@@ -1405,6 +1409,17 @@ html.printdoc .rsvp.sm3 button.on{background:none!important;color:#14233b!import
     } catch (e) { document.body.innerHTML = '<p style="padding:20px">Impossible d\'ouvrir la page d\'impression.</p>'; }
     return;
   }
+  // Mode hors ligne : l'application s'enregistre sur l'appareil (fichier sw.js à côté de relax.html)
+  const offline = { ready: false, supported: false };
+  try {
+    if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+      offline.supported = true;
+      navigator.serviceWorker.register('sw.js', { scope: './' }).then(reg => {
+        const done = () => { offline.ready = true; if (ui && ui.tab === 'reglages' && !ui.cover) render(); };
+        if (reg.active) done(); else navigator.serviceWorker.ready.then(done);
+      }).catch(() => { offline.supported = false; });
+    }
+  } catch (e) { /* ignore */ }
   let D = load();
   { const t = isoDay(new Date()); const s = D.sessions.find(x => x.date === t); if (s) D.cur = s.id; }
   const FORMATS = {
@@ -1646,6 +1661,8 @@ html.printdoc .rsvp.sm3 button.on{background:none!important;color:#14233b!import
   }
   window.addEventListener('resize', () => { clearTimeout(ui.fitT); ui.fitT = setTimeout(fitNames, 120); });
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitNames);
+  window.addEventListener('online', () => { if (!ui.cover && ui.tab !== 'salle') render(); });
+  window.addEventListener('offline', () => { if (!ui.cover && ui.tab !== 'salle') render(); });
   window.addEventListener('orientationchange', () => setTimeout(fitNames, 300));
   function render() {
     if (ui.cover) { document.body.className = 'cover-on'; document.body.innerHTML = viewCover(); return; }
@@ -1661,6 +1678,7 @@ html.printdoc .rsvp.sm3 button.on{background:none!important;color:#14233b!import
     document.body.innerHTML =
       '<header><img class="logo" src="' + LOGO + '" alt="Page de garde" data-a="cover"><div class="htitle"><h1>Bridge Relax</h1><button class="hdate" data-a="tab" data-v="seances">' + esc(cap(fmtDate(s.date, { weekday: 'short', day: 'numeric', month: 'short' }))) + ' · ' + hh(s.start) + '–' + hh(s.end) + '</button></div><div class="clock" id="hclock"></div></header>' +
       '<nav>' + tabs.map(t => '<button data-a="tab" data-v="' + t[0] + '" class="' + (ui.tab === t[0] || (simple ? (t[0] === 'plus' && inPlus.indexOf(ui.tab) >= 0) : (ui.tab === 'bilan' && t[0] === 'seances')) ? 'on' : '') + '"><svg viewBox="0 0 24 24" aria-hidden="true">' + ICON[t[0]] + '</svg>' + t[1] + '</button>').join('') + '</nav>' +
+      (navigator.onLine === false ? '<div class="offbar">Pas de réseau : l\'application fonctionne normalement, tout est enregistré sur cet appareil.</div>' : '') +
       (ui.toast ? '<div id="toast" class="toast' + (ui.toast.warn ? ' warn' : '') + '" data-a="toastclose">' + esc(ui.toast.msg) + '</div>' : '') +
       '<main>' + ({ seances: viewSessions, joueurs: viewPlayers, tour: viewRound, etuis: viewBoards, reglages: viewSettings, bilan: viewBilan, aide: viewHelp, today: viewToday, plus: viewPlus }[ui.tab] || viewRound)() + '</main>';
     ui.fresh = false;
@@ -2331,6 +2349,10 @@ html.printdoc .rsvp.sm3 button.on{background:none!important;color:#14233b!import
       '<div class="panel"><h3>Affichage</h3><label class="chk"><input type="checkbox" data-f="big"' + (s.big ? ' checked' : '') + '> Grands caractères</label><label class="chk"><input type="checkbox" data-f="simple"' + (s.simple !== false ? ' checked' : '') + '> Mode simple (4 onglets : Aujourd\'hui, Joueurs, Tables, Plus)</label></div>' +
       '<div class="panel"><h3>Niveaux</h3><label class="chk"><input type="checkbox" data-f="levelMatch"' + (s.levelMatch !== false ? ' checked' : '') + '> Associer les joueurs de même niveau quand c\'est possible</label><p class="mute">Niveau 1 : débutant ou intermédiaire. Niveau 2 : moyen+ ou confirmé. Priorité aux partenaires de même niveau, puis aux tables d\'un même niveau, sans jamais redonner un même partenaire. Le niveau se choisit dans Joueurs, Liste (N1 ou N2).</p></div>' +
       '<div class="panel"><h3>Incompatibilités</h3><p class="mute">Deux personnes qui ne doivent jamais être à la même table. ' + plural((D.avoid || []).length, 'incompatibilité enregistrée', 'incompatibilités enregistrées') + '.</p><button class="btn sm" data-a="goavoid">Gérer les incompatibilités</button></div>' +
+      '<div class="panel"><h3>Mode hors ligne</h3>' + (offline.ready
+        ? '<p><b class="okc">✓ Prêt.</b> L\'application est enregistrée sur cet appareil : elle s\'ouvre même sans wifi. Les mises à jour arrivent toutes seules dès qu\'il y a du réseau.</p>'
+        : offline.supported ? '<p>Préparation en cours… Gardez l\'application ouverte quelques secondes avec du réseau.</p>'
+        : '<p class="mute">Le mode hors ligne s\'active quand l\'application est ouverte depuis son adresse internet (https://…), avec le fichier sw.js déposé sur GitHub.</p>') + '</div>' +
       '<div class="panel"><h3>À propos</h3><p><b>Bridge Relax, version ' + VERSION + '</b> du ' + VERSION_DATE + '.</p><div class="row"><button class="btn sm" data-a="help">Mode d\'emploi</button><button class="btn sm" data-a="cover">Page de garde</button></div></div>' +
       '<div class="panel"><h3>Tout effacer</h3><button class="btn danger" data-a="reset">Effacer séances et liste</button></div></div>';
   }
