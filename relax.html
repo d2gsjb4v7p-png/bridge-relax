@@ -1167,7 +1167,8 @@ body.pv-on{overflow:hidden}
     let roundsLeft;
     if (s.nRounds > 0) { roundsLeft = Math.max(1, s.nRounds - done); if (s.pauseMin && done < Math.ceil(s.nRounds / 2)) remaining -= s.pauseMin; }
     else roundsLeft = Math.max(1, Math.round(remaining / s.roundMin));
-    return Math.max(10, remaining / roundsLeft - (s.changeMin || 0));
+    // la dernière période va jusqu'à l'heure de fin (pas de changement de table après)
+    return Math.max(10, remaining / roundsLeft - (s.nRounds > 0 && roundsLeft === 1 ? 0 : (s.changeMin || 0)));
   }
 
   /* ---------- Relais des étuis ----------
@@ -1432,10 +1433,10 @@ window.BR_FLYER="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYF
 (function () {
   'use strict';
   const LS = 'bridge-relax-v1';
-  const VERSION = '7.2';
+  const VERSION = '7.3';
   const VERSION_DATE = '26 novembre 2026';
   const NEWS = [
-    'Accueil 15h30, jeu de 15h45 à 18h45 : 3 périodes de 55 min (ou 2 de 85, ou 4 de 40), 5 min entre deux',
+    'Accueil 15h30, jeu de 15h45 à 18h45 : 3 périodes de 55 min, la dernière jusqu\'à 18h45 (ou 2 ou 4 périodes)',
     'Aperçu du message WhatsApp avant l\'envoi',
     'Invitation WhatsApp avec l\'affiche de Nathalie en pièce jointe',
     'WhatsApp en un geste : inviter, relancer, rappeler',
@@ -1474,7 +1475,7 @@ window.BR_FLYER="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYF
     return s;
   }
   function defaults() {
-    const D = { v: 2, nextId: 1, nextSess: 1, settings: { welcome: '15:30', start: '15:45', end: '18:45', sched3: true, roundMin: 30, minPerBoard: 11, setSize: 4, bankSets: 9, changeMin: 5, prepared: false, format: '3p', pauseMin: 0, stock: 36, sound: true, perTable: 2, reshuffle: true, simple: true }, roster: [], sessions: [], cur: null, notes: {}, avoid: [] };
+    const D = { v: 2, nextId: 1, nextSess: 1, settings: { welcome: '15:30', start: '15:45', end: '18:45', sched3: true, sched4: true, roundMin: 30, minPerBoard: 11, setSize: 4, bankSets: 9, changeMin: 5, prepared: false, format: '3p', pauseMin: 0, stock: 36, sound: true, perTable: 2, reshuffle: true, simple: true }, roster: [], sessions: [], cur: null, notes: {}, avoid: [] };
     D.places = [{ id: 1, text: DEF_PLACE }]; D.settings.defPlace = 1;
     D.cur = newSession(D).id;
     return D;
@@ -1502,6 +1503,17 @@ window.BR_FLYER="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYF
           if (s.start === '15:00' && s.end === '18:30') { s.start = '15:45'; s.end = '18:45'; }
           if (!s.dur || ['30', '45', '60'].includes(s.dur)) s.dur = '3p';
         });
+      }
+      // v7.3 : le jeu commence à 15h45 (15h30 = accueil) et finit à 18h45
+      if (!(j.settings && j.settings.sched4)) {
+        const st = D.settings, t = isoDay(new Date());
+        if (['15:00', '15:30'].includes(st.start) && ['18:30', '18:45'].includes(st.end)) { st.start = '15:45'; st.end = '18:45'; }
+        st.welcome = st.welcome || '15:30';
+        D.sessions.forEach(s => {
+          if (s.rounds.length || s.date < t) return;
+          if (['15:00', '15:30'].includes(s.start) && ['18:30', '18:45'].includes(s.end)) { s.start = '15:45'; s.end = '18:45'; if (!s.welcome) s.welcome = '15:30'; }
+        });
+        st.sched4 = true;
       }
       if (!D.avoid) D.avoid = [];
       if (D.settings.perTable == null) D.settings.perTable = 2;
@@ -1608,6 +1620,8 @@ window.BR_FLYER="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYF
       if (pause && i === Math.ceil(f.nRounds / 2)) t += pause;
       out.push([t, t + f.dur * 60000]); t += (f.dur + ch) * 60000;
     }
+    // la dernière période va jusqu'à l'heure de fin
+    if (out.length && FORMATS[f.key] && FORMATS[f.key].n) out[out.length - 1][1] = Math.max(out[out.length - 1][1], sessMs(s, s.end));
     return out;
   }
   const welcomeOf = s => s.welcome || D.settings.welcome || '';
@@ -1887,7 +1901,7 @@ window.BR_FLYER="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYF
     const w = welcomeOf(s), P = planTimes(s), f = fmt(s);
     return '<ul class="prog">' + (w && w < s.start ? '<li><b>' + hh(w) + '</b><span>Accueil</span></li>' : '') +
       P.map((x, i) => '<li><b>' + hh(fmtT(x[0])) + '</b><span>Période ' + (i + 1) + ' <small>jusqu\'à ' + hh(fmtT(x[1])) + '</small></span></li>').join('') +
-      '<li><b>' + hh(s.end) + '</b><span>Fin</span></li></ul><p class="mute progn">' + f.nRounds + ' périodes de ' + f.dur + ' min, ' + (D.settings.changeMin == null ? 5 : D.settings.changeMin) + ' min entre deux périodes.</p>';
+      '<li><b>' + hh(s.end) + '</b><span>Fin</span></li></ul><p class="mute progn">' + f.nRounds + ' périodes de ' + f.dur + ' min, ' + (D.settings.changeMin == null ? 5 : D.settings.changeMin) + ' min entre deux périodes' + (P.length && (P[P.length - 1][1] - P[P.length - 1][0]) / 60000 > f.dur ? ' ; la dernière va jusqu\'à ' + hh(s.end) : '') + '.</p>';
   }
 
   /* ---------- Comptes ---------- */
@@ -3042,7 +3056,13 @@ window.BR_FLYER="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYF
     else if (el.dataset.f === 'printto') { ui.printTo = Math.max(1, +el.value || 1); render(); }
     else if (el.dataset.f === 'avoidsel') { /* choix en attente */ }
     else if (el.dataset.f === 'mode') { D.settings.prepared = el.value === 'prep'; commit(); }
-    else if (el.dataset.f === 'sess') { if (el.value) { cur()[el.dataset.k] = el.value; commit(); } }
+    else if (el.dataset.f === 'sess') {
+      if (el.value) {
+        const s = cur(); s[el.dataset.k] = el.value;
+        if (el.dataset.k === 'start' && welcomeOf(s) && welcomeOf(s) > s.start) toast('Attention : l\'accueil (' + hh(welcomeOf(s)) + ') est après le début du jeu.', true);
+        commit();
+      }
+    }
     else if (el.dataset.f === 'set') {
       const k = el.dataset.k;
       D.settings[k] = (k === 'start' || k === 'end' || k === 'welcome') ? el.value : Math.max(0, +el.value || 0);
