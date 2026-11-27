@@ -1030,6 +1030,13 @@ details.bulkp textarea{width:100%;box-sizing:border-box;font-size:16px;margin-to
 .bmeth button b{white-space:nowrap;font-size:14.5px}
 @media (max-width:430px){.bmeth button small{display:none}.bmeth button{padding:10px 4px}}
 .lopts .lvleg{margin:0 0 10px;padding:0;background:none}
+/* v7.9 — professeurs et mode d'emploi */
+.profnote{display:flex;gap:10px;align-items:flex-start;margin:12px 0 0;padding:10px 12px;border-radius:12px;background:var(--paper-2);font-size:14.5px;line-height:1.45}
+.profnote .pstar{color:#d4a017;font-size:20px;line-height:1}
+.hstep .hblk{display:block;margin:10px 0 0;padding:10px 12px;border-radius:12px;background:var(--paper-2);line-height:1.5}
+.hstep .hblk>b:first-child{display:block;font-size:1.05em;margin-bottom:4px}
+.hstep .hnote{display:block;margin-top:8px;padding-top:8px;border-top:1px solid var(--line)}
+.hstep .hm{display:block;margin:6px 0;padding-left:4px}
 
 </style>
 </head>
@@ -1542,9 +1549,10 @@ window.BR_FLYER="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYF
 (function () {
   'use strict';
   const LS = 'bridge-relax-v1';
-  const VERSION = '7.8';
+  const VERSION = '7.9';
   const VERSION_DATE = '26 novembre 2026';
   const NEWS = [
+    'Plusieurs professeurs possibles (une étoile chacun) ; mode d\'emploi de la liste plus clair',
     'Liste des joueurs : « Ajouter une personne » et « Ajouter toute une liste » (copier-coller, Excel ou fichier), bien séparés',
     'Historique : invités, oui et venus à chaque séance ; qui vient et qui ne vient jamais',
     'Séances passées : horaire 15h45–18h45 corrigé ; boutons Ouvrir et Bilan côte à côte',
@@ -1950,7 +1958,13 @@ window.BR_FLYER="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYF
     const step = (n, t, d) => '<div class="hstep"><b>' + n + '</b><div><h3>' + t + '</h3><p>' + d + '</p></div></div>';
     return '<div class="sec"><button class="btn sm" data-a="tab" data-v="' + (D.settings.simple !== false ? 'today' : 'tour') + '">‹ Retour</button><h2 style="margin-top:12px">Mode d\'emploi</h2><p class="lead">Le plus simple : ouvrez l\'onglet <b>Aujourd\'hui</b> et suivez les étapes, une par une. L\'étape à faire est encadrée en vert.</p></div>' +
       '<div class="panel"><h3 class="hh">Une seule fois, au début</h3>' +
-      step(1, 'Mettre la liste des joueurs', 'Joueurs, puis Liste. Deux cadres :<br><b>👤 Ajouter une personne</b> : tapez le prénom et le nom, touchez « Ajouter ».<br><b>📋 Ajouter toute une liste</b> : choisissez d\'où elle vient :<br>• <b>💬 Copier-coller</b> (WhatsApp, e-mail, Notes, Word) : sélectionnez les noms, « Copier », revenez, touchez le cadre puis « Coller » ;<br>• <b>📊 Depuis Excel</b> : copiez la colonne des noms et collez-la de la même façon ;<br>• <b>📁 Un fichier</b> .txt, .csv ou .vcf (contacts). Un .xlsx ou .docx ne s\'ouvre pas : copiez-collez.<br>Vérifiez l\'aperçu, puis « Ajouter ». L\'étoile ★ désigne le professeur.') + '</div>' +
+      step(1, 'Mettre la liste des joueurs', 'Joueurs, puis Liste. Deux cadres :' +
+        '<span class="hblk"><b>👤 Ajouter une personne</b>Tapez le prénom et le nom, puis touchez « Ajouter ».<span class="hnote">★ <b>Le ou les professeurs</b> : touchez l\'étoile ☆ à côté de leur nom. Plusieurs étoiles = plusieurs professeurs.</span></span>' +
+        '<span class="hblk"><b>📋 Ajouter toute une liste</b>Choisissez d\'où elle vient :' +
+        '<span class="hm">💬 <b>Copier-coller</b> (WhatsApp, e-mail, Notes, Word) : sélectionnez les noms, « Copier », revenez, touchez le cadre puis « Coller ».</span>' +
+        '<span class="hm">📊 <b>Depuis Excel</b> : copiez la colonne des noms, puis collez-la de la même façon.</span>' +
+        '<span class="hm">📁 <b>Un fichier</b> .txt, .csv ou .vcf (contacts). Un .xlsx ou .docx ne s\'ouvre pas : copiez-collez.</span>' +
+        'Vérifiez l\'aperçu, puis touchez « Ajouter ».</span>') + '</div>' +
       '<div class="panel"><h3 class="hh">Quelques jours avant</h3>' +
       step(2, 'Créer la séance', 'Plus, puis Séances, « Nouvelle séance » : la date, l\'heure d\'accueil, le début du jeu et la fin. Plusieurs dates d\'un coup : « Créer plusieurs séances d\'un coup ».') +
       step(3, 'Inviter', 'Aujourd\'hui, étape « Qui vient ? », bouton vert « Inviter avec l\'affiche ». Un aperçu montre le message entier ; « Modifier le texte » si besoin, puis « Envoyer » et choisissez le groupe WhatsApp.') +
@@ -2293,7 +2307,7 @@ window.BR_FLYER="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYF
   function playersListHtml() {
     const s = cur(), m = pmode();
     const list = filtered();
-    if (!list.length) return '<div class="empty" style="padding:18px 0">' + (D.roster.length ? (ui.filter ? 'Aucun nom ne correspond. Touchez « Ajouter » pour créer ce joueur.' : 'Personne dans ce filtre.') : 'La liste est vide. Tapez un nom ci-dessus, ou collez votre liste de diffusion dans l\'onglet « Liste ».') + '</div>';
+    if (!list.length) return '<div class="empty" style="padding:18px 0">' + (D.roster.length ? (ui.filter ? 'Aucun nom ne correspond.' + (m === 'liste' ? ' Pour l\'ajouter : cadre « Ajouter une personne » ci-dessus.' : ' Touchez « Ajouter » pour créer ce joueur.') : 'Personne dans ce filtre.') : (m === 'liste' ? 'La liste est vide. Utilisez « Ajouter une personne » ou « Ajouter toute une liste » ci-dessus.' : 'La liste est vide. Ajoutez les joueurs dans l\'onglet « Liste ».')) + '</div>';
     const GT = { yes: 'Réponse oui', none: 'Pas répondu', no: 'Réponse non' };
     const nG = {}; list.forEach(p => { const g = rsvpOf(s, p.id); nG[g] = (nG[g] || 0) + 1; });
     if (m === 'accueil') return accueilTable(list, s, GT);
@@ -2302,7 +2316,7 @@ window.BR_FLYER="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYF
       const v = rsvpOf(s, p.id), a = s.att[p.id] || {};
       let head = '';
       const gk = p.teacher ? 'prof' : v;
-      if (m !== 'liste' && gk !== lastG) { lastG = gk; head = p.teacher ? '<div class="ghead g-prof">Professeur</div>' : '<div class="ghead g-' + v + '">' + GT[v] + ' <span>' + list.filter(x => !x.teacher && rsvpOf(s, x.id) === v).length + '</span></div>'; }
+      if (m !== 'liste' && gk !== lastG) { lastG = gk; head = p.teacher ? '<div class="ghead g-prof">' + (list.filter(x => x.teacher).length > 1 ? 'Professeurs' : 'Professeur') + '</div>' : '<div class="ghead g-' + v + '">' + GT[v] + ' <span>' + list.filter(x => !x.teacher && rsvpOf(s, x.id) === v).length + '</span></div>'; }
       let right = '';
       if (m === 'insc') {
         right = '<div class="rsvp">' + [['yes', 'Oui'], ['none', '?'], ['no', 'Non']].map(x => '<button class="' + x[0] + (v === x[0] ? ' on' : '') + '" data-a="rsvp" data-id="' + p.id + '" data-v="' + x[0] + '">' + x[1] + '</button>').join('') + '</div>';
@@ -2310,7 +2324,7 @@ window.BR_FLYER="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYF
         right = a.present ? '<button class="btn dep" data-a="depart" data-id="' + p.id + '">Départ</button>' : '<button class="btn arr" data-a="arrive" data-id="' + p.id + '">' + (a.left ? 'Revenu' : 'Arrivé') + '</button>';
       } else {
         right = (p.teacher || !ui.showLv ? '' : '<div class="lvsel" role="group" aria-label="Niveau">' + [1, 2].map(n => '<button class="lv' + n + (p.level === n ? ' on' : '') + '" data-a="level" data-id="' + p.id + '" data-v="' + n + '" title="' + LVL[n] + '">N' + n + '</button>').join('') + '</div>') +
-          '<button class="star ' + (p.teacher ? 'on' : '') + '" data-a="teach" data-id="' + p.id + '" aria-label="Professeur">' + (p.teacher ? '★' : '☆') + '</button>' +
+          '<button class="star ' + (p.teacher ? 'on' : '') + '" data-a="teach" data-id="' + p.id + '" aria-label="Professeur (toucher pour changer)" title="Professeur">' + (p.teacher ? '★' : '☆') + '</button>' +
           (ui.delId === p.id ? '<button class="x ask" data-a="del" data-id="' + p.id + '">' + (playedAny(p.id) ? 'Retirer ?' : 'Supprimer ?') + '</button>' : '<button class="x" data-a="del" data-id="' + p.id + '" aria-label="Retirer de la liste">✕</button>');
       }
       const cls = m === 'accueil' ? (a.present ? 'here' : a.left ? 'off' : '') : (m === 'insc' ? 'r-' + v : '');
@@ -2325,7 +2339,7 @@ window.BR_FLYER="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYF
       const l = gg === 'prof' ? list.filter(p => p.teacher) : list.filter(p => !p.teacher && rsvpOf(s, p.id) === gg);
       if (!l.length) return;
       const here = l.filter(p => isPresent(p.id)).length;
-      h += '<tbody class="grp-' + gg + '"><tr class="ghead-row g-' + gg + '"><th colspan="4"><span class="ghead-t">' + (gg === 'prof' ? 'Professeur' : GT[gg]) + '</span>' + (gg === 'prof' ? '' : ' <span class="gn">' + l.length + '</span><small>' + here + ' présent' + (here > 1 ? 's' : '') + ', ' + (l.length - here) + ' absent' + (l.length - here > 1 ? 's' : '') + '</small>') + '</th></tr>';
+      h += '<tbody class="grp-' + gg + '"><tr class="ghead-row g-' + gg + '"><th colspan="4"><span class="ghead-t">' + (gg === 'prof' ? (l.length > 1 ? 'Professeurs' : 'Professeur') : GT[gg]) + '</span>' + (gg === 'prof' ? '' : ' <span class="gn">' + l.length + '</span><small>' + here + ' présent' + (here > 1 ? 's' : '') + ', ' + (l.length - here) + ' absent' + (l.length - here > 1 ? 's' : '') + '</small>') + '</th></tr>';
       l.forEach(p => {
         const g = rsvpOf(s, p.id);
         const a = s.att[p.id] || {};
@@ -2361,7 +2375,7 @@ window.BR_FLYER="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYF
         : '<button class="missing" data-a="pf" data-v="wait"><b>' + wait + '</b><span>Qui manque encore ?<small>' + (wait ? 'Les attendus pas encore arrivés en premier, puis les autres absents' : 'Tous les inscrits sont arrivés') + '</small></span></button>');
       chips = chip('all', 'tous', D.roster.filter(p => !p.archived).length, '') + chip('here', 'présents', c.present, 'yes') + chip('abs', 'absents', D.roster.filter(p => !p.archived && !isPresent(p.id)).length, 'no') + chip('wait', 'attendus', wait, 'none');
     } else {
-      top = '<p class="lead">Toutes les personnes invitées, une seule liste pour toutes les séances. L\'étoile ★ désigne le professeur.</p>';
+      top = '<p class="lead">Toutes les personnes invitées, une seule liste pour toutes les séances.</p>';
       lvBox = '<div class="lvleg noprint">' + (ui.showLv
           ? '<div class="lvhead"><b>🔒 Niveaux (confidentiel)</b><button class="btn sm" data-a="lvtoggle">Masquer les niveaux</button></div><span class="lv lv1">N1</span> ' + LVL[1] + ' <span class="lv lv2">N2</span> ' + LVL[2] + '<br><small>' + (() => { const a = D.roster.filter(p => !p.archived && !p.teacher); const n1 = a.filter(p => p.level === 1).length, n2 = a.filter(p => p.level === 2).length; return n1 + ' en N1, ' + n2 + ' en N2' + (a.length - n1 - n2 ? ', ' + (a.length - n1 - n2) + ' sans niveau' : '') + '. Les niveaux ne s\'affichent jamais sur le grand écran ni sur les feuilles imprimées.'; })() + '</small>'
           : '<div class="lvhead"><span>🔒 Les niveaux sont masqués.</span><button class="btn sm" data-a="lvtoggle">Afficher les niveaux</button></div>') + '</div>';
@@ -2409,7 +2423,8 @@ window.BR_FLYER="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYF
       : '<textarea id="bulk" rows="6" placeholder="Touchez ici puis « Coller »&#10;&#10;Un nom par ligne, par exemple :&#10;Marie Dupont&#10;Jean Martin" aria-label="Collez les noms ici"></textarea>';
     return '<div class="addgrid">' +
       '<section class="addc one"><div class="addh"><span class="addi">👤</span><div><h3>Ajouter une personne</h3><p>Tapez le prénom et le nom.</p></div></div>' +
-      '<div class="addrow"><input type="text" id="pnew" placeholder="Prénom Nom" autocomplete="off" autocapitalize="words" aria-label="Prénom et nom"><button class="btn pri" data-a="addone">Ajouter</button></div></section>' +
+      '<div class="addrow"><input type="text" id="pnew" placeholder="Prénom Nom" autocomplete="off" autocapitalize="words" aria-label="Prénom et nom"><button class="btn pri" data-a="addone">Ajouter</button></div>' +
+      '<p class="profnote"><span class="pstar">★</span><span><b>Professeur(s)</b> : dans la liste, touchez l\'étoile ☆ à côté du nom. Il peut y en avoir plusieurs. Le premier professeur présent complète une table quand il manque un joueur.</span></p></section>' +
       '<section class="addc many"><div class="addh"><span class="addi">📋</span><div><h3>Ajouter toute une liste</h3><p>D\'où vient votre liste ?</p></div></div>' +
       '<div class="bmeth" role="tablist">' + Object.keys(BM).map(k => '<button role="tab" aria-selected="' + (bm === k) + '" class="' + (bm === k ? 'on' : '') + '" data-a="bmeth" data-v="' + k + '"><span>' + BM[k].ico + '</span><b>' + BM[k].t + '</b><small>' + BM[k].d + '</small></button>').join('') + '</div>' +
       '<ol class="bsteps">' + steps.map(x => '<li>' + x + '</li>').join('') + '</ol>' + ctl +
@@ -3102,7 +3117,7 @@ window.BR_FLYER="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYF
     allnone() { if (confirm('Remettre toutes les réponses à « pas répondu » ?')) { cur().rsvp = {}; commit(); } },
     lvtoggle() { ui.showLv = !ui.showLv; render(); },
     level(el) { const p = getP(+el.dataset.id); if (!p) return; const v = +el.dataset.v; p.level = p.level === v ? undefined : v; commit(); },
-    teach(el) { const p = getP(+el.dataset.id); if (!p) return; const v = !p.teacher; D.roster.forEach(x => { x.teacher = false; }); p.teacher = v; commit(); },
+    teach(el) { const p = getP(+el.dataset.id); if (!p) return; p.teacher = !p.teacher; commit(); toast(p.name + (p.teacher ? ' est professeur.' : ' n\'est plus professeur.')); },
     del(el) {
       const id = +el.dataset.id, p = getP(id); if (!p) return;
       if (!twoTap('delId', id)) return;
