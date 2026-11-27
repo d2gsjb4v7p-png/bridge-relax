@@ -1042,6 +1042,16 @@ details.bulkp textarea{width:100%;box-sizing:border-box;font-size:16px;margin-to
 .hhelp:hover{background:rgba(255,255,255,.26)}
 .hhelp:focus-visible{outline:3px solid #f0cf86;outline-offset:2px}
 @media (max-width:380px){.hhelp{width:32px;height:32px;font-size:17px}}
+/* v8.1 — téléphone ↔ ordinateur */
+.btn.big{min-height:52px;font-size:17px;width:100%;justify-content:center}
+.synin{border:2px solid #2a9d5c}
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0 12px}
+.cmp>div{background:var(--paper-2);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:2px;font-size:14.5px}
+.cmp small{color:var(--muted,#667);font-size:12.5px}
+.cmp b{font-size:16px}
+.warnbox{background:var(--warn-bg);border-radius:12px;padding:10px 12px;margin:0 0 12px;line-height:1.45}
+.synin .row{gap:8px}.synin .row .btn.big{flex:2}.synin .row .btn:not(.big){flex:1;min-height:52px}
+ol.tl{margin:6px 0 10px;padding-left:22px;display:grid;gap:8px;line-height:1.5}
 
 </style>
 </head>
@@ -1554,9 +1564,10 @@ window.BR_FLYER="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYF
 (function () {
   'use strict';
   const LS = 'bridge-relax-v1';
-  const VERSION = '8.0';
+  const VERSION = '8.1';
   const VERSION_DATE = '26 novembre 2026';
   const NEWS = [
+    'Téléphone ↔ ordinateur : envoyer et recevoir les données entre appareils',
     'Mode d\'emploi accessible partout : bouton ? en haut à droite',
     'Plusieurs professeurs possibles (une étoile chacun) ; mode d\'emploi de la liste plus clair',
     'Liste des joueurs : « Ajouter une personne » et « Ajouter toute une liste » (copier-coller, Excel ou fichier), bien séparés',
@@ -1763,7 +1774,7 @@ window.BR_FLYER="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYF
   const LVL = { 1: 'niveau moyen (débutant, intermédiaire)', 2: 'meilleur niveau (moyen+, confirmé)' };
   const lvlChip = p => p.level ? '<span class="lv lv' + p.level + '" title="' + LVL[p.level] + '">N' + p.level + '</span>' : '';
   const ui = { cover: true, tab: 'today', filter: '', fresh: false, salleView: 'noms', auto: true, tick: 0, pmode: null, pf: 'all', delId: null, delS: null };
-  function save() { try { localStorage.setItem(LS, JSON.stringify(D)); } catch (e) { /* ignore */ } }
+  function save() { D.savedAt = Date.now(); try { localStorage.setItem(LS, JSON.stringify(D)); } catch (e) { /* ignore */ } }
   function commit() { save(); render(); }
 
   const cur = () => D.sessions.find(s => s.id === D.cur) || D.sessions[0];
@@ -1984,7 +1995,7 @@ window.BR_FLYER="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYF
       step(10, 'Fin de la période', 'Un signal sonne 5 minutes avant la fin, puis à la fin. On note les scores sur la feuille de l\'étui, on rebat les cartes, puis on relance.') + '</div>' +
       '<div class="panel"><h3 class="hh">Après</h3>' +
       step(11, 'Le bilan', 'Aujourd\'hui, dernière étape : qui est venu, qui a joué avec qui. Plus, Historique : les chiffres de toutes les séances.') +
-      step(12, 'Une sauvegarde', 'Plus, Réglages, « Exporter » : une copie de sécurité de la liste et des séances.') + '</div>' +
+      step(12, 'Smartphone et ordinateur', 'Plus, « Téléphone ↔ ordinateur ». Avant la séance : smartphone › « Envoyer les données », ordinateur › « Recevoir les données ». Après la séance : dans l\'autre sens. Un seul appareil à la fois fait les changements. Le même fichier sert de sauvegarde.') + '</div>' +
       '<p class="mute">Bridge Relax, version ' + VERSION + ' du ' + VERSION_DATE + '.</p>';
   }
   const hh = t => String(t).replace(':00', 'h').replace(':', 'h');
@@ -2020,14 +2031,14 @@ window.BR_FLYER="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYF
     const tabs = simple
       ? [['today', 'Aujourd\'hui'], ['joueurs', 'Joueurs'], ['tour', 'Tables'], ['plus', 'Plus']]
       : [['seances', 'Séances'], ['joueurs', 'Joueurs'], ['tour', 'Période'], ['etuis', 'Étuis'], ['reglages', 'Réglages']];
-    const inPlus = ['seances', 'etuis', 'reglages', 'bilan', 'aide', 'plus', 'histo'];
+    const inPlus = ['seances', 'etuis', 'reglages', 'bilan', 'aide', 'plus', 'histo', 'sync'];
     const s = cur();
     document.body.innerHTML =
       '<header><img class="logo" src="' + LOGO + '" alt="Page de garde" data-a="cover"><div class="htitle"><h1>Bridge Relax</h1><button class="hdate" data-a="tab" data-v="seances">' + esc(cap(fmtDate(s.date, { weekday: 'short', day: 'numeric', month: 'short' }))) + ' · ' + hh(s.start) + '–' + hh(s.end) + '</button></div><div class="clock" id="hclock"></div>' + (ui.tab === 'salle' ? '' : '<button class="hhelp noprint" data-a="help" aria-label="Mode d\'emploi" title="Mode d\'emploi">?</button>') + '</header>' +
       '<nav>' + tabs.map(t => '<button data-a="tab" data-v="' + t[0] + '" class="' + (ui.tab === t[0] || (simple ? (t[0] === 'plus' && inPlus.indexOf(ui.tab) >= 0) : (ui.tab === 'bilan' && t[0] === 'seances')) ? 'on' : '') + '"><svg viewBox="0 0 24 24" aria-hidden="true">' + ICON[t[0]] + '</svg>' + t[1] + '</button>').join('') + '</nav>' +
       (navigator.onLine === false ? '<div class="offbar">Pas de réseau : l\'application fonctionne normalement, tout est enregistré sur cet appareil.</div>' : '') +
       (ui.toast ? '<div id="toast" class="toast' + (ui.toast.warn ? ' warn' : '') + '" data-a="toastclose">' + esc(ui.toast.msg) + '</div>' : '') +
-      '<main>' + ({ seances: viewSessions, joueurs: viewPlayers, tour: viewRound, etuis: viewBoards, reglages: viewSettings, bilan: viewBilan, histo: viewHisto, aide: viewHelp, today: viewToday, plus: viewPlus }[ui.tab] || viewRound)() + '</main>';
+      '<main>' + ({ seances: viewSessions, joueurs: viewPlayers, tour: viewRound, etuis: viewBoards, reglages: viewSettings, bilan: viewBilan, histo: viewHisto, sync: viewSync, aide: viewHelp, today: viewToday, plus: viewPlus }[ui.tab] || viewRound)() + '</main>';
     if (ui.preview) { document.body.insertAdjacentHTML('beforeend', previewHtml()); document.body.classList.add('pv-on'); }
     ui.fresh = false;
     updateClock();
@@ -2169,6 +2180,7 @@ window.BR_FLYER="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYF
     const it = (a, extra, icon, t, d) => '<button class="pitem" data-a="' + a + '"' + extra + '><span class="pi">' + icon + '</span><span><b>' + t + '</b><small>' + d + '</small></span><span class="pc">›</span></button>';
     return '<div class="sec"><h2>Plus</h2></div><div class="plistm">' +
       it('help', '', '❓', 'Mode d\'emploi', 'Les étapes d\'un après-midi, une par une. Aussi : bouton ? en haut à droite') +
+      it('tab', ' data-v="sync"', '📲', 'Téléphone ↔ ordinateur', 'Passer les données d\'un appareil à l\'autre') +
       it('tab', ' data-v="seances"', '📅', 'Séances', 'Créer, changer ou supprimer une séance') +
       it('tab', ' data-v="etuis"', '🂠', 'Étuis et feuilles', 'Nombre d\'étuis, feuilles à imprimer') +
       it('bilan', ' data-id="' + cur().id + '"', '📋', 'Bilan de la séance', 'Présents, absents, qui a joué avec qui') +
@@ -2180,6 +2192,73 @@ window.BR_FLYER="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYF
       '<label class="chk"><input type="checkbox" data-f="big"' + (D.settings.big ? ' checked' : '') + '> Grands caractères</label>' +
       '<label class="chk"><input type="checkbox" data-f="simple"' + (D.settings.simple !== false ? ' checked' : '') + '> Mode simple (4 onglets)</label>' +
       '<p class="mute">Le mode complet montre tous les onglets et réglages, pour l\'organisateur qui veut tout régler.</p></div>';
+  }
+
+  /* ---------- Téléphone ↔ ordinateur : transfert des données par un fichier ----------
+     Pas de serveur : les données (dont les niveaux, confidentiels) ne passent que par vos propres appareils. */
+  const DEV = 'bridge-relax-appareil';
+  function deviceName() {
+    try { const n = localStorage.getItem(DEV); if (n) return n; } catch (e) { /* ignore */ }
+    const ua = navigator.userAgent || '';
+    return /iPhone/.test(ua) ? 'iPhone' : /iPad/.test(ua) ? 'iPad' : /Android/.test(ua) ? (/Mobile/.test(ua) ? 'smartphone Android' : 'tablette Android') : /Mac/.test(ua) ? 'Mac' : /Windows/.test(ua) ? 'ordinateur Windows' : 'cet appareil';
+  }
+  const whenTxt = t => t ? fmtDate(isoDay(new Date(t)), { weekday: 'short', day: 'numeric', month: 'short' }) + ' à ' + hh(fmtT(t)) : 'date inconnue';
+  const dataSummary = x => plural((x.roster || []).filter(p => !p.archived).length, 'joueur', 'joueurs') + ', ' + plural((x.sessions || []).length, 'séance', 'séances');
+  function syncPayload() {
+    const o = JSON.parse(JSON.stringify(D)); o.sentFrom = deviceName(); o.sentAt = Date.now();
+    try { const f = localStorage.getItem(FLY); if (f) o.affiche = f; } catch (e) { /* ignore */ }
+    return o;
+  }
+  function sendData() {
+    const o = syncPayload(), d = new Date(o.sentAt), p2 = x => String(x).padStart(2, '0');
+    const name = 'Bridge Relax ' + d.getFullYear() + '-' + p2(d.getMonth() + 1) + '-' + p2(d.getDate()) + ' ' + p2(d.getHours()) + 'h' + p2(d.getMinutes()) + '.json';
+    const file = new File([JSON.stringify(o)], name, { type: 'application/json' });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      navigator.share({ files: [file], title: 'Données Bridge Relax' }).then(() => toast('Fichier envoyé. Sur l\'autre appareil : « Recevoir les données ».')).catch(() => {});
+      return;
+    }
+    const a = document.createElement('a'); a.href = URL.createObjectURL(file); a.download = name; document.body.appendChild(a); a.click();
+    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 800);
+    toast('Fichier enregistré dans vos téléchargements : envoyez-le à l\'autre appareil (AirDrop, e-mail, WhatsApp).');
+  }
+  // Fichier reçu : on montre ce qu'il contient avant de remplacer
+  function receiveFile(f) {
+    const rd = new FileReader();
+    rd.onload = () => {
+      let j = null; try { j = JSON.parse(rd.result); } catch (x) { j = null; }
+      const m = j && migrate(JSON.parse(rd.result));
+      if (!m) { toast('Ce fichier n\'est pas un fichier Bridge Relax.', true); return; }
+      delete m.affiche; delete m.sentFrom; delete m.sentAt;
+      ui.incoming = { data: m, from: j.sentFrom || 'un autre appareil', at: j.sentAt || j.savedAt || 0, affiche: j.affiche || null };
+      ui.cover = false; ui.tab = 'sync'; render(); window.scrollTo(0, 0);
+    };
+    rd.readAsText(f);
+  }
+  function viewSync() {
+    const inc = ui.incoming;
+    let h = '<div class="sec"><h2>Téléphone ↔ ordinateur</h2><p class="lead">Les données restent dans chaque appareil. Pour travailler sur un autre appareil, on lui <b>envoie un fichier</b>. Rien ne passe par Internet : la liste et les niveaux restent privés.</p></div>';
+    if (inc) {
+      const newer = (inc.at || 0) >= (D.savedAt || 0);
+      h += '<div class="panel synin"><h3>📥 Fichier reçu</h3>' +
+        '<div class="cmp"><div><small>Dans le fichier</small><b>' + esc(inc.from) + '</b><span>' + esc(whenTxt(inc.at)) + '</span><span>' + dataSummary(inc.data) + '</span></div>' +
+        '<div><small>Actuellement ici</small><b>' + esc(deviceName()) + '</b><span>' + esc(whenTxt(D.savedAt)) + '</span><span>' + dataSummary(D) + '</span></div></div>' +
+        (newer ? '' : '<p class="warnbox">⚠️ Le fichier est <b>plus ancien</b> que les données de cet appareil. En le prenant, les changements faits ici depuis seront perdus.</p>') +
+        '<div class="row"><button class="btn pri big" data-a="syncok">Prendre ces données</button><button class="btn" data-a="syncno">Annuler</button></div></div>';
+    }
+    h += '<div class="addgrid">' +
+      '<section class="addc"><div class="addh"><span class="addi">📤</span><div><h3>Envoyer les données</h3><p>Depuis l\'appareil qui a les données à jour.</p></div></div>' +
+      '<ol class="bsteps"><li>Touchez <b>Envoyer les données</b>.</li><li>Choisissez <b>AirDrop</b> (iPhone vers Mac), <b>Mail</b> ou <b>WhatsApp</b> (à vous-même).</li><li>Sur l\'autre appareil, enregistrez le fichier (Téléchargements, ou « Enregistrer dans Fichiers » sur iPhone).</li></ol>' +
+      '<button class="btn pri big" data-a="syncsend">📤 Envoyer les données</button><p class="mute">Données de cet appareil (' + esc(deviceName()) + ') : ' + dataSummary(D) + (D.savedAt ? ', modifiées le ' + esc(whenTxt(D.savedAt)) : '') + '.</p></section>' +
+      '<section class="addc many"><div class="addh"><span class="addi">📥</span><div><h3>Recevoir les données</h3><p>Sur l\'appareil qui doit les reprendre.</p></div></div>' +
+      '<ol class="bsteps"><li>Touchez <b>Choisir le fichier reçu</b>.</li><li>Prenez le fichier « Bridge Relax … .json » le plus récent.</li><li>Vérifiez la date affichée, puis <b>Prendre ces données</b>.</li></ol>' +
+      '<label class="btn pri big bfile">📥 Choisir le fichier reçu<input type="file" accept=".json,application/json" data-f="syncfile" hidden></label></section></div>' +
+      '<div class="panel"><h3>Votre façon de travailler</h3><ol class="tl">' +
+      '<li><b>Avant la séance, sur le smartphone</b> : invitations, réponses, nouveaux joueurs.</li>' +
+      '<li><b>Le jour même, avant l\'accueil</b> : smartphone › Envoyer les données ; ordinateur › Recevoir les données.</li>' +
+      '<li><b>Pendant la séance, sur l\'ordinateur</b> (avec l\'écran étendu) : arrivées, départs, périodes. Ne modifiez plus le smartphone ce jour-là.</li>' +
+      '<li><b>Après la séance</b> : ordinateur › Envoyer ; smartphone › Recevoir. Le smartphone garde ainsi l\'historique et les présences pour la fois suivante.</li></ol>' +
+      '<p class="mute">Règle simple : <b>un seul appareil à la fois</b> fait les changements. Le dernier fichier reçu remplace tout.</p></div>';
+    return h;
   }
 
   /* ---------- Historique ----------
@@ -3273,6 +3352,13 @@ window.BR_FLYER="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYF
       if (document.fullscreenElement) { document.exitFullscreen(); return; }
       if (el.requestFullscreen) el.requestFullscreen(); else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
     },
+    syncsend() { sendData(); },
+    syncok() {
+      const inc = ui.incoming; if (!inc) return;
+      D = inc.data; if (inc.affiche) { try { localStorage.setItem(FLY, inc.affiche); } catch (e) { /* ignore */ } }
+      ui.incoming = null; save(); render(); toast('Données reprises : ' + dataSummary(D) + '.');
+    },
+    syncno() { ui.incoming = null; render(); },
     export() {
       const blob = new Blob([JSON.stringify(D)], { type: 'application/json' });
       const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
@@ -3358,10 +3444,8 @@ window.BR_FLYER="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYF
       if (k === 'setSize') D.settings.setSize = Math.max(2, Math.min(6, D.settings.setSize));
       if (k === 'bankSets') D.settings.bankSets = Math.max(3, Math.min(30, D.settings.bankSets));
       save();
-    } else if (el.id === 'imp' && el.files[0]) {
-      const rd = new FileReader();
-      rd.onload = () => { try { const m = migrate(JSON.parse(rd.result)); if (m) { D = m; commit(); } else alert('Fichier non reconnu.'); } catch (x) { alert('Fichier illisible.'); } };
-      rd.readAsText(el.files[0]);
+    } else if ((el.id === 'imp' || el.dataset.f === 'syncfile') && el.files[0]) {
+      receiveFile(el.files[0]); el.value = '';
     }
   });
 
