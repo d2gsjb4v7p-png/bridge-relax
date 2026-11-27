@@ -978,6 +978,17 @@ details.newsess[open]>summary .plus{transform:rotate(45deg)}
 @media (prefers-color-scheme:dark){.hbar .b-inv,.hleg .l-inv{background:#3b4a63}.hbar .b-came,.hleg .l-came{background:#3fbf78}}
 .hlist li{padding:6px 0}
 @media (min-width:560px){.hlist{columns:2;column-gap:24px}.hlist li{break-inside:avoid}}
+/* v7.7 — ajout de plusieurs noms */
+details.bulkp{margin:12px 0 0;border:1px solid var(--line);border-radius:14px;padding:10px 14px}
+details.bulkp>summary{font-weight:800;cursor:pointer;padding:4px 0}
+details.bulkp[open]>summary{margin-bottom:8px}
+.bulkhow{margin:6px 0 8px;padding-left:20px;display:grid;gap:6px;line-height:1.45}
+details.bulkp textarea{width:100%;box-sizing:border-box;font-size:16px;margin-top:6px}
+.bulkrow{margin:8px 0}
+.bulkprev p{margin:8px 0 4px}
+.bchips{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 10px}
+.bchips span{background:var(--paper-2);border:1px solid var(--line);border-radius:999px;padding:3px 10px;font-size:14px;font-weight:600}
+.hstep p{line-height:1.5}
 
 </style>
 </head>
@@ -1490,9 +1501,10 @@ window.BR_FLYER="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYF
 (function () {
   'use strict';
   const LS = 'bridge-relax-v1';
-  const VERSION = '7.6';
+  const VERSION = '7.7';
   const VERSION_DATE = '26 novembre 2026';
   const NEWS = [
+    'Ajouter plusieurs noms : copier-coller ou fichier (.txt, .csv, .vcf), avec aperçu avant l\'ajout',
     'Historique : invités, oui et venus à chaque séance ; qui vient et qui ne vient jamais',
     'Séances passées : horaire 15h45–18h45 corrigé ; boutons Ouvrir et Bilan côte à côte',
     'Page Séances plus claire : séances à venir d\'abord, formulaire propre (date, 3 heures, lieu, périodes)',
@@ -1897,20 +1909,20 @@ window.BR_FLYER="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYF
     const step = (n, t, d) => '<div class="hstep"><b>' + n + '</b><div><h3>' + t + '</h3><p>' + d + '</p></div></div>';
     return '<div class="sec"><button class="btn sm" data-a="tab" data-v="' + (D.settings.simple !== false ? 'today' : 'tour') + '">‹ Retour</button><h2 style="margin-top:12px">Mode d\'emploi</h2><p class="lead">Le plus simple : ouvrez l\'onglet <b>Aujourd\'hui</b> et suivez les étapes, une par une. L\'étape à faire est encadrée en vert.</p></div>' +
       '<div class="panel"><h3 class="hh">Une seule fois, au début</h3>' +
-      step(1, 'Mettre la liste des joueurs', 'Joueurs, puis Liste. Tapez un nom et touchez « Ajouter ». Ou collez toute la liste d\'un coup (un nom par ligne). L\'étoile ☆ désigne le professeur.') + '</div>' +
+      step(1, 'Mettre la liste des joueurs', 'Joueurs, puis Liste. Un seul nom : tapez-le en haut et touchez « Ajouter ». Toute la liste d\'un coup : ouvrez « Ajouter plusieurs noms d\'un coup », puis <br>• <b>copier-coller</b> : dans WhatsApp, un e-mail, Notes, Word ou Excel, sélectionnez les noms, « Copier », revenez, touchez le cadre puis « Coller » ;<br>• <b>ou un fichier</b> .txt, .csv (Excel : Enregistrer sous › CSV) ou .vcf (contacts). Un fichier .xlsx ou .docx ne s\'ouvre pas directement : copiez-collez les noms.<br>Un nom par ligne ; vérifiez l\'aperçu puis touchez « Ajouter ». L\'étoile ☆ désigne le professeur.') + '</div>' +
       '<div class="panel"><h3 class="hh">Quelques jours avant</h3>' +
-      step(2, 'Créer la séance', 'Plus, puis Séances : la date et les heures.') +
-      step(3, 'Inviter', 'Aujourd\'hui, étape « Qui vient ? », bouton « Écrire l\'invitation » : le texte est prêt, il suffit de l\'envoyer par WhatsApp ou e-mail.') +
+      step(2, 'Créer la séance', 'Plus, puis Séances, « Nouvelle séance » : la date, l\'heure d\'accueil, le début du jeu et la fin. Plusieurs dates d\'un coup : « Créer plusieurs séances d\'un coup ».') +
+      step(3, 'Inviter', 'Aujourd\'hui, étape « Qui vient ? », bouton vert « Inviter avec l\'affiche ». Un aperçu montre le message entier ; « Modifier le texte » si besoin, puis « Envoyer » et choisissez le groupe WhatsApp.') +
       step(4, 'Noter les réponses', 'Joueurs, puis Réponses : touchez Oui, ? ou Non à côté de chaque nom.') +
       step(5, 'Imprimer les feuilles d\'étui', 'Aujourd\'hui, étape « Préparer les étuis ». Une feuille par étui, à glisser dedans.') + '</div>' +
       '<div class="panel"><h3 class="hh">Le jour même</h3>' +
       step(6, 'Accueillir', 'Joueurs, puis Arrivées : touchez « Arrivé » quand une personne arrive. Une erreur ? Touchez « Annuler ».') +
       step(7, 'Lancer la période', 'Aujourd\'hui ou Tables : le gros bouton vert. L\'application forme les tables toute seule.') +
-      step(8, 'Annoncer les tables', 'Lisez la liste « Qui va où ? », ou touchez « Grand écran » si l\'appareil est relié à une télévision.') +
+      step(8, 'Annoncer les tables', 'Lisez la liste « Qui va où ? », ou projetez : Tables, « Projecteur (2e fenêtre) », faites glisser la fenêtre sur l\'écran du projecteur, puis « Plein écran ».') +
       step(9, 'Quelqu\'un part', 'Joueurs, Arrivées : touchez « Départ ». Sa place est aussitôt donnée à quelqu\'un qui attend, ou au professeur.') +
       step(10, 'Fin de la période', 'Un signal sonne 5 minutes avant la fin, puis à la fin. On note les scores sur la feuille de l\'étui, on rebat les cartes, puis on relance.') + '</div>' +
       '<div class="panel"><h3 class="hh">Après</h3>' +
-      step(11, 'Le bilan', 'Aujourd\'hui, dernière étape : qui est venu, qui a joué avec qui.') +
+      step(11, 'Le bilan', 'Aujourd\'hui, dernière étape : qui est venu, qui a joué avec qui. Plus, Historique : les chiffres de toutes les séances.') +
       step(12, 'Une sauvegarde', 'Plus, Réglages, « Exporter » : une copie de sécurité de la liste et des séances.') + '</div>' +
       '<p class="mute">Bridge Relax, version ' + VERSION + ' du ' + VERSION_DATE + '.</p>';
   }
@@ -2315,7 +2327,7 @@ window.BR_FLYER="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYF
     }
     let tools = '';
     if (m === 'insc') tools = waRow(s, counts(s)) + '<div class="row" style="margin-top:10px"><button class="btn sm pri" data-a="msg" data-v="invit">Rédiger l\'invitation</button><button class="btn sm" data-a="msg" data-v="relance">Relancer les sans-réponse</button><button class="btn sm" data-a="msg" data-v="veille">Rappel aux inscrits</button></div><div class="row" style="margin-top:6px"><button class="btn sm" data-a="copynone">Copier les noms sans réponse</button><button class="btn sm" data-a="allnone">Tout remettre à « ? »</button></div>';
-    if (m === 'liste') tools = avoidPanel() + '<details style="margin:10px 0 0"><summary>Coller une liste de noms</summary><textarea id="bulk" rows="6" placeholder="Un nom par ligne. Pour le niveau, ajoutez 1 ou 2 après le nom (ex. Marie Dupont ; 2)"></textarea><button class="btn" data-a="bulk" style="margin-top:8px">Ajouter ces noms</button></details>';
+    if (m === 'liste') tools = avoidPanel() + bulkPanel();
     if (m === 'accueil') tools = '<div class="row" style="margin-top:10px"><button class="btn sm" data-a="printacc">Imprimer le tableau d\'accueil</button></div>';
     const ph = m === 'accueil' ? 'Nom (chercher ou ajouter)' : 'Nom (chercher ou ajouter)';
     return '<div class="sec"><h2>' + (m === 'accueil' ? 'Arrivées' : m === 'insc' ? 'Réponses' : 'Liste des joueurs') + '</h2>' + seg + top + '</div>' +
@@ -2334,6 +2346,70 @@ window.BR_FLYER="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYF
       '<p class="mute">Ces deux personnes ne seront jamais placées à la même table, ni comme partenaires ni comme adversaires. Cette liste n\'apparaît que dans cet onglet.</p>' +
       '<div class="row"><select id="av1" class="grow">' + opts + '</select><select id="av2" class="grow">' + opts + '</select><button class="btn" data-a="avoidadd">Ajouter</button></div>' + list +
       '<p class="mute" style="margin-top:8px">Par ailleurs, l\'application évite de redonner les mêmes partenaires que lors des trois séances précédentes.</p></details>';
+  }
+  /* ---------- Ajouter plusieurs noms d'un coup (copier-coller ou fichier) ---------- */
+  function bulkPanel() {
+    const empty = !D.roster.some(p => !p.archived);
+    return '<details class="bulkp"' + (empty || ui.bulkOpen ? ' open' : '') + '><summary data-a="bulktoggle">Ajouter plusieurs noms d\'un coup</summary>' +
+      '<ol class="bulkhow">' +
+      '<li><b>Copier-coller.</b> Dans WhatsApp, un e-mail, Notes, Word ou Excel, sélectionnez les noms puis « Copier ». Revenez ici, touchez le cadre ci-dessous, puis « Coller » (sur ordinateur : Ctrl+V, ou ⌘+V sur Mac).</li>' +
+      '<li><b>Ou un fichier.</b> Touchez « Choisir un fichier ». Fichiers acceptés : <b>.txt</b> (texte), <b>.csv</b> (Excel : Fichier › Enregistrer sous › CSV) et <b>.vcf</b> (contacts du téléphone). Un fichier Excel (.xlsx) ou Word (.docx) ne s\'ouvre pas directement : copiez la colonne des noms et collez-la.</li>' +
+      '<li><b>Vérifiez</b> l\'aperçu qui apparaît sous le cadre, puis touchez « Ajouter ».</li></ol>' +
+      '<p class="mute">Un nom par ligne. Les numéros, tirets, adresses e-mail et numéros de téléphone sont retirés tout seuls ; les noms déjà dans la liste ne sont pas ajoutés deux fois. Niveau (facultatif, confidentiel) : ajoutez 1 ou 2 après le nom, séparé par un point-virgule (ex. « Marie Dupont ; 2 ») ou dans une 2e colonne Excel.</p>' +
+      '<textarea id="bulk" rows="7" placeholder="Collez les noms ici, un par ligne :&#10;Marie Dupont&#10;Jean Martin&#10;…"></textarea>' +
+      '<div class="row bulkrow"><label class="btn sm">Choisir un fichier<input type="file" accept=".txt,.csv,.vcf,text/plain,text/csv,text/vcard,text/x-vcard" data-f="bulkfile" hidden></label><button class="btn sm" data-a="bulkclear">Vider le cadre</button></div>' +
+      '<div id="bulkprev" class="bulkprev"></div></details>';
+  }
+  // Lit un texte collé ou un fichier : renvoie les noms trouvés (et le niveau s'il est indiqué)
+  function parseNames(txt) {
+    txt = String(txt || '').replace(/\r\n?/g, '\n').replace(/^\uFEFF/, '');
+    const out = [], skip = [];
+    if (/BEGIN:VCARD/i.test(txt)) {
+      txt.split(/END:VCARD/i).forEach(c => { const m = c.match(/^FN[^:]*:(.+)$/im); if (m) out.push({ name: m[1].trim() }); });
+      return { list: out, skip };
+    }
+    const lines = txt.split('\n').map(l => l.trim()).filter(Boolean);
+    const sep = l => (l.match(/\t/) ? '\t' : l.match(/;/) ? ';' : null);
+    // en-tête de tableau (Nom ; Prénom ; Niveau…)
+    let iN = -1, iP = -1, iL = -1, start = 0;
+    const s0 = lines[0] && sep(lines[0]);
+    if (s0) {
+      const h = lines[0].split(s0).map(x => x.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
+      if (h.some(x => /^(nom|name|prenom|first ?name|last ?name|joueur|niveau|level)$/.test(x))) {
+        iN = h.findIndex(x => /^(nom|name|last ?name|joueur)$/.test(x)); iP = h.findIndex(x => /^(prenom|first ?name)$/.test(x)); iL = h.findIndex(x => /^(niveau|level)$/.test(x)); start = 1;
+      }
+    }
+    lines.slice(start).forEach(line => {
+      let name = line, level = null;
+      const sp = sep(line);
+      if (sp) {
+        const c = line.split(sp).map(x => x.trim());
+        if (start) { name = [iP >= 0 ? c[iP] : '', iN >= 0 ? c[iN] : c[0]].filter(Boolean).join(' '); if (iL >= 0 && /^[12]$/.test(c[iL] || '')) level = +c[iL]; }
+        else { const lv = c.findIndex((x, i) => i > 0 && /^[12]$/.test(x)); if (lv > 0) level = +c[lv]; name = c.filter((x, i) => i !== lv && x && !/^[12]$/.test(x)).slice(0, 2).join(' '); }
+      } else {
+        const m = line.match(/^(.*?)\s*,\s*([12])$/); if (m) { name = m[1]; level = +m[2]; }
+      }
+      name = name.replace(/<[^>]*>/g, ' ').replace(/[\w.+-]+@[\w-]+\.[\w.]+/g, ' ').replace(/\+?\d[\d\s./-]{6,}\d/g, ' ')
+        .replace(/^\s*(\d+[.)]|[-–•*·])\s*/, '').replace(/["']/g, '').replace(/\s+/g, ' ').trim();
+      if (!name || !/[A-Za-zÀ-ÿ]/.test(name) || name.length > 60) { skip.push(line); return; }
+      out.push({ name, level });
+    });
+    return { list: out, skip };
+  }
+  function bulkSplit() {
+    const r = parseNames($('#bulk') ? $('#bulk').value : ''), seen = new Set(), add = [], dup = [];
+    r.list.forEach(x => { const k = x.name.toLowerCase(); if (seen.has(k)) return; seen.add(k);
+      (D.roster.some(p => !p.archived && p.name.toLowerCase() === k) ? dup : add).push(x); });
+    return { add, dup, skip: r.skip };
+  }
+  function bulkPreview() {
+    const el = $('#bulkprev'); if (!el) return;
+    const b = bulkSplit();
+    if (!b.add.length && !b.dup.length && !b.skip.length) { el.innerHTML = ''; return; }
+    el.innerHTML = (b.add.length ? '<p><b>' + plural(b.add.length, 'nouveau nom', 'nouveaux noms') + ' :</b></p><div class="bchips">' + b.add.map(x => '<span>' + esc(x.name) + '</span>').join('') + '</div>' : '<p><b>Aucun nouveau nom.</b></p>') +
+      (b.dup.length ? '<p class="mute">Déjà dans la liste : ' + b.dup.map(x => esc(x.name)).join(', ') + '.</p>' : '') +
+      (b.skip.length ? '<p class="mute">Lignes ignorées : ' + b.skip.slice(0, 5).map(esc).join(' · ') + (b.skip.length > 5 ? '…' : '') + '</p>' : '') +
+      (b.add.length ? '<button class="btn pri" data-a="bulk">Ajouter ' + plural(b.add.length, 'nom', 'noms') + '</button>' : '');
   }
   function addPlayer(name) {
     name = name.trim();
@@ -2927,13 +3003,13 @@ window.BR_FLYER="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYF
       ui.filter = ''; commit(); const i = $('#pname'); if (i) i.focus();
     },
     bulk() {
-      $('#bulk').value.split(/\n/).map(x => x.trim()).filter(Boolean).forEach(line => {
-        const m = line.match(/^(.*?)\s*[;,\t]\s*([12])$/);
-        const p = addPlayer(m ? m[1] : line);
-        if (p && m) p.level = +m[2];
-      });
-      commit();
+      const b = bulkSplit();
+      b.add.forEach(x => { const p = addPlayer(x.name); if (p && x.level) p.level = x.level; });
+      b.dup.forEach(x => { const p = D.roster.find(q => q.name.toLowerCase() === x.name.toLowerCase()); if (p && x.level && !p.level) p.level = x.level; });
+      ui.bulkOpen = false; commit(); toast(plural(b.add.length, 'nom ajouté', 'noms ajoutés') + '.');
     },
+    bulkclear() { const t = $('#bulk'); if (t) { t.value = ''; bulkPreview(); t.focus(); } },
+    bulktoggle() { setTimeout(() => { const d = $('details.bulkp'); ui.bulkOpen = !!(d && d.open); }, 0); },
     rsvp(el) {
       const s = cur(), id = +el.dataset.id, v = el.dataset.v;
       if (rsvpOf(s, id) === v) return;
@@ -3135,6 +3211,7 @@ window.BR_FLYER="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYF
     else if (el.dataset.f === 'note') { D.notes[el.dataset.b] = el.value; save(); }
     else if (el.dataset.f === 'pc') { D.prep = D.prep || {}; D.prep[el.dataset.b] = el.value; save(); }
     else if (el.dataset.f === 'plink') { D.settings.prepLink = el.value.trim(); save(); }
+    else if (el.id === 'bulk') bulkPreview();
     else if (el.id === 'pvt') { ui.preview.text = el.value; const a = $('#pvsend'); if (a && a.tagName === 'A') a.href = 'https://wa.me/?text=' + encodeURIComponent(el.value); }
     else if (el.dataset.f === 'sign' || el.id === 'msgt') {
       if (el.dataset.f === 'sign') { D.settings.sign = el.value; save(); const t = $('#msgt'); if (t) t.value = msgText(ui.msg); }
@@ -3146,6 +3223,15 @@ window.BR_FLYER="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYF
   });
   document.addEventListener('change', e => {
     const el = e.target;
+    if (el.dataset.f === 'bulkfile' && el.files && el.files[0]) {
+      const f = el.files[0];
+      if (/\.(xlsx?|docx?|pdf|numbers|pages)$/i.test(f.name)) { toast('Ce type de fichier ne s\'ouvre pas ici : ouvrez-le, copiez les noms et collez-les dans le cadre.', true); el.value = ''; return; }
+      const put = t => { const ta = $('#bulk'); if (ta) { ta.value = t; bulkPreview(); } };
+      const rd = new FileReader();
+      rd.onload = () => { const t = String(rd.result || '');
+        if (t.indexOf('\uFFFD') >= 0) { const r2 = new FileReader(); r2.onload = () => put(String(r2.result || '')); r2.readAsText(f, 'windows-1252'); } else put(t); };
+      rd.readAsText(f, 'utf-8'); el.value = ''; return;
+    }
     if (el.dataset.f === 'flyer' && el.files && el.files[0]) {
       const img = new Image(), rd = new FileReader();
       rd.onload = () => { img.onload = () => {
