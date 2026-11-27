@@ -1037,6 +1037,11 @@ details.bulkp textarea{width:100%;box-sizing:border-box;font-size:16px;margin-to
 .hstep .hblk>b:first-child{display:block;font-size:1.05em;margin-bottom:4px}
 .hstep .hnote{display:block;margin-top:8px;padding-top:8px;border-top:1px solid var(--line)}
 .hstep .hm{display:block;margin:6px 0;padding-left:4px}
+/* v8.0 — bouton d'aide dans l'en-tête */
+.hhelp{flex:none;width:36px;height:36px;border-radius:50%;border:2px solid rgba(255,255,255,.75);background:rgba(255,255,255,.14);color:#fff;font:800 19px/1 var(--sans);cursor:pointer;display:grid;place-items:center;padding:0}
+.hhelp:hover{background:rgba(255,255,255,.26)}
+.hhelp:focus-visible{outline:3px solid #f0cf86;outline-offset:2px}
+@media (max-width:380px){.hhelp{width:32px;height:32px;font-size:17px}}
 
 </style>
 </head>
@@ -1549,9 +1554,10 @@ window.BR_FLYER="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYF
 (function () {
   'use strict';
   const LS = 'bridge-relax-v1';
-  const VERSION = '7.9';
+  const VERSION = '8.0';
   const VERSION_DATE = '26 novembre 2026';
   const NEWS = [
+    'Mode d\'emploi accessible partout : bouton ? en haut à droite',
     'Plusieurs professeurs possibles (une étoile chacun) ; mode d\'emploi de la liste plus clair',
     'Liste des joueurs : « Ajouter une personne » et « Ajouter toute une liste » (copier-coller, Excel ou fichier), bien séparés',
     'Historique : invités, oui et venus à chaque séance ; qui vient et qui ne vient jamais',
@@ -1956,7 +1962,7 @@ window.BR_FLYER="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYF
   }
   function viewHelp() {
     const step = (n, t, d) => '<div class="hstep"><b>' + n + '</b><div><h3>' + t + '</h3><p>' + d + '</p></div></div>';
-    return '<div class="sec"><button class="btn sm" data-a="tab" data-v="' + (D.settings.simple !== false ? 'today' : 'tour') + '">‹ Retour</button><h2 style="margin-top:12px">Mode d\'emploi</h2><p class="lead">Le plus simple : ouvrez l\'onglet <b>Aujourd\'hui</b> et suivez les étapes, une par une. L\'étape à faire est encadrée en vert.</p></div>' +
+    return '<div class="sec"><button class="btn sm" data-a="helpback">‹ Retour</button><h2 style="margin-top:12px">Mode d\'emploi</h2><p class="lead">Le plus simple : ouvrez l\'onglet <b>Aujourd\'hui</b> et suivez les étapes, une par une. L\'étape à faire est encadrée en vert.</p></div>' +
       '<div class="panel"><h3 class="hh">Une seule fois, au début</h3>' +
       step(1, 'Mettre la liste des joueurs', 'Joueurs, puis Liste. Deux cadres :' +
         '<span class="hblk"><b>👤 Ajouter une personne</b>Tapez le prénom et le nom, puis touchez « Ajouter ».<span class="hnote">★ <b>Le ou les professeurs</b> : touchez l\'étoile ☆ à côté de leur nom. Plusieurs étoiles = plusieurs professeurs.</span></span>' +
@@ -2017,7 +2023,7 @@ window.BR_FLYER="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYF
     const inPlus = ['seances', 'etuis', 'reglages', 'bilan', 'aide', 'plus', 'histo'];
     const s = cur();
     document.body.innerHTML =
-      '<header><img class="logo" src="' + LOGO + '" alt="Page de garde" data-a="cover"><div class="htitle"><h1>Bridge Relax</h1><button class="hdate" data-a="tab" data-v="seances">' + esc(cap(fmtDate(s.date, { weekday: 'short', day: 'numeric', month: 'short' }))) + ' · ' + hh(s.start) + '–' + hh(s.end) + '</button></div><div class="clock" id="hclock"></div></header>' +
+      '<header><img class="logo" src="' + LOGO + '" alt="Page de garde" data-a="cover"><div class="htitle"><h1>Bridge Relax</h1><button class="hdate" data-a="tab" data-v="seances">' + esc(cap(fmtDate(s.date, { weekday: 'short', day: 'numeric', month: 'short' }))) + ' · ' + hh(s.start) + '–' + hh(s.end) + '</button></div><div class="clock" id="hclock"></div>' + (ui.tab === 'salle' ? '' : '<button class="hhelp noprint" data-a="help" aria-label="Mode d\'emploi" title="Mode d\'emploi">?</button>') + '</header>' +
       '<nav>' + tabs.map(t => '<button data-a="tab" data-v="' + t[0] + '" class="' + (ui.tab === t[0] || (simple ? (t[0] === 'plus' && inPlus.indexOf(ui.tab) >= 0) : (ui.tab === 'bilan' && t[0] === 'seances')) ? 'on' : '') + '"><svg viewBox="0 0 24 24" aria-hidden="true">' + ICON[t[0]] + '</svg>' + t[1] + '</button>').join('') + '</nav>' +
       (navigator.onLine === false ? '<div class="offbar">Pas de réseau : l\'application fonctionne normalement, tout est enregistré sur cet appareil.</div>' : '') +
       (ui.toast ? '<div id="toast" class="toast' + (ui.toast.warn ? ' warn' : '') + '" data-a="toastclose">' + esc(ui.toast.msg) + '</div>' : '') +
@@ -2162,13 +2168,13 @@ window.BR_FLYER="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYF
   function viewPlus() {
     const it = (a, extra, icon, t, d) => '<button class="pitem" data-a="' + a + '"' + extra + '><span class="pi">' + icon + '</span><span><b>' + t + '</b><small>' + d + '</small></span><span class="pc">›</span></button>';
     return '<div class="sec"><h2>Plus</h2></div><div class="plistm">' +
+      it('help', '', '❓', 'Mode d\'emploi', 'Les étapes d\'un après-midi, une par une. Aussi : bouton ? en haut à droite') +
       it('tab', ' data-v="seances"', '📅', 'Séances', 'Créer, changer ou supprimer une séance') +
       it('tab', ' data-v="etuis"', '🂠', 'Étuis et feuilles', 'Nombre d\'étuis, feuilles à imprimer') +
       it('bilan', ' data-id="' + cur().id + '"', '📋', 'Bilan de la séance', 'Présents, absents, qui a joué avec qui') +
       it('tab', ' data-v="histo"', '📈', 'Historique', 'Invités, inscrits et venus à chaque séance ; qui vient, qui ne vient jamais') +
       it('goavoid', '', '⛔', 'Incompatibilités', 'Deux personnes jamais à la même table') +
       it('tab', ' data-v="reglages"', '⚙️', 'Réglages', 'Durée des périodes, étuis, son, sauvegarde') +
-      it('help', '', '❓', 'Mode d\'emploi', 'Les étapes d\'un après-midi, une par une') +
       it('cover', '', '♠', 'Page de garde', 'Version ' + VERSION + ' du ' + VERSION_DATE) +
       '</div><div class="panel"><h3>Affichage</h3>' +
       '<label class="chk"><input type="checkbox" data-f="big"' + (D.settings.big ? ' checked' : '') + '> Grands caractères</label>' +
@@ -3212,7 +3218,8 @@ window.BR_FLYER="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYF
     gosheets() { ui.tab = 'etuis'; render(); actions.printsheets(); },
     unarrive(el) { const s = cur(), id = +el.dataset.id; delete s.att[id]; toast('Arrivée de ' + nm(id) + ' annulée.'); commit(); },
     goavoid() { ui.cover = false; ui.tab = 'joueurs'; ui.pmode = 'liste'; ui.avoidOpen = true; render(); const a = $('.avoid'); if (a && a.scrollIntoView) a.scrollIntoView({ block: 'center' }); },
-    help() { ui.cover = false; ui.tab = 'aide'; render(); window.scrollTo(0, 0); },
+    help() { if (ui.tab !== 'aide') ui.prevTab = ui.cover ? null : ui.tab; ui.cover = false; ui.tab = 'aide'; render(); window.scrollTo(0, 0); },
+    helpback() { ui.tab = ui.prevTab || (D.settings.simple !== false ? 'today' : 'tour'); ui.prevTab = null; render(); window.scrollTo(0, 0); },
     cover() { ui.cover = true; render(); window.scrollTo(0, 0); },
     msg(el) { ui.msg = el.dataset.v; render(); const p = $('.msgp'); if (p && p.scrollIntoView) p.scrollIntoView({ block: 'start' }); },
     msgclose() { ui.msg = null; render(); },
