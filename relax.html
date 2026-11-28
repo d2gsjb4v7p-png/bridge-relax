@@ -1052,6 +1052,15 @@ details.bulkp textarea{width:100%;box-sizing:border-box;font-size:16px;margin-to
 .warnbox{background:var(--warn-bg);border-radius:12px;padding:10px 12px;margin:0 0 12px;line-height:1.45}
 .synin .row{gap:8px}.synin .row .btn.big{flex:2}.synin .row .btn:not(.big){flex:1;min-height:52px}
 ol.tl{margin:6px 0 10px;padding-left:22px;display:grid;gap:8px;line-height:1.5}
+.rcv{background:var(--paper-2);border-radius:14px;padding:12px;margin:0 0 10px}
+.rcv>b{display:block;font-size:16px;margin-bottom:4px}
+.rcv p{margin:0 0 4px;line-height:1.45}
+.rcv .bsteps{margin:8px 0 10px}
+.rcv textarea{width:100%;box-sizing:border-box;margin:10px 0 6px;font-size:15px}
+.btn.wa.big{display:flex}
+header .htitle{min-width:0}
+header h1{white-space:nowrap}
+@media (max-width:420px){header{gap:8px;padding-left:12px;padding-right:12px}header h1{font-size:21px}header .clock{font-size:12px;max-width:34vw}header .logo{width:40px;height:40px}}
 
 </style>
 </head>
@@ -1564,10 +1573,10 @@ window.BR_FLYER="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYF
 (function () {
   'use strict';
   const LS = 'bridge-relax-v1';
-  const VERSION = '8.1';
+  const VERSION = '8.2';
   const VERSION_DATE = '26 novembre 2026';
   const NEWS = [
-    'Téléphone ↔ ordinateur : envoyer et recevoir les données entre appareils',
+    'Téléphone ↔ ordinateur par WhatsApp : un message à soi-même, un clic pour reprendre les données',
     'Mode d\'emploi accessible partout : bouton ? en haut à droite',
     'Plusieurs professeurs possibles (une étoile chacun) ; mode d\'emploi de la liste plus clair',
     'Liste des joueurs : « Ajouter une personne » et « Ajouter toute une liste » (copier-coller, Excel ou fichier), bien séparés',
@@ -1995,7 +2004,7 @@ window.BR_FLYER="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYF
       step(10, 'Fin de la période', 'Un signal sonne 5 minutes avant la fin, puis à la fin. On note les scores sur la feuille de l\'étui, on rebat les cartes, puis on relance.') + '</div>' +
       '<div class="panel"><h3 class="hh">Après</h3>' +
       step(11, 'Le bilan', 'Aujourd\'hui, dernière étape : qui est venu, qui a joué avec qui. Plus, Historique : les chiffres de toutes les séances.') +
-      step(12, 'Smartphone et ordinateur', 'Plus, « Téléphone ↔ ordinateur ». Avant la séance : smartphone › « Envoyer les données », ordinateur › « Recevoir les données ». Après la séance : dans l\'autre sens. Un seul appareil à la fois fait les changements. Le même fichier sert de sauvegarde.') + '</div>' +
+      step(12, 'Smartphone et ordinateur', 'Plus, « Téléphone ↔ ordinateur ». <b>Avant la séance</b> : sur le smartphone, « Envoyer par WhatsApp » et choisissez votre propre nom ; sur l\'ordinateur, cliquez sur le lien du message. <b>Après la séance</b> : dans l\'autre sens ; sur le smartphone, appui long sur le message › Copier, puis « Coller les données reçues ». Un seul appareil à la fois fait les changements.') + '</div>' +
       '<p class="mute">Bridge Relax, version ' + VERSION + ' du ' + VERSION_DATE + '.</p>';
   }
   const hh = t => String(t).replace(':00', 'h').replace(':', 'h');
@@ -2221,43 +2230,94 @@ window.BR_FLYER="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYF
     setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 800);
     toast('Fichier enregistré dans vos téléchargements : envoyez-le à l\'autre appareil (AirDrop, e-mail, WhatsApp).');
   }
+  /* Transfert par WhatsApp : toutes les données tiennent dans un lien (compressé).
+     Les données sont après le « # » : elles ne sont jamais envoyées au site, seulement d'un appareil à l'autre. */
+  const b64u = bytes => { let s = ''; const a = new Uint8Array(bytes); for (let i = 0; i < a.length; i += 0x8000) s += String.fromCharCode.apply(null, a.subarray(i, i + 0x8000)); return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); };
+  const unb64u = s => { const b = atob(s.replace(/-/g, '+').replace(/_/g, '/')); const a = new Uint8Array(b.length); for (let i = 0; i < b.length; i++) a[i] = b.charCodeAt(i); return a; };
+  async function packData() {
+    const o = JSON.parse(JSON.stringify(D)); o.sentFrom = deviceName(); o.sentAt = Date.now();
+    const bytes = new TextEncoder().encode(JSON.stringify(o));
+    if (window.CompressionStream) {
+      try { const z = await new Response(new Blob([bytes]).stream().pipeThrough(new CompressionStream('deflate-raw'))).arrayBuffer(); return 'z' + b64u(z); } catch (e) { /* repli */ }
+    }
+    return 'p' + b64u(bytes);
+  }
+  async function unpackData(s) {
+    s = String(s || '').trim();
+    const m = s.match(/#d=([A-Za-z0-9_-]+)/) || s.match(/^([zp][A-Za-z0-9_-]{20,})$/);
+    if (!m) return null;
+    const code = m[1], raw = unb64u(code.slice(1));
+    let txt;
+    if (code[0] === 'z') { if (!window.DecompressionStream) throw new Error('nodecomp'); txt = await new Response(new Blob([raw]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).text(); }
+    else txt = new TextDecoder().decode(raw);
+    return JSON.parse(txt);
+  }
+  function takeIncoming(j) {
+    const m = j && migrate(JSON.parse(JSON.stringify(j)));
+    if (!m) { toast('Ce message ne contient pas de données Bridge Relax.', true); return false; }
+    const from = j.sentFrom || 'un autre appareil', at = j.sentAt || j.savedAt || 0, affiche = j.affiche || null;
+    delete m.affiche; delete m.sentFrom; delete m.sentAt;
+    ui.incoming = { data: m, from, at, affiche };
+    ui.cover = false; ui.tab = 'sync'; render(); window.scrollTo(0, 0); return true;
+  }
+  async function sendWhatsApp() {
+    const code = await packData();
+    const link = location.origin + location.pathname + '#d=' + code;
+    const txt = '♠ Bridge Relax : données du ' + whenTxt(Date.now()) + ' (' + dataSummary(D) + '), depuis ' + deviceName() + '.\n\n' +
+      '💻 Sur l\'ordinateur : cliquez sur le lien.\n📱 Sur le téléphone : appui long sur ce message › Copier, puis dans l\'app « Coller les données reçues ».\n\n' + link;
+    try { navigator.clipboard && navigator.clipboard.writeText(txt).catch(() => {}); } catch (e) { /* ignore */ }
+    if (navigator.share && /iPhone|iPad|Android/.test(navigator.userAgent || '')) {
+      navigator.share({ text: txt }).then(() => toast('Envoyé. Sur l\'autre appareil, ouvrez le message WhatsApp.')).catch(() => {});
+      return;
+    }
+    window.open('https://wa.me/?text=' + encodeURIComponent(txt), '_blank', 'noopener');
+    toast('WhatsApp s\'ouvre : choisissez la discussion avec vous-même, puis Envoyer. (Le message est aussi copié.)');
+  }
+  async function pasteIncoming(text) {
+    try { const j = await unpackData(text); if (!j) { toast('Rien à reprendre : copiez d\'abord le message WhatsApp en entier.', true); return; } takeIncoming(j); }
+    catch (e) { toast(e.message === 'nodecomp' ? 'Ce navigateur est trop ancien pour lire ce message. Utilisez la méthode « fichier ».' : 'Le message est incomplet : copiez-le en entier.', true); }
+  }
   // Fichier reçu : on montre ce qu'il contient avant de remplacer
   function receiveFile(f) {
     const rd = new FileReader();
     rd.onload = () => {
       let j = null; try { j = JSON.parse(rd.result); } catch (x) { j = null; }
-      const m = j && migrate(JSON.parse(rd.result));
-      if (!m) { toast('Ce fichier n\'est pas un fichier Bridge Relax.', true); return; }
-      delete m.affiche; delete m.sentFrom; delete m.sentAt;
-      ui.incoming = { data: m, from: j.sentFrom || 'un autre appareil', at: j.sentAt || j.savedAt || 0, affiche: j.affiche || null };
-      ui.cover = false; ui.tab = 'sync'; render(); window.scrollTo(0, 0);
+      if (!j) { toast('Ce fichier n\'est pas un fichier Bridge Relax.', true); return; }
+      takeIncoming(j);
     };
     rd.readAsText(f);
   }
   function viewSync() {
     const inc = ui.incoming;
-    let h = '<div class="sec"><h2>Téléphone ↔ ordinateur</h2><p class="lead">Les données restent dans chaque appareil. Pour travailler sur un autre appareil, on lui <b>envoie un fichier</b>. Rien ne passe par Internet : la liste et les niveaux restent privés.</p></div>';
+    let h = '<div class="sec"><h2>Téléphone ↔ ordinateur</h2><p class="lead">Chaque appareil garde ses propres données. Pour passer de l\'un à l\'autre, on s\'envoie un <b>message WhatsApp à soi-même</b>.</p></div>';
     if (inc) {
       const newer = (inc.at || 0) >= (D.savedAt || 0);
-      h += '<div class="panel synin"><h3>📥 Fichier reçu</h3>' +
-        '<div class="cmp"><div><small>Dans le fichier</small><b>' + esc(inc.from) + '</b><span>' + esc(whenTxt(inc.at)) + '</span><span>' + dataSummary(inc.data) + '</span></div>' +
-        '<div><small>Actuellement ici</small><b>' + esc(deviceName()) + '</b><span>' + esc(whenTxt(D.savedAt)) + '</span><span>' + dataSummary(D) + '</span></div></div>' +
-        (newer ? '' : '<p class="warnbox">⚠️ Le fichier est <b>plus ancien</b> que les données de cet appareil. En le prenant, les changements faits ici depuis seront perdus.</p>') +
-        '<div class="row"><button class="btn pri big" data-a="syncok">Prendre ces données</button><button class="btn" data-a="syncno">Annuler</button></div></div>';
+      h += '<div class="panel synin"><h3>📥 Données reçues : à vérifier</h3>' +
+        '<div class="cmp"><div><small>Reçues de</small><b>' + esc(inc.from) + '</b><span>' + esc(whenTxt(inc.at)) + '</span><span>' + dataSummary(inc.data) + '</span></div>' +
+        '<div><small>Actuellement ici</small><b>' + esc(deviceName()) + '</b><span>' + (D.savedAt ? esc(whenTxt(D.savedAt)) : '—') + '</span><span>' + dataSummary(D) + '</span></div></div>' +
+        (newer ? '' : '<p class="warnbox">⚠️ Ces données sont <b>plus anciennes</b> que celles de cet appareil. En les prenant, les changements faits ici depuis seront perdus.</p>') +
+        '<div class="row"><button class="btn pri big" data-a="syncok">✓ Prendre ces données</button><button class="btn" data-a="syncno">Annuler</button></div></div>';
     }
     h += '<div class="addgrid">' +
-      '<section class="addc"><div class="addh"><span class="addi">📤</span><div><h3>Envoyer les données</h3><p>Depuis l\'appareil qui a les données à jour.</p></div></div>' +
-      '<ol class="bsteps"><li>Touchez <b>Envoyer les données</b>.</li><li>Choisissez <b>AirDrop</b> (iPhone vers Mac), <b>Mail</b> ou <b>WhatsApp</b> (à vous-même).</li><li>Sur l\'autre appareil, enregistrez le fichier (Téléchargements, ou « Enregistrer dans Fichiers » sur iPhone).</li></ol>' +
-      '<button class="btn pri big" data-a="syncsend">📤 Envoyer les données</button><p class="mute">Données de cet appareil (' + esc(deviceName()) + ') : ' + dataSummary(D) + (D.savedAt ? ', modifiées le ' + esc(whenTxt(D.savedAt)) : '') + '.</p></section>' +
-      '<section class="addc many"><div class="addh"><span class="addi">📥</span><div><h3>Recevoir les données</h3><p>Sur l\'appareil qui doit les reprendre.</p></div></div>' +
-      '<ol class="bsteps"><li>Touchez <b>Choisir le fichier reçu</b>.</li><li>Prenez le fichier « Bridge Relax … .json » le plus récent.</li><li>Vérifiez la date affichée, puis <b>Prendre ces données</b>.</li></ol>' +
-      '<label class="btn pri big bfile">📥 Choisir le fichier reçu<input type="file" accept=".json,application/json" data-f="syncfile" hidden></label></section></div>' +
+      '<section class="addc"><div class="addh"><span class="addi">📤</span><div><h3>Envoyer</h3><p>Sur l\'appareil qui a les données à jour.</p></div></div>' +
+      '<ol class="bsteps"><li>Touchez <b>Envoyer par WhatsApp</b>.</li><li>Dans WhatsApp, choisissez <b>votre propre nom</b> (« Moi » / « Vous »), puis <b>Envoyer</b>.</li></ol>' +
+      '<button class="btn wa big" data-a="syncwa">' + WA_ICO + 'Envoyer par WhatsApp</button>' +
+      '<p class="mute">Ici (' + esc(deviceName()) + ') : ' + dataSummary(D) + (D.savedAt ? ', modifiées le ' + esc(whenTxt(D.savedAt)) : '') + '.</p></section>' +
+      '<section class="addc many"><div class="addh"><span class="addi">📥</span><div><h3>Recevoir</h3><p>Sur l\'autre appareil, ouvrez ce message WhatsApp.</p></div></div>' +
+      '<div class="rcv"><b>💻 Sur l\'ordinateur</b><p>Cliquez sur le <b>lien</b> du message : l\'app s\'ouvre et montre les données. Touchez <b>Prendre ces données</b>.</p></div>' +
+      '<div class="rcv"><b>📱 Sur le téléphone</b><ol class="bsteps"><li>Dans WhatsApp, <b>appui long</b> sur le message, puis <b>Copier</b>.</li><li>Revenez dans l\'app et touchez le bouton ci-dessous.</li></ol>' +
+      '<button class="btn pri big" data-a="syncpaste">📋 Coller les données reçues</button>' +
+      (ui.pasteBox ? '<textarea id="synct" rows="3" placeholder="Si le bouton ne colle rien : touchez ici, puis « Coller »."></textarea><button class="btn" data-a="syncpaste2">Valider</button>' : '') + '</div>' +
+      '</section></div>' +
       '<div class="panel"><h3>Votre façon de travailler</h3><ol class="tl">' +
       '<li><b>Avant la séance, sur le smartphone</b> : invitations, réponses, nouveaux joueurs.</li>' +
-      '<li><b>Le jour même, avant l\'accueil</b> : smartphone › Envoyer les données ; ordinateur › Recevoir les données.</li>' +
-      '<li><b>Pendant la séance, sur l\'ordinateur</b> (avec l\'écran étendu) : arrivées, départs, périodes. Ne modifiez plus le smartphone ce jour-là.</li>' +
-      '<li><b>Après la séance</b> : ordinateur › Envoyer ; smartphone › Recevoir. Le smartphone garde ainsi l\'historique et les présences pour la fois suivante.</li></ol>' +
-      '<p class="mute">Règle simple : <b>un seul appareil à la fois</b> fait les changements. Le dernier fichier reçu remplace tout.</p></div>';
+      '<li><b>Le jour même, avant l\'accueil</b> : smartphone › <b>Envoyer par WhatsApp</b>. Ordinateur : cliquez sur le lien.</li>' +
+      '<li><b>Pendant la séance, sur l\'ordinateur</b> : arrivées, départs, périodes, projecteur. Ne touchez plus au smartphone.</li>' +
+      '<li><b>Après la séance</b> : ordinateur › <b>Envoyer par WhatsApp</b>. Smartphone : copiez le message, puis <b>Coller les données reçues</b>.</li></ol>' +
+      '<p class="mute"><b>Un seul appareil à la fois</b> fait les changements : les données reçues remplacent tout. L\'affiche d\'invitation ne voyage pas avec les données.</p></div>' +
+      '<details class="panel bhelp"><summary>Autre méthode : par fichier (AirDrop, e-mail)</summary>' +
+      '<p class="mute">Utile si WhatsApp n\'est pas disponible. Le fichier sert aussi de sauvegarde.</p><div class="row"><button class="btn" data-a="syncsend">📤 Envoyer un fichier</button>' +
+      '<label class="btn">📥 Choisir un fichier reçu<input type="file" accept=".json,application/json" data-f="syncfile" hidden></label></div></details>';
     return h;
   }
 
@@ -3353,10 +3413,18 @@ window.BR_FLYER="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYF
       if (el.requestFullscreen) el.requestFullscreen(); else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
     },
     syncsend() { sendData(); },
+    syncwa() { sendWhatsApp(); },
+    syncpaste() {
+      if (navigator.clipboard && navigator.clipboard.readText) {
+        navigator.clipboard.readText().then(t => { if (t && /#d=|^[zp][A-Za-z0-9_-]{20,}/.test(t.trim())) pasteIncoming(t); else { ui.pasteBox = true; render(); toast('Rien de reçu dans le presse-papier : copiez d\'abord le message WhatsApp.', true); } })
+          .catch(() => { ui.pasteBox = true; render(); const t = $('#synct'); if (t) t.focus(); });
+      } else { ui.pasteBox = true; render(); const t = $('#synct'); if (t) t.focus(); }
+    },
+    syncpaste2() { const t = $('#synct'); pasteIncoming(t ? t.value : ''); },
     syncok() {
       const inc = ui.incoming; if (!inc) return;
       D = inc.data; if (inc.affiche) { try { localStorage.setItem(FLY, inc.affiche); } catch (e) { /* ignore */ } }
-      ui.incoming = null; save(); render(); toast('Données reprises : ' + dataSummary(D) + '.');
+      ui.incoming = null; ui.pasteBox = false; save(); render(); toast('Données reprises : ' + dataSummary(D) + '.');
     },
     syncno() { ui.incoming = null; render(); },
     export() {
@@ -3449,6 +3517,11 @@ window.BR_FLYER="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYF
     }
   });
 
+  if (/^#d=/.test(location.hash)) {
+    const hsh = location.hash;
+    try { history.replaceState(null, '', location.pathname + location.search); } catch (e) { /* ignore */ }
+    setTimeout(() => { pasteIncoming(hsh); }, 50);
+  }
   if (location.hash === '#salle') { ui.second = true; ui.cover = false; ui.tab = 'salle'; ui.salleView = 'tables'; }
   render();
   setInterval(updateClock, 5000);
